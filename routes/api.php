@@ -20,5 +20,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
-Route::get('/fetch', 'SynchronizeController@synchronizeApp');
+
+/**routes para sincronizar la app de forma masiva (inicial) */
+Route::get('/fetch/all', 'SynchronizeController@synchronizeApp');
+
+
+/** routes para sincronizar la app de forma manual (diaria) */
 Route::get('/fetch/daily', 'SynchronizeController@syncronizeAppDaily');
+Route::get('/fetch/daily/platforms-categories', 'SynchronizeController@syncronizeAppPlatformsCategoriesDaily');
+Route::get('/fetch/daily/courses', 'SynchronizeController@synchronizeAppCoursesActive');
+Route::get('/fetch/daily/activities', 'SynchronizeController@syncronizeAppActivitiesActive');
+Route::get('/fetch/daily/user-registered', 'SynchronizeController@syncronizeAppRegisteredUsersActive');
+Route::get('/fetch/daily/user-registered-activities', 'SynchronizeController@syncronizeAppRegisteredUserActivitiesActive');
