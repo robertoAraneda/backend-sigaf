@@ -164,7 +164,7 @@ class SynchronizeController extends Controller
     // }
 
 
-    $response5 = Http::get($base_url . "api/collection/check?page=1");
+    $response5 = Http::get($base_url . "pi/collection/inscrito-actividad/active");
 
     $registeredUserActivities = $response5->json()['data'];
 
@@ -304,7 +304,7 @@ class SynchronizeController extends Controller
     //   }
     // }
 
-    $response5 = Http::get($base_url . "                                                                           ");
+    $response5 = Http::get($base_url . "api/collection/inscrito-actividad/active");
 
     $registeredUserActivities = $response5->json();
 
@@ -336,13 +336,10 @@ class SynchronizeController extends Controller
             $registeredUserActivity['idinscrito'] = $courseRegisteredUserSearch->id;
             $registeredUserActivity['idacividad'] = $activitySearch->id;
 
-            $response = $activityCourseRegisteredUserController->store($registeredUserActivity);
+            $activityCourseRegisteredUserController->store($registeredUserActivity);
           }
         }
       }
     }
-
-
-    return 'OK-Daily';
   }
 }
