@@ -10,7 +10,17 @@ use Illuminate\Support\Facades\Http;
 class SynchronizeController extends Controller
 {
 
+  private $base_url;
 
+  public function __construct()
+  {
+    $this->base_url = "http://ayuda2-emineduc.iie.cl/iie-inacap/public/api/";
+  }
+
+  public function getBASE_URL()
+  {
+    return $this->base_url;
+  }
 
   public function synchronizeApp()
   {
@@ -164,7 +174,7 @@ class SynchronizeController extends Controller
     // }
 
 
-    $response5 = Http::get($base_url . "api/collection/inscrito-actividad/active");
+    $response5 = Http::get($base_url . "collection/inscrito-actividad/active");
 
     $registeredUserActivities = $response5->json()['data'];
 
@@ -200,14 +210,13 @@ class SynchronizeController extends Controller
     }
   }
 
-  public function syncronizeAppDaily()
+  public function syncronizeAppPlatformsCategoriesDaily()
   {
 
-    $base_url = 'http://ayuda2-emineduc.iie.cl/iie-inacap/public/';
-
-    $response = Http::get($base_url . "api/collection/categorias/active");
+    $response = Http::get($this->getBASE_URL() . "collection/categorias/active");
 
     $categoriesActive = $response->json();
+
 
     foreach ($categoriesActive as $category) {
 
@@ -218,12 +227,15 @@ class SynchronizeController extends Controller
       $platformSearch = $platformController->findByDescription($category['plataforma']['nombre']);
 
       if (!isset($platformSearch)) {
+
         $platformController->store($category['plataforma']);
       }
 
       $platformSearch = $platformController->findByDescription($category['plataforma']['nombre']);
 
       $categorySearch = $categoryController->findByIdPlatformAndCategoryMoodle($category['idcategory'], $platformSearch->id);
+
+      $categories[] = $category;
 
       if (!isset($categorySearch)) {
 
@@ -232,11 +244,18 @@ class SynchronizeController extends Controller
         $categoryController->store($category);
       }
     }
+    return response()->json([
+      'success' => true,
+      'error' => null
+    ], 200);
+  }
 
-    $response2 = Http::get($base_url . "api/collection/cursos/active");
+  public function synchronizeAppCoursesActive()
+  {
+
+    $response2 = Http::get($this->getBASE_URL() . "collection/cursos/active");
 
     $activeCourses = $response2->json();
-
 
     foreach ($activeCourses as $activeCourse) {
 
@@ -253,8 +272,16 @@ class SynchronizeController extends Controller
         $courseController->store($activeCourse);
       }
     }
+    return response()->json([
+      'success' => true,
+      'error' => null
+    ], 200);
+  }
 
-    $response3 = Http::get($base_url . "api/collection/actividades/active");
+  public function syncronizeAppActivitiesActive()
+  {
+
+    $response3 = Http::get($this->getBASE_URL() . "api/collection/actividades/active");
 
     $activeActivities = $response3->json();
 
@@ -273,8 +300,15 @@ class SynchronizeController extends Controller
         $activityController->store($activeActivity);
       }
     }
+    return response()->json([
+      'success' => true,
+      'error' => null
+    ], 200);
+  }
 
-    $response4 = Http::get($base_url . "api/collection/inscritos/active");
+  public function syncronizeAppRegisteredUsersActive()
+  {
+    $response4 = Http::get($this->getBASE_URL() . "api/collection/inscritos/active");
 
     $activeRegisteredUsers = $response4->json();
 
@@ -303,8 +337,16 @@ class SynchronizeController extends Controller
         $courseRegisteredUserController->store($activeRegisteredUser);
       }
     }
+    return response()->json([
+      'success' => true,
+      'error' => null
+    ], 200);
+  }
 
-    $response5 = Http::get($base_url . "api/collection/inscrito-actividad/active");
+  public function syncronizeAppRegisteredUserActivitiesActive()
+  {
+
+    $response5 = Http::get($this->getBASE_URL() . "api/collection/inscrito-actividad/active");
 
     $registeredUserActivities = $response5->json();
 
@@ -319,7 +361,6 @@ class SynchronizeController extends Controller
 
         $courseSearch = $courseController->findByIdCourseMoodle($registeredUserActivity['user_registered']['curso']['idcurso']);
         $registeredUserSearch = $registeredUserController->findByIdRegisteredUserMoodle($registeredUserActivity['user_registered']['iduser']);
-
 
         $activitySearch = $activityController->findByIdActivityMoodle($registeredUserActivity['activity']['idmod']);
 
@@ -341,7 +382,23 @@ class SynchronizeController extends Controller
         }
       }
     }
+    return response()->json([
+      'success' => true,
+      'error' => null
+    ], 200);
+  }
+  public function syncronizeAppDaily()
 
-    return "ok";
+  {
+
+    $this->syncronizeAppPlatformsCategoriesDaily();
+    $this->synchronizeAppCoursesActive();
+    $this->syncronizeAppRegisteredUsersActive();
+    $this->syncronizeAppActivitiesActive();
+    $this->syncronizeAppRegisteredUserActivitiesActive();
+    return response()->json([
+      'success' => true,
+      'error' => null
+    ], 200);
   }
 }
