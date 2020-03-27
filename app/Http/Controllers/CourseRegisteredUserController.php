@@ -20,7 +20,6 @@ class CourseRegisteredUserController extends Controller
   /**
    * Store a newly created resource in storage.
    *
-   * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
   public function store($courseRegisteredUserMoodle)
@@ -29,9 +28,11 @@ class CourseRegisteredUserController extends Controller
 
     $courseRegisteredUser->course_id =  $courseRegisteredUserMoodle['curso']['idrcurso'];
     $courseRegisteredUser->registered_user_id = $courseRegisteredUserMoodle['iduser'];
-    $courseRegisteredUser->last_access_registered_moodle = str_replace('-', '', $courseRegisteredUserMoodle['ultimoacceso']);
+    $courseRegisteredUser->last_access_registered_moodle = $courseRegisteredUserMoodle['ultimoacceso'];
 
     $courseRegisteredUser->save();
+
+    return $courseRegisteredUser->fresh();
   }
 
   /**
@@ -53,16 +54,18 @@ class CourseRegisteredUserController extends Controller
   }
 
 
-  /**
-   * Update the specified resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
-  public function update(Request $request, $id)
+
+  public function update($id, $courseRegisteredUserMoodle)
   {
-    //
+    $courseRegisteredUser = CourseRegisteredUser::whereId($id)->first();
+
+    $courseRegisteredUser->course_id =  $courseRegisteredUserMoodle['curso']['idrcurso'];
+    $courseRegisteredUser->registered_user_id = $courseRegisteredUserMoodle['iduser'];
+    $courseRegisteredUser->last_access_registered_moodle = $courseRegisteredUserMoodle['ultimoacceso'];
+
+    $courseRegisteredUser->save();
+
+    return $courseRegisteredUser->fresh();
   }
 
   /**
