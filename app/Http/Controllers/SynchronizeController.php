@@ -338,10 +338,13 @@ class SynchronizeController extends Controller
 
       $courseRegisteredUserSearch = $courseRegisteredUserController->findByIdCourseRegisteredUser($activeRegisteredUser);
 
+
+
       if (!isset($courseRegisteredUserSearch)) {
 
         $courseRegisteredUserController->store($activeRegisteredUser);
       } else {
+
         $courseRegisteredUserController->update($courseRegisteredUserSearch->id, $activeRegisteredUser);
       }
     }
@@ -384,11 +387,12 @@ class SynchronizeController extends Controller
           $registeredUserActivity['idinscrito'] = $courseRegisteredUserSearch->id;
           $registeredUserActivity['idacividad'] = $activitySearch->id;
 
-          if (!isset($activityCourseRegisteredUserSearch)) {
 
+          if (!isset($activityCourseRegisteredUserSearch)) {
 
             $activityCourseRegisteredUserController->store($registeredUserActivity);
           } else {
+
             $activityCourseRegisteredUserController->update($activityCourseRegisteredUserSearch->id, $registeredUserActivity);
           }
         }
