@@ -210,10 +210,11 @@ class SynchronizeController extends Controller
     }
   }
 
+
   public function syncronizeAppPlatformsCategoriesDaily()
   {
 
-    $response = Http::get($this->getBASE_URL() . "collection/categorias/active");
+    $response = Http::get($this->getBASE_URL() . "collection/categorias/all");
 
     $categoriesActive = $response->json();
 
@@ -250,10 +251,11 @@ class SynchronizeController extends Controller
     ], 200);
   }
 
+
   public function synchronizeAppCoursesActive()
   {
 
-    $response2 = Http::get($this->getBASE_URL() . "collection/cursos/active");
+    $response2 = Http::get($this->getBASE_URL() . "collection/cursos/all");
 
     $activeCourses = $response2->json();
 
@@ -281,7 +283,7 @@ class SynchronizeController extends Controller
   public function syncronizeAppActivitiesActive()
   {
 
-    $response3 = Http::get($this->getBASE_URL() . "api/collection/actividades/active");
+    $response3 = Http::get($this->getBASE_URL() . "collection/actividades/all");
 
     $activeActivities = $response3->json();
 
@@ -308,7 +310,7 @@ class SynchronizeController extends Controller
 
   public function syncronizeAppRegisteredUsersActive()
   {
-    $response4 = Http::get($this->getBASE_URL() . "api/collection/inscritos/active");
+    $response4 = Http::get($this->getBASE_URL() . "collection/inscrito/filtered");
 
     $activeRegisteredUsers = $response4->json();
 
@@ -346,7 +348,7 @@ class SynchronizeController extends Controller
   public function syncronizeAppRegisteredUserActivitiesActive()
   {
 
-    $response5 = Http::get($this->getBASE_URL() . "api/collection/inscrito-actividad/active");
+    $response5 = Http::get($this->getBASE_URL() . "collection/inscrito-actividad/filtered");
 
     $registeredUserActivities = $response5->json();
 
@@ -388,7 +390,6 @@ class SynchronizeController extends Controller
     ], 200);
   }
   public function syncronizeAppDaily()
-
   {
 
     $this->syncronizeAppPlatformsCategoriesDaily();
