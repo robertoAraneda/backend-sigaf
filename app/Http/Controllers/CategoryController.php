@@ -17,12 +17,6 @@ class CategoryController extends Controller
     //
   }
 
-  /**
-   * Store a newly created resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
-   */
   public function store($categoryMoodle)
   {
     $category = new Category();
@@ -33,14 +27,10 @@ class CategoryController extends Controller
     $category->status = $categoryMoodle['active'];
 
     $category->save();
+
+    return $category->fresh();
   }
 
-  /**
-   * Display the specified resource.
-   *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
   public function show($id)
   {
     //
@@ -50,35 +40,33 @@ class CategoryController extends Controller
   {
     $category = Category::where('id_category_moodle', $idCategoryMoodle)->first();
 
-    return $category;
+    return $category->fresh();
   }
 
   public function findByIdPlatformAndCategoryMoodle($idCategoryMoodle, $idPlatform)
   {
     $category = Category::where('id_category_moodle', $idCategoryMoodle)->where('platform_id', $idPlatform)->first();
 
-    return $category;
+    return $category->fresh();
   }
 
 
-  /**
-   * Update the specified resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
-  public function update(Request $request, $id)
+  public function update($id, $categoryMoodle)
   {
-    //
+
+    $category = Category::whereId($id)->first();
+
+    $category->description = $categoryMoodle['nombre'];
+    $category->id_category_moodle = $categoryMoodle['idcategory'];
+    $category->platform_id = $categoryMoodle['idplataforma'];
+    $category->status = $categoryMoodle['active'];
+
+    $category->save();
+
+    return $category->fresh();
   }
 
-  /**
-   * Remove the specified resource from storage.
-   *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
+
   public function destroy($id)
   {
     //

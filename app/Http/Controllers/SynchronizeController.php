@@ -230,6 +230,8 @@ class SynchronizeController extends Controller
       if (!isset($platformSearch)) {
 
         $platformController->store($category['plataforma']);
+      } else {
+        $platformController->update($platformSearch->id, $category['plataforma']);
       }
 
       $platformSearch = $platformController->findByDescription($category['plataforma']['nombre']);
@@ -238,11 +240,13 @@ class SynchronizeController extends Controller
 
       $categories[] = $category;
 
+      $category['idplataforma']  = $platformSearch->id;
+
       if (!isset($categorySearch)) {
 
-        $category['idplataforma']  = $platformSearch->id;
-
         $categoryController->store($category);
+      } else {
+        $categoryController->update($categorySearch->id, $category);
       }
     }
     return response()->json([
@@ -392,11 +396,111 @@ class SynchronizeController extends Controller
   public function syncronizeAppDaily()
   {
 
+    $this->syncronizeAppRegisteredUsersActive();
+    $this->syncronizeAppRegisteredUserActivitiesActive();
+    return response()->json([
+      'success' => true,
+      'error' => null
+    ], 200);
+  }
+
+
+
+  public function syncronizeAppRegisteredUsersActiveInit()
+  {
+    $response4 = Http::get($this->getBASE_URL() . "collection/inscrito/all");
+
+    $activeRegisteredUsers = $response4->json();
+
+    foreach ($activeRegisteredUsers as $activeRegisteredUser) {
+      $registeredUserController = new RegisteredUserController();
+      $courseController = new CourseController();
+      $courseRegisteredUserController = new CourseRegisteredUserController();
+
+
+      $registeredUserSearch = $registeredUserController->findByIdRegisteredUserMoodle($activeRegisteredUser['iduser']);
+
+      if (!isset($registeredUserSearch)) {
+
+        $registeredUserSearch = $registeredUserController->store($activeRegisteredUser);
+      }
+
+      $courseSearch = $courseController->findByIdCourseMoodle($activeRegisteredUser['curso']['idcurso']);
+
+      $activeRegisteredUser['curso']['idrcurso'] = $courseSearch->id;
+      $activeRegisteredUser['iduser'] =  $registeredUserSearch->id;
+
+      $courseRegisteredUserSearch = $courseRegisteredUserController->findByIdCourseRegisteredUser($activeRegisteredUser);
+
+      if (!isset($courseRegisteredUserSearch)) {
+
+        $courseRegisteredUserController->store($activeRegisteredUser);
+      } else {
+        $courseRegisteredUserController->update($courseRegisteredUserSearch->id, $activeRegisteredUser);
+      }
+    }
+    return response()->json([
+      'success' => true,
+      'error' => null
+    ], 200);
+  }
+
+  public function syncronizeAppRegisteredUserActivitiesActiveInit()
+  {
+
+    $response5 = Http::get($this->getBASE_URL() . "collection/inscrito-actividad/all");
+
+    $registeredUserActivities = $response5->json();
+
+    foreach ($registeredUserActivities as $keys) {
+      foreach ($keys as $registeredUserActivity) {
+
+        $courseRegistereduserController = new CourseRegisteredUserController();
+        $activityController = new ActivityController();
+        $courseController = new CourseController();
+        $registeredUserController = new RegisteredUserController();
+        $activityCourseRegisteredUserController = new ActivityCourseRegisteredUserController();
+
+        $courseSearch = $courseController->findByIdCourseMoodle($registeredUserActivity['user_registered']['curso']['idcurso']);
+        $registeredUserSearch = $registeredUserController->findByIdRegisteredUserMoodle($registeredUserActivity['user_registered']['iduser']);
+
+        $activitySearch = $activityController->findByIdActivityMoodle($registeredUserActivity['activity']['idmod']);
+
+        $registeredUserActivityFormat['curso']['idrcurso'] = $courseSearch->id;
+        $registeredUserActivityFormat['iduser'] = $registeredUserSearch->id;
+
+        $courseRegisteredUserSearch = $courseRegistereduserController->findByIdCourseRegisteredUser($registeredUserActivityFormat);
+
+        if (isset($courseSearch) && isset($registeredUserSearch) && isset($courseRegisteredUserSearch) && isset($activitySearch)) {
+
+          $activityCourseRegisteredUserSearch = $activityCourseRegisteredUserController->findByIdActivityCourseRegisteredUser($activitySearch->id, $courseRegisteredUserSearch->id);
+
+          $registeredUserActivity['idinscrito'] = $courseRegisteredUserSearch->id;
+          $registeredUserActivity['idacividad'] = $activitySearch->id;
+
+          if (!isset($activityCourseRegisteredUserSearch)) {
+
+            $activityCourseRegisteredUserController->store($registeredUserActivity);
+          } else {
+            $activityCourseRegisteredUserController->update($activityCourseRegisteredUserSearch->id, $registeredUserActivity);
+          }
+        }
+      }
+    }
+    return response()->json([
+      'success' => true,
+      'error' => null
+    ], 200);
+  }
+
+
+  public function synchronizeAppInit()
+  {
     $this->syncronizeAppPlatformsCategoriesDaily();
     $this->synchronizeAppCoursesActive();
-    $this->syncronizeAppRegisteredUsersActive();
+    $this->syncronizeAppRegisteredUsersActiveInit();
     $this->syncronizeAppActivitiesActive();
-    $this->syncronizeAppRegisteredUserActivitiesActive();
+    $this->syncronizeAppRegisteredUserActivitiesActiveInit();
     return response()->json([
       'success' => true,
       'error' => null
