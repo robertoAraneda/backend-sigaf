@@ -319,6 +319,7 @@ class SynchronizeController extends Controller
     $activeRegisteredUsers = $response4->json();
 
     foreach ($activeRegisteredUsers as $activeRegisteredUser) {
+
       $registeredUserController = new RegisteredUserController();
       $courseController = new CourseController();
       $courseRegisteredUserController = new CourseRegisteredUserController();
@@ -329,6 +330,9 @@ class SynchronizeController extends Controller
       if (!isset($registeredUserSearch)) {
 
         $registeredUserSearch = $registeredUserController->store($activeRegisteredUser);
+      } else {
+
+        $registeredUserSearch = $registeredUserController->update($registeredUserSearch->id, $activeRegisteredUser);
       }
 
       $courseSearch = $courseController->findByIdCourseMoodle($activeRegisteredUser['curso']['idcurso']);
@@ -337,8 +341,6 @@ class SynchronizeController extends Controller
       $activeRegisteredUser['iduser'] =  $registeredUserSearch->id;
 
       $courseRegisteredUserSearch = $courseRegisteredUserController->findByIdCourseRegisteredUser($activeRegisteredUser);
-
-
 
       if (!isset($courseRegisteredUserSearch)) {
 

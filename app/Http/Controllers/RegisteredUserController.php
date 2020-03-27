@@ -65,9 +65,21 @@ class RegisteredUserController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function update(Request $request, $id)
+  public function update($id, $registeredUserMoodle)
   {
-    //
+    $registeredUser = RegisteredUser::whereId($id)->first();
+
+    $registeredUser->id_registered_moodle = $registeredUserMoodle['iduser'];
+    $registeredUser->rut_registered_moodle = $registeredUserMoodle['rut'];
+    $registeredUser->name_registered_moodle = $registeredUserMoodle['nombre'];
+    $registeredUser->email_registered_moodle = $registeredUserMoodle['email'];
+    $registeredUser->status_moodle = $registeredUserMoodle['activo'];
+
+    $registeredUser->save();
+
+    $registeredUser = RegisteredUser::where('id_registered_moodle',  $registeredUserMoodle['iduser'])->first();
+
+    return $registeredUser;
   }
 
   /**
