@@ -32,7 +32,7 @@ class CourseRegisteredUserController extends Controller
 
     $courseRegisteredUser->save();
 
-    return $courseRegisteredUser->fresh();
+    return $courseRegisteredUser;
   }
 
   /**
@@ -65,7 +65,7 @@ class CourseRegisteredUserController extends Controller
 
     $courseRegisteredUser->save();
 
-    return $courseRegisteredUser->fresh();
+    return $courseRegisteredUser;
   }
 
   /**

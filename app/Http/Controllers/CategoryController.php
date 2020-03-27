@@ -28,7 +28,7 @@ class CategoryController extends Controller
 
     $category->save();
 
-    return $category->fresh();
+    return $category;
   }
 
   public function show($id)
@@ -40,14 +40,14 @@ class CategoryController extends Controller
   {
     $category = Category::where('id_category_moodle', $idCategoryMoodle)->first();
 
-    return $category->fresh();
+    return $category;
   }
 
   public function findByIdPlatformAndCategoryMoodle($idCategoryMoodle, $idPlatform)
   {
     $category = Category::where('id_category_moodle', $idCategoryMoodle)->where('platform_id', $idPlatform)->first();
 
-    return $category->fresh();
+    return $category;
   }
 
 
@@ -63,7 +63,7 @@ class CategoryController extends Controller
 
     $category->save();
 
-    return $category->fresh();
+    return $category;
   }
 
 
