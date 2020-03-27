@@ -382,11 +382,11 @@ class SynchronizeController extends Controller
 
         if (isset($courseSearch) && isset($registeredUserSearch) && isset($courseRegisteredUserSearch) && isset($activitySearch)) {
 
+
           $activityCourseRegisteredUserSearch = $activityCourseRegisteredUserController->findByIdActivityCourseRegisteredUser($activitySearch->id, $courseRegisteredUserSearch->id);
 
           $registeredUserActivity['idinscrito'] = $courseRegisteredUserSearch->id;
           $registeredUserActivity['idacividad'] = $activitySearch->id;
-
 
           if (!isset($activityCourseRegisteredUserSearch)) {
 

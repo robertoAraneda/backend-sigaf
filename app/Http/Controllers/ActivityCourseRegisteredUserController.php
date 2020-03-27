@@ -57,12 +57,10 @@ class ActivityCourseRegisteredUserController extends Controller
     $activityCourseRegisteredUser = ActivityCourseRegisteredUser::whereId($id)->first();
 
 
-
     $activityCourseRegisteredUser->activity_id = $activityCourseRegisteredUserMoodle['idacividad'];
     $activityCourseRegisteredUser->course_registered_user_id = $activityCourseRegisteredUserMoodle['idinscrito'];
     $activityCourseRegisteredUser->qualification_moodle = $activityCourseRegisteredUserMoodle['calificacion'];
     $activityCourseRegisteredUser->status_moodle = $activityCourseRegisteredUserMoodle['estado'];
-
 
     $activityCourseRegisteredUser->save();
 
