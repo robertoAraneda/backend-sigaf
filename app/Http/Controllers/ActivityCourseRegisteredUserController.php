@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activity;
 use App\Models\ActivityCourseRegisteredUser;
 use Illuminate\Http\Request;
 
@@ -17,12 +18,7 @@ class ActivityCourseRegisteredUserController extends Controller
     //
   }
 
-  /**
-   * Store a newly created resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
-   */
+
   public function store($activityCourseRegisteredUserMoodle)
   {
     $activityCourseRegisteredUser = new ActivityCourseRegisteredUser();
@@ -55,16 +51,19 @@ class ActivityCourseRegisteredUserController extends Controller
 
     return $activityCourseRegisteredUserMoodle;
   }
-  /**
-   * Update the specified resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
-  public function update(Request $request, $id)
+
+  public function update($id, $activityCourseRegisteredUserMoodle)
   {
-    //
+    $activityCourseRegisteredUser = ActivityCourseRegisteredUser::whereId($id)->first();
+
+    $activityCourseRegisteredUser->activity_id = $activityCourseRegisteredUserMoodle['idacividad'];
+    $activityCourseRegisteredUser->course_registActivityered_user_id = $activityCourseRegisteredUserMoodle['idinscrito'];
+    $activityCourseRegisteredUser->qualification_moodle = $activityCourseRegisteredUserMoodle['calificacion'];
+    $activityCourseRegisteredUser->status_moodle = $activityCourseRegisteredUserMoodle['estado'];
+
+    $activityCourseRegisteredUser->save();
+
+    return $activityCourseRegisteredUser->fresh();
   }
 
   /**

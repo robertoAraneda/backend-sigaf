@@ -47,16 +47,13 @@ class PlatformController extends Controller
     return $platform;
   }
 
-  /**
-   * Update the specified resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
-  public function update(Request $request, $id)
+  public function update($id, $platformMoodle)
   {
-    //
+    $platform = Platform::whereId($id)->first();
+
+    $platform->description = $platformMoodle['nombre'];
+
+    $platform->save();
   }
 
   /**
