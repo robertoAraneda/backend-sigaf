@@ -42,6 +42,7 @@ class TicketController extends Controller
         'error' => null
       ], 200);
     } catch (\Exception $exception) {
+
       return response()->json([
         'success' => false,
         'data' => null,
@@ -76,7 +77,7 @@ class TicketController extends Controller
       return response()->json([
         'success' => false,
         'data' => null,
-        'error' => $exception
+        'error' => $exception->getMessage()
       ], 500);
     }
   }
@@ -91,20 +92,41 @@ class TicketController extends Controller
   {
     try {
 
-      $ticket = Ticket::whereId($id)->first();
+      if (is_numeric($id)) {
 
-      return response()->json([
+        $ticket = Ticket::whereId($id)->first();
 
-        'success' => true,
-        'data' => $ticket->format(),
-        'error' => null
-      ], 200);
+        if (isset($ticket)) {
+
+          return response()->json([
+
+            'success' => true,
+            'data' => $ticket->format(),
+            'error' => null
+          ], 200);
+        } else {
+
+          return response()->json([
+
+            'success' => false,
+            'data' => null,
+            'error' => 'No Content'
+          ], 204);
+        }
+      } else {
+        return response()->json([
+
+          'success' => false,
+          'data' => null,
+          'error' => 'Bad Request'
+        ], 400);
+      }
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
         'data' => null,
-        'error' => $exception
+        'error' => $exception->getMessage()
       ], 500);
     }
   }
@@ -116,9 +138,48 @@ class TicketController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function update(Request $request, $id)
+  public function update($id)
   {
-    //
+    try {
+      if (is_numeric($id)) {
+
+        $ticket = Ticket::whereId($id)->first();
+
+        if (isset($ticket)) {
+
+          $dataUpdate = $this->validateData();
+
+          $ticket->update($dataUpdate);
+
+          return response()->json([
+            'success' => true,
+            'data' => $ticket->format(),
+            'error' => null
+          ], 200);
+        } else {
+
+          return response()->json([
+            'success' => false,
+            'data' => null,
+            'error' => null
+          ], 204);
+        }
+      } else {
+
+        return response()->json([
+          'success' => false,
+          'data' => null,
+          'error' => 'Bad Request'
+        ], 400);
+      }
+    } catch (\Exception $exception) {
+
+      return response()->json([
+        'success' => false,
+        'data' => null,
+        'error' => $exception->getMessage()
+      ], 500);
+    }
   }
 
   /**
@@ -129,6 +190,41 @@ class TicketController extends Controller
    */
   public function destroy($id)
   {
-    //
+    try {
+
+      if (is_numeric($id)) {
+        $ticket = Ticket::whereId($id)->first();
+
+        if (isset($ticket)) {
+          return response()->json([
+
+            'success' => true,
+            'data' => null,
+            'error' => null
+          ], 200);
+        } else {
+          return response()->json([
+
+            'success' => false,
+            'data' => $ticket->format(),
+            'error' => 'No content'
+          ], 204);
+        }
+      } else {
+        return response()->json([
+
+          'success' => false,
+          'data' => null,
+          'error' => 'Bad Request'
+        ], 400);
+      }
+    } catch (\Exception $exception) {
+
+      return response()->json([
+        'success' => false,
+        'data' => null,
+        'error' => $exception->getMessage()
+      ], 500);
+    }
   }
 }

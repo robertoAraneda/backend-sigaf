@@ -28,7 +28,10 @@ class TicketDetailController extends Controller
 
     try {
 
-      $ticketDetails = TicketDetail::all()->map->format();
+      $ticketDetails = TicketDetail::orderBy('id')
+        ->get()
+        ->map
+        ->format();
 
       return response()->json([
 
@@ -96,6 +99,7 @@ class TicketDetailController extends Controller
       if (is_numeric($id)) {
 
         $ticketDetail = TicketDetail::whereId($id)->first();
+
         if (isset($ticketDetail)) {
 
           return response()->json([
@@ -105,9 +109,9 @@ class TicketDetailController extends Controller
           ], 200);
         } else {
           return response()->json([
-            'success' => true,
+            'success' => false,
             'data' => null,
-            'error' => null
+            'error' => 'No Content'
           ], 204);
         }
       } else {
@@ -138,12 +142,13 @@ class TicketDetailController extends Controller
     try {
 
       if (is_numeric($id)) {
-        $dataUpdate = $this->validateData();
+
 
         $ticketDetail = TicketDetail::whereId($id)->first();
 
         if (isset($ticketDetail)) {
 
+          $dataUpdate = $this->validateData();
           // $ticketDetail->ticket_id = $updateData['ticket_id'];
           // $ticketDetail->user_create_id = $updateData['user_created_id'];
           // $ticketDetail->status_detail_ticket_id = $updateData['status_detail_ticket_id'];
@@ -160,9 +165,9 @@ class TicketDetailController extends Controller
           ], 200);
         } else {
           return response()->json([
-            'success' => true,
+            'success' => false,
             'data' => null,
-            'error' => null
+            'error' => 'No Content'
           ], 204);
         }
       } else {
@@ -206,9 +211,9 @@ class TicketDetailController extends Controller
           ], 200);
         } else {
           return response()->json([
-            'success' => true,
+            'success' => false,
             'data' => null,
-            'error' => null
+            'error' => 'No Content'
           ], 204);
         }
       } else {
