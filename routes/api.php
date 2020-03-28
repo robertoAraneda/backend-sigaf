@@ -35,3 +35,8 @@ Route::get('/fetch/daily', 'SynchronizeController@syncronizeAppDaily');
 
 Route::get('/fetch/daily/user-registered', 'SynchronizeController@syncronizeAppRegisteredUsersActive');
 Route::get('/fetch/daily/user-registered-activities', 'SynchronizeController@syncronizeAppRegisteredUserActivitiesActive');
+
+
+/**rutas api */
+
+Route::apiResource('/final-status', 'FinalStatusController');
