@@ -15,6 +15,7 @@ class FinalStatusController extends Controller
    */
   public function index()
   {
+
     try {
 
       $finalStatuses = FinalStatus::orderBy('id')
@@ -51,6 +52,7 @@ class FinalStatusController extends Controller
    */
   public function store(Request $request)
   {
+
     try {
 
       $request->validate([
@@ -86,6 +88,7 @@ class FinalStatusController extends Controller
    */
   public function show($id)
   {
+
     try {
       if (is_numeric($id)) {
 
@@ -107,6 +110,7 @@ class FinalStatusController extends Controller
           ], 204);
         }
       } else {
+
         return response()->json([
           'success' => false,
           'data' =>  null,
@@ -114,6 +118,7 @@ class FinalStatusController extends Controller
         ], 400);
       }
     } catch (\Exception $exception) {
+
       return response()->json([
         'success' => false,
         'data' => null,
@@ -189,6 +194,7 @@ class FinalStatusController extends Controller
   {
 
     try {
+
       if (is_numeric($id)) {
 
         $finalStatus = FinalStatus::whereId($id)->first();
@@ -213,6 +219,7 @@ class FinalStatusController extends Controller
           ], 204);
         }
       } else {
+
         return response()->json([
           'success' => false,
           'data' =>  null,
@@ -220,6 +227,7 @@ class FinalStatusController extends Controller
         ], 400);
       }
     } catch (\Exception $exception) {
+
       return response()->json([
         'success' => false,
         'data' => null,
