@@ -16,7 +16,7 @@ class CreateTicketDetailsTable extends Migration
     Schema::create('ticket_details', function (Blueprint $table) {
       $table->bigIncrements('id');
       $table->unsignedBigInteger('ticket_id');
-      $table->unsignedBigInteger('user_create_id');
+      $table->unsignedBigInteger('user_created_id');
       $table->unsignedBigInteger('status_detail_ticket_id');
       $table->string('comment');
       $table->timestamps();
