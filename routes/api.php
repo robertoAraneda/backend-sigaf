@@ -40,3 +40,8 @@ Route::get('/fetch/daily/user-registered-activities', 'SynchronizeController@syn
 /**rutas api */
 
 Route::apiResource('/final-status', 'FinalStatusController');
+
+
+/**rutas files */
+
+Route::get('/upload-file/excel', 'RegisteredUserController@import');
