@@ -31,7 +31,7 @@ class Ticket extends Model
         'id' => $this->statusTicket->id,
         'description' => $this->statusTicket->description
       ],
-      'priorotyTicket' => [
+      'priorityTicket' => [
         'id' => $this->priorityTicket->id,
         'description' => $this->priorityTicket->description
       ],

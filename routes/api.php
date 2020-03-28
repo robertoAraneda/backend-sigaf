@@ -50,6 +50,7 @@ Route::apiResource('/status-ticket', 'StatusTicketController');
 Route::apiResource('/classroom', 'ClassroomController');
 Route::apiResource('/ticket-detail', 'TicketDetailController');
 Route::apiResource('/ticket', 'TicketController');
+Route::apiResource('/alert', 'AlertController');
 
 /**rutas files */
 
