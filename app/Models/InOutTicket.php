@@ -16,7 +16,7 @@ class InOutTicket extends Model
       'id' => $this->id,
       'description' => $this->description,
       'createdAt' => $this->created_at,
-      'updatedAt' => $this->updated_at,
+      'updatedAt' => $this->updated_at
     ];
   }
 }

@@ -54,11 +54,12 @@ class InOutTicketController extends Controller
   {
 
     try {
+
       $dataStore = $this->validateData();
 
       $inOutTicket = new InOutTicket();
 
-      $inOutTicket->create($dataStore);
+      $inOutTicket = $inOutTicket->create($dataStore);
       // $inOutTicket->description = $request->description;
 
       // $inOutTicket->save();
@@ -152,22 +153,29 @@ class InOutTicketController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => $inOutTicket->fresh(),
+            'data' => $inOutTicket->fresh()->format(),
             'error' => null
           ], 200);
         } else {
 
           return response()->json([
-            'success' => false,
+            'success' => true,
             'data' => null,
-            'error' => 'Bad Request'
-          ], 400);
+            'error' => null
+          ], 204);
         }
+      } else {
+
+        return response()->json([
+          'success' => false,
+          'data' => null,
+          'error' => 'Bad Request'
+        ], 400);
       }
     } catch (\Exception $exception) {
 
       return response()->json([
-        'success' => true,
+        'success' => false,
         'data' => null,
         'error' => $exception->getMessage()
       ], 500);
@@ -183,18 +191,46 @@ class InOutTicketController extends Controller
   public function destroy($id)
   {
 
-    // try{
+    try {
 
-    //   if(is_numeric($id)){
+      if (is_numeric($id)) {
 
-    //     $inOutTicket = InOutTicket::
+        $inOutTicket = InOutTicket::whereId($id)->first();
 
-    //   }else{
+        if (isset($inOutTicket)) {
 
-    //   }
+          $inOutTicket = InOutTicket::whereId($id)->first();
 
-    // }catch(\Exception $exception){
+          $inOutTicket->delete();
 
-    // }
+          return response()->json([
+            'success' => true,
+            'data' => null,
+            'error' => null,
+          ], 200);
+        } else {
+
+          return response()->json([
+            'success' => true,
+            'data' => null,
+            'error' => null,
+          ], 204);
+        }
+      } else {
+
+        return response()->json([
+          'success' => false,
+          'data' => null,
+          'error' => 'Bad Request',
+        ], 400);
+      }
+    } catch (\Exception $exception) {
+
+      return response()->json([
+        'success' => false,
+        'data' => null,
+        'error' => $exception->getMessage(),
+      ], 500);
+    }
   }
 }

@@ -8,6 +8,13 @@ use Illuminate\Http\Request;
 
 class FinalStatusController extends Controller
 {
+
+  protected function validateData()
+  {
+    return request()->validate([
+      'description' => 'required|max:255'
+    ]);
+  }
   /**
    * Display a listing of the resource.
    *
@@ -20,14 +27,8 @@ class FinalStatusController extends Controller
 
       $finalStatuses = FinalStatus::orderBy('id')
         ->get()
-        ->map(function ($finalStatus) {
-          return [
-            'id' => $finalStatus->id,
-            'description' => $finalStatus->description,
-            'created_at' => Carbon::parse($finalStatus->created_at)->diffForHumans(),
-            'updated_at' => Carbon::parse($finalStatus->updated_at)->diffForHumans()
-          ];
-        });
+        ->map
+        ->format();
 
       return response()->json([
         'success' => true,
@@ -55,19 +56,15 @@ class FinalStatusController extends Controller
 
     try {
 
-      $request->validate([
-        'description' => 'required|max:255'
-      ]);
+      $dataStore = $this->validateData();
 
       $finalStatus = new FinalStatus();
-      $finalStatus->description = $request->description;
 
-
-      $finalStatus->save();
+      $finalStatus = $finalStatus->create($dataStore);
 
       return response()->json([
         'success' => true,
-        'data' =>  $finalStatus->fresh(),
+        'data' =>  $finalStatus->fresh()->format(),
         'error' => null
       ], 201);
     } catch (\Exception $exception) {
@@ -92,7 +89,7 @@ class FinalStatusController extends Controller
     try {
       if (is_numeric($id)) {
 
-        $finalStatus = FinalStatus::whereId($id)->first();
+        $finalStatus = FinalStatus::whereId($id)->first()->format();
 
         if (isset($finalStatus)) {
 
@@ -139,23 +136,19 @@ class FinalStatusController extends Controller
 
     try {
 
-      $request->validate([
-        'description' => 'required|max:255'
-      ]);
-
       if (is_numeric($id)) {
+
+        $dataUpdate = $this->validateData();
 
         $finalStatus = FinalStatus::whereId($id)->first();
 
         if (isset($finalStatus)) {
 
-          $finalStatus->description = $request->description;
-
-          $finalStatus->save();
+          $finalStatus->update($dataUpdate);
 
           return response()->json([
             'success' => true,
-            'data' =>  $finalStatus->fresh(),
+            'data' =>  $finalStatus->fresh()->format(),
             'error' => null
           ], 200);
         } else {
