@@ -40,7 +40,7 @@ Route::get('/fetch/daily/user-registered-activities', 'SynchronizeController@syn
 /**rutas api */
 
 Route::apiResource('/final-status', 'FinalStatusController');
-Route::apiResource('/ticket-detail', 'TicketDetailController');
+Route::apiResource('/in-out-ticket', 'InOutTicketController');
 
 
 /**rutas files */
