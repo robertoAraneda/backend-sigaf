@@ -15,7 +15,7 @@ class CreateFinalStatusesTable extends Migration
   {
     Schema::create('final_statuses', function (Blueprint $table) {
       $table->bigIncrements('id');
-      $table->string('descripcion', 255);
+      $table->string('description', 255);
       $table->timestamps();
     });
   }
