@@ -71,7 +71,7 @@ class InOutTicketController extends Controller
     } catch (\Exception $exception) {
 
       return response()->json([
-        'success' => true,
+        'success' => false,
         'data' => null,
         'error' => $exception->getMessage()
       ], 500);
@@ -119,7 +119,7 @@ class InOutTicketController extends Controller
     } catch (\Exception $exception) {
 
       return response()->json([
-        'success' => true,
+        'success' => false,
         'data' => null,
         'error' => $exception->getMessage()
       ], 500);
@@ -213,7 +213,7 @@ class InOutTicketController extends Controller
           return response()->json([
             'success' => true,
             'data' => null,
-            'error' => null,
+            'error' => null
           ], 204);
         }
       } else {
