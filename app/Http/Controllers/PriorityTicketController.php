@@ -24,21 +24,21 @@ class PriorityTicketController extends Controller
 
     try {
 
-      $priorityTicket = PriorityTicket::orderBy('id')
+      $priorityTickets = PriorityTicket::orderBy('id')
         ->get()
         ->map
         ->format();
 
-      return response()->jason([
+      return response()->json([
         'success' => true,
-        'data' => $priorityTicket,
+        'data' => $priorityTickets,
         'error' => null
       ], 200);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => false,
+        'data' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -50,7 +50,7 @@ class PriorityTicketController extends Controller
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
-  public function store(Request $request)
+  public function store()
   {
 
     try {
@@ -70,7 +70,7 @@ class PriorityTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => false,
+        'data' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -89,21 +89,21 @@ class PriorityTicketController extends Controller
 
       if (is_numeric($id)) {
 
-        $priorityTicket = PriorityTicket::whereId($id)->first()->format();
+        $priorityTicket = PriorityTicket::whereId($id)->first();
 
         if (isset($priorityTicket)) {
 
           return response()->json([
             'success' => true,
-            'data' => $priorityTicket,
+            'data' => $priorityTicket->format(),
             'error' => null,
           ], 200);
         } else {
 
           return response()->json([
-            'success' => true,
+            'success' => false,
             'data' => null,
-            'error' => null,
+            'error' => 'No Content',
           ], 204);
         }
       } else {
@@ -118,7 +118,7 @@ class PriorityTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => false,
+        'data' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -140,7 +140,7 @@ class PriorityTicketController extends Controller
 
         $dataUpdate = $this->validateData();
 
-        $priorityTicket = PriorityTicket::where($id)->first();
+        $priorityTicket = PriorityTicket::whereId($id)->first();
 
         if (isset($priorityTicket)) {
 
@@ -156,7 +156,7 @@ class PriorityTicketController extends Controller
           return response()->json([
             'success' => true,
             'data' => null,
-            'error' => null,
+            'error' => 'No Content',
           ], 204);
         }
       } else {
@@ -164,14 +164,14 @@ class PriorityTicketController extends Controller
         return response()->json([
           'success' => false,
           'data' => null,
-          'error' => null,
+          'error' => 'Bad Request',
         ], 400);
       }
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => false,
+        'data' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -201,6 +201,12 @@ class PriorityTicketController extends Controller
             'data' => null,
             'error' => null,
           ], 200);
+        } else {
+          return response()->json([
+            'success' => false,
+            'data' => null,
+            'error' => 'No Content',
+          ], 204);
         }
       } else {
 
@@ -214,7 +220,7 @@ class PriorityTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => false,
+        'data' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }

@@ -24,21 +24,21 @@ class MotiveTicketController extends Controller
 
     try {
 
-      $motiveTicket = MotiveTicket::orderBy('id')
+      $motiveTickets = MotiveTicket::orderBy('id')
         ->get()
         ->map
         ->format();
 
       return response()->json([
         'success' => true,
-        'data' => $motiveTicket,
+        'data' => $motiveTickets,
         'error' => null,
       ], 200);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => false,
+        'data' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -50,7 +50,7 @@ class MotiveTicketController extends Controller
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
-  public function store(Request $request)
+  public function store()
   {
 
     try {
@@ -70,7 +70,7 @@ class MotiveTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => false,
+        'data' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -89,21 +89,21 @@ class MotiveTicketController extends Controller
 
       if (is_numeric($id)) {
 
-        $motiveTicket = MotiveTicket::whereId($id)->first()->format();
+        $motiveTicket = MotiveTicket::whereId($id)->first();
 
         if (isset($motiveTicket)) {
 
           return response()->json([
             'success' => true,
-            'data' => $motiveTicket,
+            'data' => $motiveTicket->format(),
             'error' => null,
           ], 200);
         } else {
 
           return response()->json([
-            'success' => true,
+            'success' => false,
             'data' => null,
-            'error' => null,
+            'error' => 'No Content'
           ], 204);
         }
       } else {
@@ -118,7 +118,7 @@ class MotiveTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => false,
+        'data' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -140,7 +140,7 @@ class MotiveTicketController extends Controller
 
         $dataUpdate = $this->validateData();
 
-        $motiveTicket = MotiveTicket::where($id)->first();
+        $motiveTicket = MotiveTicket::whereId($id)->first();
 
         if (isset($motiveTicket)) {
 
@@ -154,9 +154,9 @@ class MotiveTicketController extends Controller
         } else {
 
           return response()->json([
-            'success' => true,
+            'success' => false,
             'data' => null,
-            'error' => null
+            'error' => 'No Content'
           ], 204);
         }
       } else {
@@ -171,7 +171,7 @@ class MotiveTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => false,
+        'data' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -201,6 +201,13 @@ class MotiveTicketController extends Controller
             'data' => null,
             'error' => null,
           ], 200);
+        } else {
+
+          return response()->json([
+            'success' => false,
+            'data' => null,
+            'error' => 'No Content',
+          ], 204);
         }
       } else {
 
@@ -214,7 +221,7 @@ class MotiveTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => false,
+        'data' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
