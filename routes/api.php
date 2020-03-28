@@ -49,7 +49,7 @@ Route::apiResource('/status-detail-ticket', 'StatusDetailTicketController');
 Route::apiResource('/status-ticket', 'StatusTicketController');
 Route::apiResource('/classroom', 'ClassroomController');
 Route::apiResource('/ticket-detail', 'TicketDetailController');
-
+Route::apiResource('/ticket', 'TicketController');
 
 /**rutas files */
 
