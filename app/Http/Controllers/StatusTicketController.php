@@ -24,21 +24,21 @@ class StatusTicketController extends Controller
 
     try {
 
-      $statusTicket = StatusTicket::orderBy('id')
+      $statusTickets = StatusTicket::orderBy('id')
         ->get()
         ->map
         ->format();
 
       return response()->json([
         'success' => true,
-        'data' => $statusTicket,
+        'data' => $statusTickets,
         'error' => null,
       ], 200);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => false,
+        'data' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -50,7 +50,7 @@ class StatusTicketController extends Controller
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
-  public function store(Request $request)
+  public function store()
   {
 
     try {
@@ -70,7 +70,7 @@ class StatusTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => false,
+        'data' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -89,21 +89,21 @@ class StatusTicketController extends Controller
 
       if (is_numeric($id)) {
 
-        $statusTicket = StatusTicket::whereId($id)->first()->format();
+        $statusTicket = StatusTicket::whereId($id)->first();
 
         if (isset($statusTicket)) {
 
           return response()->json([
             'success' => true,
-            'data' => $statusTicket,
+            'data' => $statusTicket->format(),
             'error' => null,
           ], 200);
         } else {
 
           return response()->json([
-            'success' => true,
+            'success' => false,
             'data' => null,
-            'error' => null,
+            'error' => 'No Content',
           ], 204);
         }
       } else {
@@ -118,7 +118,7 @@ class StatusTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => false,
+        'data' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -140,7 +140,7 @@ class StatusTicketController extends Controller
 
         $dataUpdate = $this->validateData();
 
-        $statusTicket = StatusTicket::where($id)->first();
+        $statusTicket = StatusTicket::whereId($id)->first();
 
         if (isset($statusTicket)) {
 
@@ -154,9 +154,9 @@ class StatusTicketController extends Controller
         } else {
 
           return response()->json([
-            'success' => true,
+            'success' => false,
             'data' => null,
-            'error' => null,
+            'error' => 'No Content',
           ], 204);
         }
       } else {
@@ -164,14 +164,14 @@ class StatusTicketController extends Controller
         return response()->json([
           'success' => false,
           'data' => null,
-          'error' => null,
+          'error' => 'Bad Request',
         ], 400);
       }
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => false,
+        'data' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -204,6 +204,13 @@ class StatusTicketController extends Controller
             'data' => null,
             'error' => null,
           ], 200);
+        } else {
+
+          return response()->json([
+            'success' => false,
+            'data' => null,
+            'error' => 'No Content'
+          ], 204);
         }
       } else {
 
@@ -217,7 +224,7 @@ class StatusTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => false,
+        'data' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }

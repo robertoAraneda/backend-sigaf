@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\FinalStatus;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class FinalStatusController extends Controller
@@ -51,7 +50,7 @@ class FinalStatusController extends Controller
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
-  public function store(Request $request)
+  public function store()
   {
 
     try {
@@ -87,23 +86,24 @@ class FinalStatusController extends Controller
   {
 
     try {
+
       if (is_numeric($id)) {
 
-        $finalStatus = FinalStatus::whereId($id)->first()->format();
+        $finalStatus = FinalStatus::whereId($id)->first();
 
         if (isset($finalStatus)) {
 
           return response()->json([
             'success' => true,
-            'data' =>  $finalStatus,
+            'data' =>  $finalStatus->format(),
             'error' => null
           ], 200);
         } else {
 
           return response()->json([
-            'success' => true,
+            'success' => false,
             'data' =>  null,
-            'error' => null
+            'error' => 'No Content'
           ], 204);
         }
       } else {
@@ -154,9 +154,9 @@ class FinalStatusController extends Controller
         } else {
 
           return response()->json([
-            'success' => true,
+            'success' => false,
             'data' =>  null,
-            'error' => null
+            'error' => 'No Content'
           ], 204);
         }
       } else {
@@ -194,8 +194,6 @@ class FinalStatusController extends Controller
 
         if (isset($finalStatus)) {
 
-          $finalStatus = FinalStatus::whereId($id)->first();
-
           $finalStatus->delete();
 
           return response()->json([
@@ -206,9 +204,9 @@ class FinalStatusController extends Controller
         } else {
 
           return response()->json([
-            'success' => true,
+            'success' => false,
             'data' =>  null,
-            'error' => null
+            'error' => 'No Content'
           ], 204);
         }
       } else {

@@ -24,14 +24,14 @@ class ClassroomController extends Controller
 
     try {
 
-      $classroom = Classroom::orderBy('id')
+      $classrooms = Classroom::orderBy('id')
         ->get()
         ->map
         ->format();
 
       return response()->json([
         'success' => true,
-        'data' => $classroom,
+        'data' => $classrooms,
         'error' => null,
       ], 200);
     } catch (\Exception $exception) {
@@ -50,7 +50,7 @@ class ClassroomController extends Controller
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
-  public function store(Request $request)
+  public function store()
   {
 
     try {
@@ -89,21 +89,21 @@ class ClassroomController extends Controller
 
       if (is_numeric($id)) {
 
-        $classroom = Classroom::whereId($id)->first()->format();
+        $classroom = Classroom::whereId($id)->first();
 
         if (isset($classroom)) {
 
           return response()->json([
             'success' => true,
-            'data' => $classroom,
+            'data' => $classroom->format(),
             'error' => null,
           ], 200);
         } else {
 
           return response()->json([
-            'success' => true,
+            'success' => false,
             'data' => null,
-            'error' => null,
+            'error' => 'No Content',
           ], 204);
         }
       } else {
@@ -153,9 +153,9 @@ class ClassroomController extends Controller
         } else {
 
           return response()->json([
-            'success' => true,
+            'success' => false,
             'data' => null,
-            'error' => null
+            'error' => 'No Content'
           ], 204);
         }
       } else {
@@ -167,6 +167,7 @@ class ClassroomController extends Controller
         ], 400);
       }
     } catch (\Exception $exception) {
+
       return response()->json([
         'success' => false,
         'data' => null,
@@ -192,15 +193,20 @@ class ClassroomController extends Controller
 
         if (isset($classroom)) {
 
-          // $classroom = Classroom::whereId($id)->first();
-
           $classroom->delete();
 
           return response()->json([
-            'success' => null,
+            'success' => true,
             'data' => null,
             'error' => null
           ], 200);
+        } else {
+
+          return response()->json([
+            'success' => false,
+            'data' => null,
+            'error' => 'No Content'
+          ], 204);
         }
       } else {
 

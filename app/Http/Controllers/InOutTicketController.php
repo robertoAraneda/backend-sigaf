@@ -50,7 +50,7 @@ class InOutTicketController extends Controller
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
-  public function store(Request $request)
+  public function store()
   {
 
     try {
@@ -91,21 +91,21 @@ class InOutTicketController extends Controller
 
       if (is_numeric($id)) {
 
-        $inOutTicket = InOutTicket::whereId($id)->first()->format();
+        $inOutTicket = InOutTicket::whereId($id)->first();
 
         if (isset($inOutTicket)) {
 
           return response()->json([
             'success' => true,
-            'data' => $inOutTicket,
+            'data' => $inOutTicket->format(),
             'error' => null
           ], 200);
         } else {
 
           return response()->json([
-            'success' => true,
+            'success' => false,
             'data' => null,
-            'error' => null,
+            'error' => 'No Content',
           ], 204);
         }
       } else {
@@ -159,9 +159,9 @@ class InOutTicketController extends Controller
         } else {
 
           return response()->json([
-            'success' => true,
+            'success' => false,
             'data' => null,
-            'error' => null
+            'error' => 'No Content'
           ], 204);
         }
       } else {
@@ -199,8 +199,6 @@ class InOutTicketController extends Controller
 
         if (isset($inOutTicket)) {
 
-          $inOutTicket = InOutTicket::whereId($id)->first();
-
           $inOutTicket->delete();
 
           return response()->json([
@@ -211,9 +209,9 @@ class InOutTicketController extends Controller
         } else {
 
           return response()->json([
-            'success' => true,
+            'success' => false,
             'data' => null,
-            'error' => null
+            'error' => 'No Content'
           ], 204);
         }
       } else {

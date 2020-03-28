@@ -24,21 +24,21 @@ class RoleController extends Controller
 
     try {
 
-      $role = Role::orderBy('id')
+      $roles = Role::orderBy('id')
         ->get()
         ->map
         ->format();
 
       return response()->json([
         'success' => true,
-        'data' => $role,
+        'data' => $roles,
         'error' => null,
       ], 200);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => false,
+        'data' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -50,7 +50,7 @@ class RoleController extends Controller
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
-  public function store(Request $request)
+  public function store()
   {
 
     try {
@@ -70,7 +70,7 @@ class RoleController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => false,
+        'data' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -89,21 +89,21 @@ class RoleController extends Controller
 
       if (is_numeric($id)) {
 
-        $role = Role::whereId($id)->first()->format();
+        $role = Role::whereId($id)->first();
 
         if (isset($role)) {
 
           return response()->json([
             'success' => true,
-            'data' => $role,
+            'data' => $role->format(),
             'error' => null,
           ], 200);
         } else {
 
           return response()->json([
-            'success' => true,
+            'success' => false,
             'data' => null,
-            'error' => null,
+            'error' => 'No Content',
           ], 204);
         }
       } else {
@@ -118,7 +118,7 @@ class RoleController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => false,
+        'data' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -140,7 +140,7 @@ class RoleController extends Controller
 
         $dataUpdate = $this->validateData();
 
-        $role = Role::where($id)->first();
+        $role = Role::whereId($id)->first();
 
         if (isset($role)) {
 
@@ -154,9 +154,9 @@ class RoleController extends Controller
         } else {
 
           return response()->json([
-            'success' => true,
+            'success' => false,
             'data' => null,
-            'error' => null,
+            'error' => 'No Content',
           ], 204);
         }
       } else {
@@ -164,14 +164,14 @@ class RoleController extends Controller
         return response()->json([
           'success' => false,
           'data' => null,
-          'error' => null,
+          'error' => 'Bad Request',
         ], 400);
       }
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => false,
+        'data' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -201,6 +201,13 @@ class RoleController extends Controller
             'data' => null,
             'error' => null,
           ], 200);
+        } else {
+
+          return response()->json([
+            'success' => false,
+            'data' => null,
+            'error' => 'No Content',
+          ], 204);
         }
       } else {
 
@@ -214,7 +221,7 @@ class RoleController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => false,
+        'data' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
