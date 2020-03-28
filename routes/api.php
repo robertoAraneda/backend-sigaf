@@ -35,3 +35,23 @@ Route::get('/fetch/daily', 'SynchronizeController@syncronizeAppDaily');
 
 Route::get('/fetch/daily/user-registered', 'SynchronizeController@syncronizeAppRegisteredUsersActive');
 Route::get('/fetch/daily/user-registered-activities', 'SynchronizeController@syncronizeAppRegisteredUserActivitiesActive');
+
+
+/**rutas api */
+
+Route::apiResource('/final-status', 'FinalStatusController');
+Route::apiResource('/in-out-ticket', 'InOutTicketController');
+Route::apiResource('/motive-ticket', 'MotiveTicketController');
+Route::apiResource('/priority-ticket', 'PriorityTicketController');
+Route::apiResource('/profile', 'ProfileController');
+Route::apiResource('/role', 'RoleController');
+Route::apiResource('/status-detail-ticket', 'StatusDetailTicketController');
+Route::apiResource('/status-ticket', 'StatusTicketController');
+Route::apiResource('/classroom', 'ClassroomController');
+Route::apiResource('/ticket-detail', 'TicketDetailController');
+Route::apiResource('/ticket', 'TicketController');
+Route::apiResource('/alert', 'AlertController');
+
+/**rutas files */
+
+Route::get('/upload-file/excel', 'RegisteredUserController@import');

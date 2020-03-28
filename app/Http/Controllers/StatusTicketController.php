@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\StatusDetailTicket;
+use App\Models\StatusTicket;
 use Illuminate\Http\Request;
 
-class StatusDetailTicketController extends Controller
+class StatusTicketController extends Controller
 {
 
   protected function validateData()
@@ -24,14 +24,14 @@ class StatusDetailTicketController extends Controller
 
     try {
 
-      $statusDetailTicket = StatusDetailTicket::orderBy('id')
+      $statusTicket = StatusTicket::orderBy('id')
         ->get()
         ->map
         ->format();
 
       return response()->json([
         'success' => true,
-        'data' => $statusDetailTicket,
+        'data' => $statusTicket,
         'error' => null,
       ], 200);
     } catch (\Exception $exception) {
@@ -57,13 +57,13 @@ class StatusDetailTicketController extends Controller
 
       $dataStore = $this->validateData();
 
-      $statusDetailTicket = new StatusDetailTicket();
+      $statusTicket = new StatusTicket();
 
-      $statusDetailTicket = $statusDetailTicket->create($dataStore);
+      $statusTicket = $statusTicket->create($dataStore);
 
       return response()->json([
         'success' => true,
-        'data' => $statusDetailTicket->fresh()->format(),
+        'data' => $statusTicket->fresh()->format(),
         'error' => null,
       ], 201);
     } catch (\Exception $exception) {
@@ -89,13 +89,13 @@ class StatusDetailTicketController extends Controller
 
       if (is_numeric($id)) {
 
-        $statusDetailTicket = StatusDetailTicket::whereId($id)->first()->format();
+        $statusTicket = StatusTicket::whereId($id)->first()->format();
 
-        if (isset($statusDetailTicket)) {
+        if (isset($statusTicket)) {
 
           return response()->json([
             'success' => true,
-            'data' => $statusDetailTicket,
+            'data' => $statusTicket,
             'error' => null,
           ], 200);
         } else {
@@ -140,15 +140,15 @@ class StatusDetailTicketController extends Controller
 
         $dataUpdate = $this->validateData();
 
-        $statusDetailTicket = StatusDetailTicket::where($id)->first();
+        $statusTicket = StatusTicket::where($id)->first();
 
-        if (isset($statusDetailTicket)) {
+        if (isset($statusTicket)) {
 
-          $statusDetailTicket->update($dataUpdate);
+          $statusTicket->update($dataUpdate);
 
           return response()->json([
             'success' => true,
-            'data' => $statusDetailTicket->fresh()->format(),
+            'data' => $statusTicket->fresh()->format(),
             'error' => null,
           ], 200);
         } else {
@@ -177,6 +177,9 @@ class StatusDetailTicketController extends Controller
     }
   }
 
+
+
+
   /**
    * Remove the specified resource from storage.
    *
@@ -190,11 +193,11 @@ class StatusDetailTicketController extends Controller
 
       if (is_numeric($id)) {
 
-        $statusDetailTicket = StatusDetailTicket::whereId($id)->first();
+        $statusTicket = StatusTicket::whereId($id)->first();
 
-        if (isset($statusDetailTicket)) {
+        if (isset($statusTicket)) {
 
-          $statusDetailTicket->delete();
+          $statusTicket->delete();
 
           return response()->json([
             'success' => true,

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\RegisteredUserImport;
 use App\Models\RegisteredUser;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RegisteredUserController extends Controller
 {
@@ -91,5 +93,28 @@ class RegisteredUserController extends Controller
   public function destroy($id)
   {
     //
+  }
+
+  public function import()
+  {
+    //$excel =  Excel::import(new RegisteredUserImport, 'D:\Proyectos\inacap-iie\importFile\prueba.xlsx');
+    $collection = (new RegisteredUserImport)->toCollection('D:\Proyectos\inacap-iie\importFile\prueba.xlsx');
+
+    $array = [];
+    foreach ($collection as $value) {
+      foreach ($value as $key) {
+        $array[] = array(
+          'rut' => $key[0],
+          'nombre' => $key[1],
+          'last_name' => $key[2],
+          'mother_last_name' => $key[3]
+        );
+      }
+    }
+
+    return $array;
+
+
+    // return redirect('/')->with('success', 'All good!');
   }
 }
