@@ -35,14 +35,14 @@ class AlertController extends Controller
 
       return response()->json([
         'success' => true,
-        'data' => $alerts,
+        'alerts' => $alerts,
         'error' => null
       ], 200);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'alerts' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -65,14 +65,14 @@ class AlertController extends Controller
 
       return response()->json([
         'success' => true,
-        'data' => $alert->fresh()->format(),
+        'alert' => $alert->fresh()->format(),
         'error' => null
       ], 201);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'alert' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -94,14 +94,14 @@ class AlertController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => $alert->format(),
+            'alert' => $alert->format(),
             'error' => null
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'data' => null,
+            'alert' => null,
             'error' => 'No Content'
           ], 204);
         }
@@ -109,7 +109,7 @@ class AlertController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'alert' => null,
           'error' => 'Bad Request'
         ], 400);
       }
@@ -117,7 +117,7 @@ class AlertController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'alert' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -146,14 +146,14 @@ class AlertController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => $alert->format(),
+            'alert' => $alert->format(),
             'error' => null
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'data' => null,
+            'alert' => null,
             'error' => 'No Content'
           ], 204);
         }
@@ -161,14 +161,14 @@ class AlertController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'alert' => null,
           'error' => 'Bad Request'
         ], 400);
       }
     } catch (\Exception $exception) {
       return response()->json([
         'success' => false,
-        'data' => null,
+        'alert' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -192,14 +192,14 @@ class AlertController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => null,
+            'alert' => null,
             'error' => null
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'data' => null,
+            'alert' => null,
             'error' => 'No Content'
           ], 204);
         }
@@ -207,7 +207,7 @@ class AlertController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'alert' => null,
           'error' => 'Bad Request'
         ], 400);
       }
@@ -215,7 +215,7 @@ class AlertController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'alert' => null,
         'error' => $exception->getMessage()
       ], 500);
     }

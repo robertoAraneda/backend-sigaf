@@ -31,14 +31,14 @@ class ProfileController extends Controller
 
       return response()->json([
         'success' => true,
-        'data' => $profiles,
+        'profiles' => $profiles,
         'error' => null,
       ], 200);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'profiles' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -63,14 +63,14 @@ class ProfileController extends Controller
 
       return response()->json([
         'success' => true,
-        'data' => $profile->fresh()->format(),
+        'profile' => $profile->fresh()->format(),
         'error' => null,
       ], 201);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'profile' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -95,14 +95,14 @@ class ProfileController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => $profile->format(),
+            'profile' => $profile->format(),
             'error' => null,
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'data' => null,
+            'profile' => null,
             'error' => 'No Content',
           ], 204);
         }
@@ -110,7 +110,7 @@ class ProfileController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'profile' => null,
           'error' => 'Bad Request',
         ], 400);
       }
@@ -118,7 +118,7 @@ class ProfileController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'profile' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -148,14 +148,14 @@ class ProfileController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => $profile->fresh()->format(),
+            'profile' => $profile->fresh()->format(),
             'error' => null,
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'data' => null,
+            'profile' => null,
             'error' => 'No Content',
           ], 204);
         }
@@ -163,7 +163,7 @@ class ProfileController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'profile' => null,
           'error' => 'Bad Request',
         ], 400);
       }
@@ -171,7 +171,7 @@ class ProfileController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'profile' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -198,14 +198,14 @@ class ProfileController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => null,
+            'profile' => null,
             'error' => null,
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'data' => null,
+            'profile' => null,
             'error' => 'No Content',
           ], 204);
         }
@@ -213,7 +213,7 @@ class ProfileController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'profile' => null,
           'error' => 'Bad Request',
         ], 400);
       }
@@ -221,7 +221,7 @@ class ProfileController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'profile' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }

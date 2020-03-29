@@ -31,14 +31,14 @@ class PriorityTicketController extends Controller
 
       return response()->json([
         'success' => true,
-        'data' => $priorityTickets,
+        'priorityTickets' => $priorityTickets,
         'error' => null
       ], 200);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'priorityTickets' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -63,14 +63,14 @@ class PriorityTicketController extends Controller
 
       return response()->json([
         'success' => true,
-        'data' => $priorityTicket->fresh()->format(),
+        'priorityTicket' => $priorityTicket->fresh()->format(),
         'error' => null
       ], 201);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'priorityTicket' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -95,14 +95,14 @@ class PriorityTicketController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => $priorityTicket->format(),
+            'priorityTicket' => $priorityTicket->format(),
             'error' => null,
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'data' => null,
+            'priorityTicket' => null,
             'error' => 'No Content',
           ], 204);
         }
@@ -110,7 +110,7 @@ class PriorityTicketController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'priorityTicket' => null,
           'error' => 'Bad Request',
         ], 400);
       }
@@ -118,7 +118,7 @@ class PriorityTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'priorityTicket' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -148,14 +148,14 @@ class PriorityTicketController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => $priorityTicket->fresh()->format(),
+            'priorityTicket' => $priorityTicket->fresh()->format(),
             'error' => null,
           ], 200);
         } else {
 
           return response()->json([
             'success' => true,
-            'data' => null,
+            'priorityTicket' => null,
             'error' => 'No Content',
           ], 204);
         }
@@ -163,7 +163,7 @@ class PriorityTicketController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'priorityTicket' => null,
           'error' => 'Bad Request',
         ], 400);
       }
@@ -171,7 +171,7 @@ class PriorityTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'priorityTicket' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -198,13 +198,13 @@ class PriorityTicketController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => null,
+            'priorityTicket' => null,
             'error' => null,
           ], 200);
         } else {
           return response()->json([
             'success' => false,
-            'data' => null,
+            'priorityTicket' => null,
             'error' => 'No Content',
           ], 204);
         }
@@ -212,7 +212,7 @@ class PriorityTicketController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'priorityTicket' => null,
           'error' => 'Bad Request',
         ], 400);
       }
@@ -220,7 +220,7 @@ class PriorityTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'priorityTicket' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }

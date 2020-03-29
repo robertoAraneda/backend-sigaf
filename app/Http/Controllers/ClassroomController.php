@@ -31,14 +31,14 @@ class ClassroomController extends Controller
 
       return response()->json([
         'success' => true,
-        'data' => $classrooms,
+        'classrooms' => $classrooms,
         'error' => null,
       ], 200);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'classrooms' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -63,14 +63,14 @@ class ClassroomController extends Controller
 
       return response()->json([
         'success' => true,
-        'data' => $classroom->fresh()->format(),
+        'classroom' => $classroom->fresh()->format(),
         'error' => null,
       ], 201);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'classroom' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -95,14 +95,14 @@ class ClassroomController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => $classroom->format(),
+            'classroom' => $classroom->format(),
             'error' => null,
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'data' => null,
+            'classroom' => null,
             'error' => 'No Content',
           ], 204);
         }
@@ -110,7 +110,7 @@ class ClassroomController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'classroom' => null,
           'error' => 'Bad Request',
         ], 400);
       }
@@ -118,7 +118,7 @@ class ClassroomController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'classroom' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -147,14 +147,14 @@ class ClassroomController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => $classroom->fresh()->format(),
+            'classroom' => $classroom->fresh()->format(),
             'error' => null
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'data' => null,
+            'classroom' => null,
             'error' => 'No Content'
           ], 204);
         }
@@ -162,7 +162,7 @@ class ClassroomController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'classroom' => null,
           'error' => 'Bad Request'
         ], 400);
       }
@@ -170,7 +170,7 @@ class ClassroomController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'classroom' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -197,14 +197,14 @@ class ClassroomController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => null,
+            'classroom' => null,
             'error' => null
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'data' => null,
+            'classroom' => null,
             'error' => 'No Content'
           ], 204);
         }
@@ -212,7 +212,7 @@ class ClassroomController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'classroom' => null,
           'error' => 'Bad Request'
         ], 400);
       }
@@ -220,7 +220,7 @@ class ClassroomController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'classroom' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
