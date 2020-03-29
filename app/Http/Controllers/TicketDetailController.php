@@ -36,14 +36,14 @@ class TicketDetailController extends Controller
       return response()->json([
 
         'success' => true,
-        'data' => $ticketDetails,
+        'ticketDetails' => $ticketDetails,
         'error' => null
       ], 200);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'ticketDetails' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -74,13 +74,13 @@ class TicketDetailController extends Controller
 
       return response()->json([
         'success' => true,
-        'data' => $ticketDetail->fresh()->format(),
+        'ticketDetail' => $ticketDetail->fresh()->format(),
         'error' => null
       ], 201);
     } catch (\Exception $exception) {
       return response()->json([
         'success' => false,
-        'data' => null,
+        'ticketDetail' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -104,27 +104,27 @@ class TicketDetailController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => $ticketDetail->format(),
+            'ticketDetail' => $ticketDetail->format(),
             'error' => null
           ], 200);
         } else {
           return response()->json([
             'success' => false,
-            'data' => null,
+            'ticketDetail' => null,
             'error' => 'No Content'
           ], 204);
         }
       } else {
         return response()->json([
           'success' => false,
-          'data' => null,
+          'ticketDetail' => null,
           'error' => 'Bad Request'
         ], 400);
       }
     } catch (\Exception $exception) {
       return response()->json([
         'success' => false,
-        'data' => null,
+        'ticketDetail' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -160,27 +160,27 @@ class TicketDetailController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => $ticketDetail->fresh()->format(),
+            'ticketDetail' => $ticketDetail->fresh()->format(),
             'error' => null
           ], 200);
         } else {
           return response()->json([
             'success' => false,
-            'data' => null,
+            'ticketDetail' => null,
             'error' => 'No Content'
           ], 204);
         }
       } else {
         return response()->json([
           'success' => false,
-          'data' => null,
+          'ticketDetail' => null,
           'error' => 'Bad Request'
         ], 400);
       }
     } catch (\Exception $exception) {
       return response()->json([
         'success' => false,
-        'data' => null,
+        'ticketDetail' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -206,27 +206,27 @@ class TicketDetailController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => null,
+            'ticketDetail' => null,
             'error' => null
           ], 200);
         } else {
           return response()->json([
             'success' => false,
-            'data' => null,
+            'ticketDetail' => null,
             'error' => 'No Content'
           ], 204);
         }
       } else {
         return response()->json([
           'success' => false,
-          'data' => null,
+          'ticketDetail' => null,
           'error' => 'Bad Request'
         ], 400);
       }
     } catch (\Exception $exception) {
       return response()->json([
         'success' => false,
-        'data' => null,
+        'ticketDetail' => null,
         'error' => $exception->getMessage()
       ], 500);
     }

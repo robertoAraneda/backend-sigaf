@@ -31,14 +31,14 @@ class StatusTicketController extends Controller
 
       return response()->json([
         'success' => true,
-        'data' => $statusTickets,
+        'statusTickets' => $statusTickets,
         'error' => null,
       ], 200);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'statusTickets' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -63,14 +63,14 @@ class StatusTicketController extends Controller
 
       return response()->json([
         'success' => true,
-        'data' => $statusTicket->fresh()->format(),
+        'statusTicket' => $statusTicket->fresh()->format(),
         'error' => null,
       ], 201);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'statusTicket' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -95,14 +95,14 @@ class StatusTicketController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => $statusTicket->format(),
+            'statusTicket' => $statusTicket->format(),
             'error' => null,
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'data' => null,
+            'statusTicket' => null,
             'error' => 'No Content',
           ], 204);
         }
@@ -110,7 +110,7 @@ class StatusTicketController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'statusTicket' => null,
           'error' => 'Bad Request',
         ], 400);
       }
@@ -118,7 +118,7 @@ class StatusTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'statusTicket' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -148,14 +148,14 @@ class StatusTicketController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => $statusTicket->fresh()->format(),
+            'statusTicket' => $statusTicket->fresh()->format(),
             'error' => null,
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'data' => null,
+            'statusTicket' => null,
             'error' => 'No Content',
           ], 204);
         }
@@ -163,7 +163,7 @@ class StatusTicketController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'statusTicket' => null,
           'error' => 'Bad Request',
         ], 400);
       }
@@ -171,7 +171,7 @@ class StatusTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'statusTicket' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -201,14 +201,14 @@ class StatusTicketController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => null,
+            'statusTicket' => null,
             'error' => null,
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'data' => null,
+            'statusTicket' => null,
             'error' => 'No Content'
           ], 204);
         }
@@ -216,7 +216,7 @@ class StatusTicketController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'statusTicket' => null,
           'error' => 'Bad Request',
         ], 400);
       }
@@ -224,7 +224,7 @@ class StatusTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'statusTicket' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }

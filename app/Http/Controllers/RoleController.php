@@ -31,14 +31,14 @@ class RoleController extends Controller
 
       return response()->json([
         'success' => true,
-        'data' => $roles,
+        'roles' => $roles,
         'error' => null,
       ], 200);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'roles' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -63,14 +63,14 @@ class RoleController extends Controller
 
       return response()->json([
         'success' => true,
-        'data' => $role->fresh()->format(),
+        'role' => $role->fresh()->format(),
         'error' => null,
       ], 201);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'role' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -95,14 +95,14 @@ class RoleController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => $role->format(),
+            'role' => $role->format(),
             'error' => null,
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'data' => null,
+            'role' => null,
             'error' => 'No Content',
           ], 204);
         }
@@ -110,7 +110,7 @@ class RoleController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'role' => null,
           'error' => 'Bad Request',
         ], 400);
       }
@@ -118,7 +118,7 @@ class RoleController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'role' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -148,14 +148,14 @@ class RoleController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => $role->fresh()->format(),
+            'role' => $role->fresh()->format(),
             'error' => null,
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'data' => null,
+            'role' => null,
             'error' => 'No Content',
           ], 204);
         }
@@ -163,7 +163,7 @@ class RoleController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'role' => null,
           'error' => 'Bad Request',
         ], 400);
       }
@@ -171,7 +171,7 @@ class RoleController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'role' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
@@ -198,14 +198,14 @@ class RoleController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => null,
+            'role' => null,
             'error' => null,
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'data' => null,
+            'role' => null,
             'error' => 'No Content',
           ], 204);
         }
@@ -213,7 +213,7 @@ class RoleController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'role' => null,
           'error' => 'Bad Request',
         ], 400);
       }
@@ -221,7 +221,7 @@ class RoleController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'role' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }
