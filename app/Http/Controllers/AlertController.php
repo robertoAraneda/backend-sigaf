@@ -42,7 +42,7 @@ class AlertController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => $alerts,
+        'data' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -64,7 +64,8 @@ class AlertController extends Controller
       $alert = $alert->create($dataStore);
 
       return response()->json([
-        'success' => true, 'data' => $alert->fresh()->format(), 'error' => null
+        'success' => true,
+        'data' => $alert->fresh()->format(), 'error' => null
       ], 201);
     } catch (\Exception $exception) {
 

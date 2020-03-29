@@ -161,7 +161,7 @@ class TicketController extends Controller
           return response()->json([
             'success' => false,
             'data' => null,
-            'error' => null
+            'error' => 'No Content'
           ], 204);
         }
       } else {
@@ -206,8 +206,8 @@ class TicketController extends Controller
           return response()->json([
 
             'success' => false,
-            'data' => $ticket->format(),
-            'error' => 'No content'
+            'data' => null,
+            'error' => 'No Content'
           ], 204);
         }
       } else {
