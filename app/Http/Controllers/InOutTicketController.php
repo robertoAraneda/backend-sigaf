@@ -31,14 +31,14 @@ class InOutTicketController extends Controller
 
       return response()->json([
         'success' => true,
-        'data' => $inOutTickets,
+        'inOutTickets' => $inOutTickets,
         'error' => null
       ], 200);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'inOutTickets' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -65,14 +65,14 @@ class InOutTicketController extends Controller
       // $inOutTicket->save();
       return response()->json([
         'success' => true,
-        'data' => $inOutTicket->fresh()->format(),
+        'inOutTicket' => $inOutTicket->fresh()->format(),
         'error' => null
       ], 201);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'inOutTicket' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -97,14 +97,14 @@ class InOutTicketController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => $inOutTicket->format(),
+            'inOutTicket' => $inOutTicket->format(),
             'error' => null
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'data' => null,
+            'inOutTicket' => null,
             'error' => 'No Content',
           ], 204);
         }
@@ -112,7 +112,7 @@ class InOutTicketController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'inOutTicket' => null,
           'error' => 'Bad Request',
         ], 400);
       }
@@ -120,7 +120,7 @@ class InOutTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'inOutTicket' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -153,14 +153,14 @@ class InOutTicketController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => $inOutTicket->fresh()->format(),
+            'inOutTicket' => $inOutTicket->fresh()->format(),
             'error' => null
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'data' => null,
+            'inOutTicket' => null,
             'error' => 'No Content'
           ], 204);
         }
@@ -168,7 +168,7 @@ class InOutTicketController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'inOutTicket' => null,
           'error' => 'Bad Request'
         ], 400);
       }
@@ -176,7 +176,7 @@ class InOutTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'inOutTicket' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -203,14 +203,14 @@ class InOutTicketController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => null,
+            'inOutTicket' => null,
             'error' => null,
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'data' => null,
+            'inOutTicket' => null,
             'error' => 'No Content'
           ], 204);
         }
@@ -218,7 +218,7 @@ class InOutTicketController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'inOutTicket' => null,
           'error' => 'Bad Request',
         ], 400);
       }
@@ -226,7 +226,7 @@ class InOutTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'inOutTicket' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }

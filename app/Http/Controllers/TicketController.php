@@ -38,14 +38,14 @@ class TicketController extends Controller
 
       return response()->json([
         'success' => true,
-        'data' => $tickets,
+        'tickets' => $tickets,
         'error' => null
       ], 200);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'tickets' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -69,14 +69,14 @@ class TicketController extends Controller
       return response()->json([
 
         'success' => true,
-        'data' => $ticket->fresh()->format(),
+        'ticket' => $ticket->fresh()->format(),
         'error' => null
       ], 201);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'ticket' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -101,7 +101,7 @@ class TicketController extends Controller
           return response()->json([
 
             'success' => true,
-            'data' => $ticket->format(),
+            'ticket' => $ticket->format(),
             'error' => null
           ], 200);
         } else {
@@ -109,7 +109,7 @@ class TicketController extends Controller
           return response()->json([
 
             'success' => false,
-            'data' => null,
+            'ticket' => null,
             'error' => 'No Content'
           ], 204);
         }
@@ -117,7 +117,7 @@ class TicketController extends Controller
         return response()->json([
 
           'success' => false,
-          'data' => null,
+          'ticket' => null,
           'error' => 'Bad Request'
         ], 400);
       }
@@ -125,7 +125,7 @@ class TicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'ticket' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -153,14 +153,14 @@ class TicketController extends Controller
 
           return response()->json([
             'success' => true,
-            'data' => $ticket->format(),
+            'ticket' => $ticket->format(),
             'error' => null
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'data' => null,
+            'ticket' => null,
             'error' => 'No Content'
           ], 204);
         }
@@ -168,7 +168,7 @@ class TicketController extends Controller
 
         return response()->json([
           'success' => false,
-          'data' => null,
+          'ticket' => null,
           'error' => 'Bad Request'
         ], 400);
       }
@@ -176,7 +176,7 @@ class TicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'ticket' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -199,14 +199,14 @@ class TicketController extends Controller
           return response()->json([
 
             'success' => true,
-            'data' => null,
+            'ticket' => null,
             'error' => null
           ], 200);
         } else {
           return response()->json([
 
             'success' => false,
-            'data' => null,
+            'ticket' => null,
             'error' => 'No Content'
           ], 204);
         }
@@ -214,7 +214,7 @@ class TicketController extends Controller
         return response()->json([
 
           'success' => false,
-          'data' => null,
+          'ticket' => null,
           'error' => 'Bad Request'
         ], 400);
       }
@@ -222,7 +222,7 @@ class TicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'data' => null,
+        'ticket' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
