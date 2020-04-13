@@ -216,6 +216,8 @@ class SynchronizeController extends Controller
 
     $response = Http::get($this->getBASE_URL() . "collection/categorias/all");
 
+
+
     $categoriesActive = $response->json();
 
 

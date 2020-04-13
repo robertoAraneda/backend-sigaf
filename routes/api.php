@@ -46,7 +46,7 @@ Route::apiResource('/priority-ticket', 'PriorityTicketController');
 Route::apiResource('/profile', 'ProfileController');
 Route::apiResource('/role', 'RoleController');
 Route::apiResource('/status-detail-ticket', 'StatusDetailTicketController');
-Route::apiResource('/status-ticket', 'StatusTicketController');
+//Route::apiResource('/status-ticket', 'StatusTicketController');
 Route::apiResource('/classroom', 'ClassroomController');
 Route::apiResource('/ticket-detail', 'TicketDetailController');
 Route::apiResource('/ticket', 'TicketController');
@@ -55,3 +55,25 @@ Route::apiResource('/alert', 'AlertController');
 /**rutas files */
 
 Route::get('/upload-file/excel', 'RegisteredUserController@import');
+
+Route::group([
+  'prefix' => 'auth'
+], function () {
+  Route::post('login', 'AuthController@login');
+  Route::post('signup', 'AuthController@signup');
+
+  Route::group([
+    'middleware' => 'auth:api'
+  ], function () {
+    Route::get('user', 'AuthController@user');
+    Route::get('logout', 'AuthController@logout');
+  });
+});
+
+Route::group([
+  'prefix' => 'v1',
+  'middleware' => 'auth:api'
+], function () {
+  Route::apiResource('/status-ticket', 'StatusTicketController');
+  Route::apiResource('/alert', 'AlertController');
+});
