@@ -46,7 +46,7 @@ Route::apiResource('/priority-ticket', 'PriorityTicketController');
 Route::apiResource('/profile', 'ProfileController');
 Route::apiResource('/role', 'RoleController');
 Route::apiResource('/status-detail-ticket', 'StatusDetailTicketController');
-//Route::apiResource('/status-ticket', 'StatusTicketController');
+Route::apiResource('/status-ticket', 'StatusTicketController');
 Route::apiResource('/classroom', 'ClassroomController');
 Route::apiResource('/ticket-detail', 'TicketDetailController');
 Route::apiResource('/ticket', 'TicketController');
