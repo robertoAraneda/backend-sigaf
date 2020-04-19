@@ -16,7 +16,7 @@ class RegisteredUserController extends Controller
    */
   public function index()
   {
-    //
+    $registeredUsers = RegisteredUser::all();
   }
 
   /**
@@ -93,6 +93,12 @@ class RegisteredUserController extends Controller
   public function destroy($id)
   {
     //
+  }
+  public function findByRut($rut)
+  {
+    $registeredUser = RegisteredUser::where('rut_registered_moodle', $rut)->get()->first();
+
+    return response()->json(['registeredUser' => $registeredUser]);
   }
 
   public function import()

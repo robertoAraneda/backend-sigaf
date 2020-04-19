@@ -76,4 +76,8 @@ Route::group([
 ], function () {
   Route::apiResource('/status-ticket', 'StatusTicketController');
   Route::apiResource('/alert', 'AlertController');
+  Route::get('/course-registered-user', 'CourseRegisteredUserController@index');
+  Route::get('/courses', 'CourseController@index');
+  Route::get('/registered-user/{rut}', 'RegisteredUserController@findByRut');
+  Route::apiResource('/tickets', 'TicketController');
 });

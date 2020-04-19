@@ -14,7 +14,15 @@ class CourseRegisteredUserController extends Controller
    */
   public function index()
   {
-    //
+    $courseRegisteredUsers = CourseRegisteredUser::with([
+      'course',
+      'classroom',
+      'registeredUser',
+      'profile',
+      'finalStatus'
+    ])->get();
+
+    return response()->json(['data' => $courseRegisteredUsers, 'success' => true]);
   }
 
   /**

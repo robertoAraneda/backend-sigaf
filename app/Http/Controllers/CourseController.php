@@ -15,7 +15,9 @@ class CourseController extends Controller
    */
   public function index()
   {
-    //
+    $courses = Course::all();
+
+    return response()->json(['data' => $courses, 'success' => true]);
   }
 
   /**
@@ -44,7 +46,6 @@ class CourseController extends Controller
    */
   public function show($id)
   {
-    //
   }
 
 
