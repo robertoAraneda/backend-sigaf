@@ -12,7 +12,7 @@ class TicketController extends Controller
   {
     return request()->validate([
       'course_registered_user_id' => 'required|integer',
-      'in_out_ticket_id' => 'required|integer',
+      'type_ticket_id' => 'required|integer',
       'status_ticket_id' => 'required|integer',
       'priority_ticket_id' => 'required|integer',
       'motive_ticket_id' => 'required|integer',
