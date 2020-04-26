@@ -77,4 +77,11 @@ class ActivityCourseRegisteredUserController extends Controller
   {
     //
   }
+
+  public function findByIdRegisteredUserCourse($id)
+  {
+    $activityCourseRegisteredUser = ActivityCourseRegisteredUser::where('course_registered_user_id', $id)->get()->map->format();
+
+    return response()->json(['activityCourseRegisteredUser' => $activityCourseRegisteredUser]);
+  }
 }

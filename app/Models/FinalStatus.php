@@ -19,4 +19,8 @@ class FinalStatus extends Model
       'updatedAd' => $this->updated_at
     ];
   }
+
+  public function courseRegisteredUsers(){
+      return $this->hasMany(CourseRegisteredUser::class);
+  }
 }

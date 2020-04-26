@@ -21,4 +21,8 @@ class PriorityTicket extends Model
       'updatedAt' => $this->updated_at
     ];
   }
+
+    public function tickets(){
+        return $this->hasMany(Ticket::class);
+    }
 }

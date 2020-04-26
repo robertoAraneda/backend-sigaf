@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityCourseRegisteredUser;
 use App\Models\CourseRegisteredUser;
 use Illuminate\Http\Request;
 
