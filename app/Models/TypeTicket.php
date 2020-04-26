@@ -4,14 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class InOutTicket extends Model
+class TypeTicket extends Model
 {
   protected $guarded = [];
 
-  protected $table = 'in_out_tickets';
+  protected $table = 'type_tickets';
 
   public function format()
   {
+
     return [
       'id' => $this->id,
       'description' => $this->description,

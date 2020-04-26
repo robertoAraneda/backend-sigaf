@@ -15,10 +15,10 @@ class CreateUsersTable extends Migration
   {
     Schema::create('users', function (Blueprint $table) {
       $table->bigIncrements('id');
-      $table->string('rut', 15)->nullable();
-      $table->string('name');
-      $table->string('phone', 20)->nullable();
-      $table->string('mobile', 20)->nullable();
+      $table->string('rut', 12)->nullable();
+      $table->string('name', 50);
+      $table->string('phone', 12)->nullable();
+      $table->string('mobile', 12)->nullable();
       $table->string('email')->unique();
       $table->timestamp('email_verified_at')->nullable();
       $table->string('password');
@@ -27,6 +27,10 @@ class CreateUsersTable extends Migration
       $table->unsignedInteger('user_create_id')->default(1);
       $table->unsignedInteger('user_update_id')->default(1);
       $table->timestamps();
+
+      $table->foreign('role_id')->references('id')->on('roles');
+      $table->foreign('user_create_id')->references('id')->on('users');
+      $table->foreign('user_update_id')->references('id')->on('users');
     });
   }
 

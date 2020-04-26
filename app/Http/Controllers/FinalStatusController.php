@@ -11,7 +11,7 @@ class FinalStatusController extends Controller
   protected function validateData()
   {
     return request()->validate([
-      'description' => 'required|max:255'
+      'description' => 'required|max:25'
     ]);
   }
   /**

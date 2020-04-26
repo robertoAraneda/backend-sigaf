@@ -22,8 +22,14 @@ class CreateCourseRegisteredUsersTable extends Migration
       $table->unsignedBigInteger('final_status_id')->default(1);
       $table->unsignedInteger('final_qualification')->default(1);
       $table->unsignedInteger('final_qualification_moodle')->nullable();
-      $table->string('last_access_registered_moodle', 255)->nullable();
+      $table->string('last_access_registered_moodle', 25)->nullable();
       $table->timestamps();
+
+      $table->foreign('course_id')->references('id')->on('courses');
+      $table->foreign('registered_user_id')->references('id')->on('registered_users');
+      $table->foreign('profile_id')->references('id')->on('profiles');
+      $table->foreign('classroom_id')->references('id')->on('classrooms');
+      $table->foreign('final_status_id')->references('id')->on('final_statuses');
     });
   }
 

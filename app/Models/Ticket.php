@@ -23,9 +23,9 @@ class Ticket extends Model
         'classroom:id,description',
         'finalStatus:id,description'
       ),
-      'inOutTicket' => [
-        'id' => $this->inOutTicket->id,
-        'description' => $this->inOutTicket->description
+      'typeTicket' => [
+        'id' => $this->typeTicket->id,
+        'description' => $this->typeTicket->description
       ],
       'statusTicket' => [
         'id' => $this->statusTicket->id,
@@ -53,9 +53,9 @@ class Ticket extends Model
     return $this->belongsTo(CourseRegisteredUser::class);
   }
 
-  public function inOutTicket()
+  public function typeTicket()
   {
-    return $this->belongsTo(InOutTicket::class);
+    return $this->belongsTo(TypeTicket::class);
   }
 
   public function statusTicket()

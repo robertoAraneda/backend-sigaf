@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\InOutTicket;
+use App\Models\TypeTicket;
 use Illuminate\Http\Request;
 
-class InOutTicketController extends Controller
+class TypeTicketController extends Controller
 {
 
   protected function validateData()
   {
     return request()->validate([
-      'description' => 'required|max:255'
+      'description' => 'required|max:25'
     ]);
   }
   /**
@@ -21,24 +21,22 @@ class InOutTicketController extends Controller
    */
   public function index()
   {
-
     try {
-
-      $inOutTickets = InOutTicket::orderBy('id')
+      $typeTickets = TypeTicket::orderBy('id')
         ->get()
         ->map
         ->format();
 
       return response()->json([
         'success' => true,
-        'inOutTickets' => $inOutTickets,
+        'typeTickets' => $typeTickets,
         'error' => null
       ], 200);
     } catch (\Exception $exception) {
 
       return response()->json([
         'success' => false,
-        'inOutTickets' => null,
+        'typeTickets' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -52,27 +50,21 @@ class InOutTicketController extends Controller
    */
   public function store()
   {
-
     try {
-
       $dataStore = $this->validateData();
+      $typeTicket = new TypeTicket();
+      $typeTicket = $typeTicket->create($dataStore);
 
-      $inOutTicket = new InOutTicket();
-
-      $inOutTicket = $inOutTicket->create($dataStore);
-      // $inOutTicket->description = $request->description;
-
-      // $inOutTicket->save();
       return response()->json([
         'success' => true,
-        'inOutTicket' => $inOutTicket->fresh()->format(),
+        'typeTickets' => $typeTicket->fresh()->format(),
         'error' => null
+
       ], 201);
     } catch (\Exception $exception) {
-
       return response()->json([
         'success' => false,
-        'inOutTicket' => null,
+        'typeTicket' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -86,25 +78,24 @@ class InOutTicketController extends Controller
    */
   public function show($id)
   {
-
     try {
 
       if (is_numeric($id)) {
 
-        $inOutTicket = InOutTicket::whereId($id)->first();
+        $typeTicket = TypeTicket::whereId($id)->first();
 
-        if (isset($inOutTicket)) {
+        if (isset($typeTicket)) {
 
           return response()->json([
             'success' => true,
-            'inOutTicket' => $inOutTicket->format(),
+            'typeTicket' => $typeTicket->format(),
             'error' => null
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'inOutTicket' => null,
+            'typeTicket' => null,
             'error' => 'No Content',
           ], 204);
         }
@@ -112,7 +103,7 @@ class InOutTicketController extends Controller
 
         return response()->json([
           'success' => false,
-          'inOutTicket' => null,
+          'typeTicket' => null,
           'error' => 'Bad Request',
         ], 400);
       }
@@ -120,7 +111,7 @@ class InOutTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'inOutTicket' => null,
+        'typeTicket' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -135,32 +126,31 @@ class InOutTicketController extends Controller
    */
   public function update(Request $request, $id)
   {
-
     try {
 
       if (is_numeric($id)) {
 
         $dataUpdate = $this->validateData();
 
-        $inOutTicket = InOutTicket::whereId($id)->first();
+        $typeTicket = TypeTicket::whereId($id)->first();
 
-        if (isset($inOutTicket)) {
+        if (isset($typeTicket)) {
 
-          $inOutTicket->update($dataUpdate);
-          // $inOutTicket->description = $request->description;
+          $typeTicket->update($dataUpdate);
+          // $typeTicket->description = $request->description;
 
-          // $inOutTicket->save();
+          // $typeTicket->save();
 
           return response()->json([
             'success' => true,
-            'inOutTicket' => $inOutTicket->fresh()->format(),
+            'typeTicket' => $typeTicket->fresh()->format(),
             'error' => null
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'inOutTicket' => null,
+            'typeTicket' => null,
             'error' => 'No Content'
           ], 204);
         }
@@ -168,7 +158,7 @@ class InOutTicketController extends Controller
 
         return response()->json([
           'success' => false,
-          'inOutTicket' => null,
+          'typeTicket' => null,
           'error' => 'Bad Request'
         ], 400);
       }
@@ -176,7 +166,7 @@ class InOutTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'inOutTicket' => null,
+        'typeTicket' => null,
         'error' => $exception->getMessage()
       ], 500);
     }
@@ -190,27 +180,26 @@ class InOutTicketController extends Controller
    */
   public function destroy($id)
   {
-
     try {
 
       if (is_numeric($id)) {
 
-        $inOutTicket = InOutTicket::whereId($id)->first();
+        $typeTicket = TypeTicket::whereId($id)->first();
 
-        if (isset($inOutTicket)) {
+        if (isset($typeTicket)) {
 
-          $inOutTicket->delete();
+          $typeTicket->delete();
 
           return response()->json([
             'success' => true,
-            'inOutTicket' => null,
+            'typeTicket' => null,
             'error' => null,
           ], 200);
         } else {
 
           return response()->json([
             'success' => false,
-            'inOutTicket' => null,
+            'typeTicket' => null,
             'error' => 'No Content'
           ], 204);
         }
@@ -218,7 +207,7 @@ class InOutTicketController extends Controller
 
         return response()->json([
           'success' => false,
-          'inOutTicket' => null,
+          'typeTicket' => null,
           'error' => 'Bad Request',
         ], 400);
       }
@@ -226,7 +215,7 @@ class InOutTicketController extends Controller
 
       return response()->json([
         'success' => false,
-        'inOutTicket' => null,
+        'typeTicket' => null,
         'error' => $exception->getMessage(),
       ], 500);
     }

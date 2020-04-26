@@ -20,6 +20,9 @@ class CreateActivityCourseRegisteredUsersTable extends Migration
       $table->string('status_moodle');
       $table->string('qualification_moodle');
       $table->timestamps();
+
+      $table->foreign('activity_id')->references('id')->on('activities');
+      $table->foreign('course_registered_user_id')->references('id')->on('course_registered_users');
     });
   }
 

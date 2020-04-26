@@ -22,7 +22,7 @@ class TicketDetail extends Model
         'courseRegisteredUser.profile:id,description',
         'courseRegisteredUser.classroom:id,description',
         'courseRegisteredUser.finalStatus:id,description',
-        'inOutTicket:id,description',
+        'typeTicket:id,description',
         'statusTicket:id,description',
         'priorityTicket:id,description',
         'motiveTicket:id,description'

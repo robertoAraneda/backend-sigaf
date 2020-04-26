@@ -20,6 +20,10 @@ class CreateTicketDetailsTable extends Migration
       $table->unsignedBigInteger('status_detail_ticket_id');
       $table->string('comment');
       $table->timestamps();
+
+      $table->foreign('ticket_id')->references('id')->on('tickets');
+      $table->foreign('user_created_id')->references('id')->on('users');
+      $table->foreign('status_detail_ticket_id')->references('id')->on('status_detail_tickets');
     });
   }
 

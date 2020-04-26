@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateInOutTicketsTable extends Migration
+class CreateTypeTicketsTable extends Migration
 {
   /**
    * Run the migrations.
@@ -13,9 +13,9 @@ class CreateInOutTicketsTable extends Migration
    */
   public function up()
   {
-    Schema::create('in_out_tickets', function (Blueprint $table) {
+    Schema::create('type_tickets', function (Blueprint $table) {
       $table->bigIncrements('id');
-      $table->string('description');
+      $table->string('description', 25);
       $table->timestamps();
     });
   }
@@ -27,6 +27,6 @@ class CreateInOutTicketsTable extends Migration
    */
   public function down()
   {
-    Schema::dropIfExists('in_out_tickets');
+    Schema::dropIfExists('type_tickets');
   }
 }

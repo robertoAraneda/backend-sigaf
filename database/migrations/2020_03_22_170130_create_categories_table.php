@@ -15,11 +15,13 @@ class CreateCategoriesTable extends Migration
   {
     Schema::create('categories', function (Blueprint $table) {
       $table->bigIncrements('id');
-      $table->string('description', 255);
+      $table->string('description', 100);
       $table->unsignedBigInteger('platform_id');
       $table->unsignedBigInteger('id_category_moodle');
       $table->unsignedInteger('status')->default(1);
       $table->timestamps();
+
+      $table->foreign('platform_id')->references('id')->on('platforms');
     });
   }
 
