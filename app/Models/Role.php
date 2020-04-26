@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
@@ -18,5 +19,9 @@ class Role extends Model
       'createdAt' => $this->created_at,
       'updatedAt' => $this->updated_at
     ];
+  }
+
+  public function users(){
+      return $this->hasMany(User::class);
   }
 }

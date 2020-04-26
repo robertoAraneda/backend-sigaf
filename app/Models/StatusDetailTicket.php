@@ -19,4 +19,10 @@ class StatusDetailTicket extends Model
       'updatedAt' => $this->updated_at
     ];
   }
+
+  public function ticketDetails(){
+      return $this->hasMany(TicketDetail::class);
+  }
+
+
 }

@@ -80,4 +80,5 @@ Route::group([
   Route::get('/courses', 'CourseController@index');
   Route::get('/registered-user/{rut}', 'RegisteredUserController@findByRut');
   Route::apiResource('/tickets', 'TicketController');
+  Route::get('/activity-course-registered-user/{id}', 'ActivityCourseRegisteredUserController@findByIdRegisteredUserCourse');
 });

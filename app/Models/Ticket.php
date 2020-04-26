@@ -83,4 +83,12 @@ class Ticket extends Model
   {
     return $this->belongsTo(User::class);
   }
+
+  public function ticketsDetails(){
+      return $this->hasMany(TicketDetail::class);
+  }
+
+  public function alerts(){
+      return $this->hasMany(Alert::class);
+  }
 }

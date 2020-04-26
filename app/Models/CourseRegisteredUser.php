@@ -34,4 +34,8 @@ class CourseRegisteredUser extends Model
   {
     return $this->belongsTo(FinalStatus::class);
   }
+
+  public function activityCourseRegisteredUsers(){
+      return $this->hasMany(ActivityCourseRegisteredUser::class);
+  }
 }
