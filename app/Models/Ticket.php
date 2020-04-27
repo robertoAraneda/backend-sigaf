@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\User;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Ticket extends Model
 {
@@ -43,8 +44,8 @@ class Ticket extends Model
       'userAssigned' => $this->userAssigned,
       'closingDate' => $this->closing_date,
       'observation' => $this->observation,
-      'createdAt' => $this->created_at,
-      'updatedAt' => $this->updated_at
+      'createdAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null,
+      'updatedAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null
     ];
   }
 
@@ -84,11 +85,13 @@ class Ticket extends Model
     return $this->belongsTo(User::class);
   }
 
-  public function ticketsDetails(){
-      return $this->hasMany(TicketDetail::class);
+  public function ticketsDetails()
+  {
+    return $this->hasMany(TicketDetail::class);
   }
 
-  public function alerts(){
-      return $this->hasMany(Alert::class);
+  public function alerts()
+  {
+    return $this->hasMany(Alert::class);
   }
 }

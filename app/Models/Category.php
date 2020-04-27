@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
-    protected $table = 'activities';
+  protected $table = 'categories';
 
-    protected $guarded = [];
+  protected $guarded = [];
 
-    public function platform(){
-        return $this->belongsTo(Platform::class);
-    }
+  public function platform()
+  {
+    return $this->belongsTo(Platform::class);
+  }
 }

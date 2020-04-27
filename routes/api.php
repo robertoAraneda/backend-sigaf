@@ -83,4 +83,6 @@ Route::group([
   Route::get('/registered-user/{rut}', 'RegisteredUserController@findByRut');
   Route::apiResource('/tickets', 'TicketController');
   Route::get('/activity-course-registered-user/{id}', 'ActivityCourseRegisteredUserController@findByIdRegisteredUserCourse');
+
+  Route::get('/type-tickets/{type_ticket}/tickets', 'TypeTicketController@tickets')->name('api.typeTickets.tickets');
 });

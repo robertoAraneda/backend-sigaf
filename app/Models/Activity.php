@@ -15,7 +15,8 @@ class Activity extends Model
     return $this->belongsTo(Course::class);
   }
 
-  public function activityCourseRegisteredUsers(){
-      return $this->hasMany(ActivityCourseRegisteredUser::class);
+  public function activityCourseRegisteredUsers()
+  {
+    return $this->hasMany(ActivityCourseRegisteredUser::class);
   }
 }

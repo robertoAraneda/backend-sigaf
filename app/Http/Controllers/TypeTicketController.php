@@ -7,6 +7,7 @@ use App\Http\Resources\TypeTicketCollection;
 use App\Models\TypeTicket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\Json\TypeTicket as TicketResource;
 
 class TypeTicketController extends Controller
 {
@@ -26,6 +27,7 @@ class TypeTicketController extends Controller
   public function index()
   {
     try {
+
       if (!request()->isJson())
         return MakeResponse::unauthorized();
 
@@ -153,6 +155,35 @@ class TypeTicketController extends Controller
       $typeTicket->delete();
 
       return MakeResponse::success(null);
+    } catch (\Exception $exception) {
+
+      return MakeResponse::exception($exception->getMessage());
+    }
+  }
+
+  public function tickets($idTypeTicket)
+  {
+
+    try {
+      if (!request()->isJson())
+        return MakeResponse::unauthorized();
+
+
+      $typeTicket = new TicketResource(TypeTicket::find($idTypeTicket));
+
+
+
+      if (!isset($typeTicket))
+        return MakeResponse::noContent();
+
+      $typeTicket->tickets = [
+        'typeTicket' => $typeTicket,
+        'href' => route('api.typeTickets.tickets', ['type_ticket' => $typeTicket->id]),
+        'rel' => class_basename($typeTicket->tickets()->getRelated()),
+        'tickets' => $typeTicket->tickets->map->format()
+      ];
+
+      return MakeResponse::success($typeTicket->tickets);
     } catch (\Exception $exception) {
 
       return MakeResponse::exception($exception->getMessage());

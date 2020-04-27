@@ -45,6 +45,7 @@ class CategoryController extends Controller
 
   public function findByIdPlatformAndCategoryMoodle($idCategoryMoodle, $idPlatform)
   {
+
     $category = Category::where('id_category_moodle', $idCategoryMoodle)->where('platform_id', $idPlatform)->first();
 
     return $category;
