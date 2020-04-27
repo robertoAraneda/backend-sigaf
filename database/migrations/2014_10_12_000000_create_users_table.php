@@ -23,14 +23,14 @@ class CreateUsersTable extends Migration
       $table->timestamp('email_verified_at')->nullable();
       $table->string('password');
       $table->rememberToken();
-      $table->unsignedInteger('role_id')->nullable();
-      $table->unsignedInteger('user_create_id')->default(1);
-      $table->unsignedInteger('user_update_id')->default(1);
+      $table->unsignedBigInteger('role_id')->nullable();
+      $table->unsignedBigInteger('user_create_id')->default(1);
+      $table->unsignedBigInteger('user_update_id')->default(1);
       $table->timestamps();
 
       $table->foreign('role_id')->references('id')->on('roles');
-      $table->foreign('user_create_id')->references('id')->on('users');
-      $table->foreign('user_update_id')->references('id')->on('users');
+      // $table->foreign('user_create_id')->references('id')->on('users');
+      // $table->foreign('user_update_id')->references('id')->on('users');
     });
   }
 
