@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class TypeTicket extends Model
 {
@@ -12,16 +13,23 @@ class TypeTicket extends Model
 
   public function format()
   {
-
     return [
-      'id' => $this->id,
-      'description' => $this->description,
-      'createdAt' => $this->created_at,
-      'updatedAt' => $this->updated_at
+      'links' => [
+        'url' => route('api.typeTickets.show', ['type_ticket' => $this->id]),
+        'href' => route('api.typeTickets.show', ['type_ticket' => $this->id], false),
+        'rel' => 'self'
+      ],
+      'typeTicket' => [
+        'id' => $this->id,
+        'description' => $this->description,
+        'created_at' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null,
+        'updated_at' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('Y-m-d H:i:s') : null
+      ]
     ];
   }
 
-    public function tickets(){
-        return $this->hasMany(Ticket::class);
-    }
+  public function tickets()
+  {
+    return $this->hasMany(Ticket::class);
+  }
 }

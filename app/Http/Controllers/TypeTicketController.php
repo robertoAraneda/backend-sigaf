@@ -2,18 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\MakeResponse;
+use App\Http\Resources\TypeTicketCollection;
 use App\Models\TypeTicket;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\Json\TypeTicket as JsonTypeTicket;
 
 class TypeTicketController extends Controller
 {
 
-  protected function validateData()
+  protected function validateData($request)
   {
-    return request()->validate([
+    return Validator::make($request, [
       'description' => 'required|max:25'
     ]);
   }
+
   /**
    * Display a listing of the resource.
    *
@@ -22,25 +26,20 @@ class TypeTicketController extends Controller
   public function index()
   {
     try {
-      $typeTickets = TypeTicket::orderBy('id')
-        ->get()
-        ->map
-        ->format();
 
-      return response()->json([
-        'success' => true,
-        'typeTickets' => $typeTickets,
-        'error' => null
-      ], 200);
+      if (!request()->isJson())
+        return MakeResponse::unauthorized();
+
+      $typeTickets = new TypeTicketCollection(TypeTicket::all());
+
+      return MakeResponse::success($typeTickets);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'typeTickets' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return MakeResponse::exception($exception->getMessage());
     }
   }
+
+
 
   /**
    * Store a newly created resource in storage.
@@ -51,22 +50,23 @@ class TypeTicketController extends Controller
   public function store()
   {
     try {
-      $dataStore = $this->validateData();
+      if (!request()->isJson())
+        return MakeResponse::unauthorized();
+
+      $valitate = $this->validateData(request()->all());
+
+      if ($valitate->fails())
+        return MakeResponse::exception($valitate->errors());
+
+
       $typeTicket = new TypeTicket();
-      $typeTicket = $typeTicket->create($dataStore);
 
-      return response()->json([
-        'success' => true,
-        'typeTickets' => $typeTicket->fresh()->format(),
-        'error' => null
+      $typeTicket = $typeTicket->create(request()->all());
 
-      ], 201);
+      return MakeResponse::created($typeTicket->format());
     } catch (\Exception $exception) {
-      return response()->json([
-        'success' => false,
-        'typeTicket' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+
+      return MakeResponse::exception($exception->getMessage());
     }
   }
 
@@ -79,41 +79,21 @@ class TypeTicketController extends Controller
   public function show($id)
   {
     try {
+      if (!request()->isJson())
+        return MakeResponse::unauthorized();
 
-      if (is_numeric($id)) {
+      if (!is_numeric($id))
+        return MakeResponse::badRequest();
 
-        $typeTicket = TypeTicket::whereId($id)->first();
+      $typeTicket = TypeTicket::whereId($id)->first();
 
-        if (isset($typeTicket)) {
+      if (!isset($typeTicket))
+        return MakeResponse::noContent();
 
-          return response()->json([
-            'success' => true,
-            'typeTicket' => $typeTicket->format(),
-            'error' => null
-          ], 200);
-        } else {
-
-          return response()->json([
-            'success' => false,
-            'typeTicket' => null,
-            'error' => 'No Content',
-          ], 204);
-        }
-      } else {
-
-        return response()->json([
-          'success' => false,
-          'typeTicket' => null,
-          'error' => 'Bad Request',
-        ], 400);
-      }
+      return MakeResponse::success($typeTicket->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'typeTicket' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return MakeResponse::exception($exception->getMessage());
     }
   }
 
@@ -124,51 +104,32 @@ class TypeTicketController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function update(Request $request, $id)
+  public function update($id)
   {
     try {
 
-      if (is_numeric($id)) {
+      if (!request()->isJson())
+        return MakeResponse::unauthorized();
 
-        $dataUpdate = $this->validateData();
+      if (!is_numeric($id))
+        return MakeResponse::badRequest();
 
-        $typeTicket = TypeTicket::whereId($id)->first();
+      $typeTicket = TypeTicket::whereId($id)->first();
 
-        if (isset($typeTicket)) {
+      if (!isset($typeTicket))
+        return MakeResponse::noContent();
 
-          $typeTicket->update($dataUpdate);
-          // $typeTicket->description = $request->description;
+      $valitate = $this->validateData(request()->all());
 
-          // $typeTicket->save();
+      if ($valitate->fails())
+        return MakeResponse::exception($valitate->errors());
 
-          return response()->json([
-            'success' => true,
-            'typeTicket' => $typeTicket->fresh()->format(),
-            'error' => null
-          ], 200);
-        } else {
+      $typeTicket->update(request()->all());
 
-          return response()->json([
-            'success' => false,
-            'typeTicket' => null,
-            'error' => 'No Content'
-          ], 204);
-        }
-      } else {
-
-        return response()->json([
-          'success' => false,
-          'typeTicket' => null,
-          'error' => 'Bad Request'
-        ], 400);
-      }
+      return MakeResponse::success($typeTicket->fresh()->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'typeTicket' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return MakeResponse::exception($exception->getMessage());
     }
   }
 
@@ -182,42 +143,47 @@ class TypeTicketController extends Controller
   {
     try {
 
-      if (is_numeric($id)) {
+      if (!request()->isJson())
+        return MakeResponse::unauthorized();
 
-        $typeTicket = TypeTicket::whereId($id)->first();
+      if (!is_numeric($id))
+        return MakeResponse::badRequest();
 
-        if (isset($typeTicket)) {
+      $typeTicket = TypeTicket::whereId($id)->first();
 
-          $typeTicket->delete();
+      if (!isset($typeTicket))
+        return MakeResponse::noContent();
 
-          return response()->json([
-            'success' => true,
-            'typeTicket' => null,
-            'error' => null,
-          ], 200);
-        } else {
+      $typeTicket->delete();
 
-          return response()->json([
-            'success' => false,
-            'typeTicket' => null,
-            'error' => 'No Content'
-          ], 204);
-        }
-      } else {
-
-        return response()->json([
-          'success' => false,
-          'typeTicket' => null,
-          'error' => 'Bad Request',
-        ], 400);
-      }
+      return MakeResponse::success(null);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'typeTicket' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return MakeResponse::exception($exception->getMessage());
+    }
+  }
+
+  public function tickets($idTypeTicket)
+  {
+
+    try {
+      if (!request()->isJson())
+        return MakeResponse::unauthorized();
+
+      $typeTicket = new JsonTypeTicket(TypeTicket::find($idTypeTicket));
+
+      $typeTicket->tickets = [
+        'typeTicket' => $typeTicket,
+        'url' => route('api.typeTickets.tickets', ['type_ticket' => $typeTicket->id]),
+        'href' => route('api.typeTickets.tickets', ['type_ticket' => $typeTicket->id], false),
+        'rel' => class_basename($typeTicket->tickets()->getRelated()),
+        'tickets' => $typeTicket->tickets->map->format()
+      ];
+
+      return MakeResponse::success($typeTicket->tickets);
+    } catch (\Exception $exception) {
+
+      return MakeResponse::exception($exception->getMessage());
     }
   }
 }

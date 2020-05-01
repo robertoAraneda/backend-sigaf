@@ -71,9 +71,11 @@ Route::group([
 });
 
 Route::group([
-  'prefix' => 'v1',
+  'prefix' => 'v2',
   'middleware' => 'auth:api'
 ], function () {
+  Route::apiResource('/type-tickets', 'TypeTicketController')->names('api.typeTickets');
+
   Route::apiResource('/status-ticket', 'StatusTicketController');
   Route::apiResource('/alert', 'AlertController');
   Route::get('/course-registered-user', 'CourseRegisteredUserController@index');
@@ -81,4 +83,7 @@ Route::group([
   Route::get('/registered-user/{rut}', 'RegisteredUserController@findByRut');
   Route::apiResource('/tickets', 'TicketController');
   Route::get('/activity-course-registered-user/{id}', 'ActivityCourseRegisteredUserController@findByIdRegisteredUserCourse');
+
+  //rels
+  Route::get('/type-tickets/{type_ticket}/tickets', 'TypeTicketController@tickets')->name('api.typeTickets.tickets');
 });
