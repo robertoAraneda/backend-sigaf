@@ -15,7 +15,7 @@ class CreateCategoriesTable extends Migration
   {
     Schema::create('categories', function (Blueprint $table) {
       $table->bigIncrements('id');
-      $table->string('description', 100);
+      $table->string('description', 255);
       $table->unsignedBigInteger('platform_id');
       $table->unsignedBigInteger('id_category_moodle');
       $table->unsignedInteger('status')->default(1);

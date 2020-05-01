@@ -2,11 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\MakeResponse;
+use App\Http\Resources\ActivityCollection;
 use App\Models\Activity;
-use Illuminate\Http\Request;
+use App\Http\Resources\Json\Activity as JsonActivity;
+use Illuminate\Support\Facades\Validator;
 
 class ActivityController extends Controller
 {
+
+  protected $response;
+
+  public function __construct(MakeResponse $makeResponse)
+  {
+    $this->response = $makeResponse;
+  }
+
+  protected function validateData($request)
+  {
+    return Validator::make($request, [
+      'weighing' => 'required|integer'
+    ]);
+  }
   /**
    * Display a listing of the resource.
    *
@@ -14,7 +31,20 @@ class ActivityController extends Controller
    */
   public function index()
   {
-    //
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $activities = new ActivityCollection(Activity::all());
+
+      if (!isset($activities))
+        return $this->response->noContent();
+
+      return $this->response->success($activities);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 
   /**
@@ -42,7 +72,24 @@ class ActivityController extends Controller
    */
   public function show($id)
   {
-    //
+
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      if (!is_numeric($id))
+        return $this->response->badRequest();
+
+      $activity = Activity::find($id);
+
+      if (!isset($activity))
+        return $this->response->noContent();
+
+      return $this->response->success($activity->format());
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 
   public function findByIdActivityMoodle($idActivityMoodle)
@@ -59,9 +106,33 @@ class ActivityController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function update(Request $request, $id)
+  public function update($id)
   {
-    //
+    try {
+
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      if (!is_numeric($id))
+        return $this->response->badRequest();
+
+      $activity = Activity::whereId($id)->first();
+
+      if (!isset($activity))
+        return $this->response->noContent();
+
+      $valitate = $this->validateData(request()->all());
+
+      if ($valitate->fails())
+        return $this->response->exception($valitate->errors());
+
+      $activity->update(request()->all());
+
+      return $this->response->success($activity->fresh()->format());
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 
   /**
@@ -73,5 +144,28 @@ class ActivityController extends Controller
   public function destroy($id)
   {
     //
+  }
+
+  public function activityCourseRegisteredUsers($idActivity)
+  {
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $activity = new JsonActivity(Activity::find($idActivity));
+
+      $activity->activityCourseRegisteredUsers = [
+        'url' => route('api.activities.activityCourseRegisteredUsers', ['activity' => $activity->id]),
+        'href' => route('api.activities.activityCourseRegisteredUsers', ['activity' => $activity->id], false),
+        'rel' => class_basename($activity->activityCourseRegisteredUsers()->getRelated()),
+        'count' => $activity->activityCourseRegisteredUsers->count(),
+        'activity' => $activity,
+        'activityCourseRegisteredUsers' => $activity->activityCourseRegisteredUsers->map->format()
+      ];
+
+      return $this->response->success($activity->activityCourseRegisteredUsers);
+    } catch (\Exception $exception) {
+      return $this->response->exception($exception->getMessage());
+    }
   }
 }

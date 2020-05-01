@@ -32,8 +32,8 @@ class CreateRegisteredUsersTable extends Migration
       $table->string('phone_school', 12)->nullable();
       $table->unsignedBigInteger('id_registered_moodle')->nullable();
       $table->string('rut_registered_moodle', 12)->nullable();
-      $table->string('name_registered_moodle', 50)->nullable();
-      $table->string('email_registered_moodle', 25)->nullable();
+      $table->string('name_registered_moodle', 200)->nullable();
+      $table->string('email_registered_moodle', 100)->nullable();
       $table->unsignedInteger('status_moodle')->default(1);
       $table->unsignedBigInteger('user_create_id')->default(1);
       $table->unsignedBigInteger('user_update_id')->default(1);

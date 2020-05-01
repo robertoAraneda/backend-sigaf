@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Models;
+namespace App\Http\Resources\Json;
 
-use App\User;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class Alert extends Model
+class Alert extends JsonResource
 {
-  protected $guarded = [];
-
-  protected $table = 'alerts';
-
-  public function format()
+  /**
+   * Transform the resource into an array.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @return array
+   */
+  public function toArray($request)
   {
-
     return [
       'links' => [
         'url' => route('api.alerts.show', ['alert' => $this->id]),
@@ -28,6 +28,8 @@ class Alert extends Model
         'statusReminder' => $this->status_reminder,
         'statusNotification' => $this->status_notification,
         'comment' => $this->comment,
+        'created_at' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null,
+        'updated_at' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('Y-m-d H:i:s') : null,
         'ticket' => $this->ticket->load(
           'courseRegisteredUser',
           'courseRegisteredUser.course',
@@ -41,19 +43,7 @@ class Alert extends Model
           'motiveTicket:id,description'
         ),
         'user' => $this->user,
-        'created_at' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null,
-        'updated_at' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('Y-m-d H:i:s') : null
       ]
     ];
-  }
-
-  public function ticket()
-  {
-    return $this->belongsTo(Ticket::class);
-  }
-
-  public function user()
-  {
-    return $this->belongsTo(User::class);
   }
 }
