@@ -5,18 +5,18 @@ namespace App\Helpers;
 class MakeResponse
 {
 
-  public static function success($data)
+  public function success($data)
   {
     return response()->json([
       'success' => true,
-      'data' => $data,
       'error' => null,
       'statusCode' => 200,
-      'message' => 'Consulta exitosa.'
+      'message' => 'Consulta exitosa.',
+      'data' => $data
     ], 200);
   }
 
-  public static function created($data)
+  public function created($data)
   {
     return response()->json([
       'success' => true,
@@ -26,7 +26,7 @@ class MakeResponse
       'message' => 'Registro creado exitosamente.'
     ], 201);
   }
-  public static function exception($exception)
+  public function exception($exception)
   {
     return response()->json([
       'success' => false,
@@ -36,7 +36,7 @@ class MakeResponse
       'message' => 'Error de grave. Contacte al administrador.'
     ], 500);
   }
-  public static function unauthorized()
+  public function unauthorized()
   {
     return response()->json([
       'success' => false,
@@ -46,7 +46,7 @@ class MakeResponse
       'message' => 'Sin autorización.'
     ], 401);
   }
-  public static function badRequest()
+  public function badRequest()
   {
     return response()->json([
       'success' => false,
@@ -56,7 +56,7 @@ class MakeResponse
       'message' => 'Url no corresponde.'
     ], 400);
   }
-  public static function noContent()
+  public function noContent()
   {
     return response()->json([
       'success' => false,

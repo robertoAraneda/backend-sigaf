@@ -20,7 +20,7 @@ class ActivityCollection extends ResourceCollection
         'href' => route('api.activities.index', [], false),
         'rel' => 'self'
       ],
-
+      'count' => $this->collection->count(),
       'activities' => $this->collection->map->format()
     ];
   }

@@ -5,11 +5,17 @@ namespace App\Http\Controllers;
 use App\Helpers\MakeResponse;
 use App\Http\Resources\AlertCollection;
 use App\Models\Alert;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class AlertController extends Controller
 {
+
+  protected $response;
+
+  public function __construct(MakeResponse $makeResponse)
+  {
+    $this->response = $makeResponse;
+  }
 
   protected function validateData($request)
   {
@@ -35,14 +41,14 @@ class AlertController extends Controller
     try {
 
       if (!request()->isJson())
-        return MakeResponse::unauthorized();
+        return $this->response->unauthorized();
 
       $alerts = new AlertCollection(Alert::all());
 
-      return MakeResponse::success($alerts);
+      return $this->response->success($alerts);
     } catch (\Exception $exception) {
 
-      return MakeResponse::exception($exception->getMessage());
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -57,21 +63,21 @@ class AlertController extends Controller
 
     try {
       if (!request()->isJson())
-        return MakeResponse::unauthorized();
+        return $this->response->unauthorized();
 
       $valitate = $this->validateData(request()->all());
 
       if ($valitate->fails())
-        return MakeResponse::exception($valitate->errors());
+        return $this->response->exception($valitate->errors());
 
       $alert = new Alert();
 
       $alert = $alert->create(request()->all());
 
-      return MakeResponse::created($alert->format());
+      return $this->response->created($alert->format());
     } catch (\Exception $exception) {
 
-      return MakeResponse::exception($exception->getMessage());
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -85,20 +91,20 @@ class AlertController extends Controller
   {
     try {
       if (!request()->isJson())
-        return MakeResponse::unauthorized();
+        return $this->response->unauthorized();
 
       if (!is_numeric($id))
-        return MakeResponse::badRequest();
+        return $this->response->badRequest();
 
       $alert = Alert::find($id);
 
       if (!isset($alert))
-        return MakeResponse::noContent();
+        return $this->response->noContent();
 
-      return MakeResponse::success($alert->format());
+      return $this->response->success($alert->format());
     } catch (\Exception $exception) {
 
-      return MakeResponse::exception($exception->getMessage());
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -115,26 +121,26 @@ class AlertController extends Controller
     try {
 
       if (!request()->isJson())
-        return MakeResponse::unauthorized();
+        return $this->response->unauthorized();
 
       if (!is_numeric($id))
-        return MakeResponse::badRequest();
+        return $this->response->badRequest();
       $alert = Alert::find($id);
 
       if (!isset($alert))
-        return MakeResponse::noContent();
+        return $this->response->noContent();
 
       $valitate = $this->validateData(request()->all());
 
       if ($valitate->fails())
-        return MakeResponse::exception($valitate->errors());
+        return $this->response->exception($valitate->errors());
 
       $alert->update(request()->all());
 
-      return MakeResponse::success($alert->fresh()->format());
+      return $this->response->success($alert->fresh()->format());
     } catch (\Exception $exception) {
 
-      return MakeResponse::exception($exception->getMessage());
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -149,22 +155,22 @@ class AlertController extends Controller
     try {
 
       if (!request()->isJson())
-        return MakeResponse::unauthorized();
+        return $this->response->unauthorized();
 
       if (!is_numeric($id))
-        return MakeResponse::badRequest();
+        return $this->response->badRequest();
 
       $alert = Alert::find($id);
 
       if (!isset($alert))
-        return MakeResponse::noContent();
+        return $this->response->noContent();
 
       $alert->delete();
 
-      return MakeResponse::success(null);
+      return $this->response->success(null);
     } catch (\Exception $exception) {
 
-      return MakeResponse::exception($exception->getMessage());
+      return $this->response->exception($exception->getMessage());
     }
   }
 }

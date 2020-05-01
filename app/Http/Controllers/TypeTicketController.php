@@ -11,6 +11,14 @@ use App\Http\Resources\Json\TypeTicket as JsonTypeTicket;
 class TypeTicketController extends Controller
 {
 
+  protected $response;
+
+  public function __construct(MakeResponse $makeResponse)
+  {
+    $this->response = $makeResponse;
+  }
+
+
   protected function validateData($request)
   {
     return Validator::make($request, [
@@ -28,14 +36,14 @@ class TypeTicketController extends Controller
     try {
 
       if (!request()->isJson())
-        return MakeResponse::unauthorized();
+        return $this->response->unauthorized();
 
       $typeTickets = new TypeTicketCollection(TypeTicket::all());
 
-      return MakeResponse::success($typeTickets);
+      return $this->response->success($typeTickets);
     } catch (\Exception $exception) {
 
-      return MakeResponse::exception($exception->getMessage());
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -56,17 +64,17 @@ class TypeTicketController extends Controller
       $valitate = $this->validateData(request()->all());
 
       if ($valitate->fails())
-        return MakeResponse::exception($valitate->errors());
+        return $this->response->exception($valitate->errors());
 
 
       $typeTicket = new TypeTicket();
 
       $typeTicket = $typeTicket->create(request()->all());
 
-      return MakeResponse::created($typeTicket->format());
+      return $this->response->created($typeTicket->format());
     } catch (\Exception $exception) {
 
-      return MakeResponse::exception($exception->getMessage());
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -80,20 +88,20 @@ class TypeTicketController extends Controller
   {
     try {
       if (!request()->isJson())
-        return MakeResponse::unauthorized();
+        return $this->response->unauthorized();
 
       if (!is_numeric($id))
-        return MakeResponse::badRequest();
+        return $this->response->badRequest();
 
       $typeTicket = TypeTicket::whereId($id)->first();
 
       if (!isset($typeTicket))
-        return MakeResponse::noContent();
+        return $this->response->noContent();
 
-      return MakeResponse::success($typeTicket->format());
+      return $this->response->success($typeTicket->format());
     } catch (\Exception $exception) {
 
-      return MakeResponse::exception($exception->getMessage());
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -109,27 +117,27 @@ class TypeTicketController extends Controller
     try {
 
       if (!request()->isJson())
-        return MakeResponse::unauthorized();
+        return $this->response->unauthorized();
 
       if (!is_numeric($id))
-        return MakeResponse::badRequest();
+        return $this->response->badRequest();
 
       $typeTicket = TypeTicket::whereId($id)->first();
 
       if (!isset($typeTicket))
-        return MakeResponse::noContent();
+        return $this->response->noContent();
 
       $valitate = $this->validateData(request()->all());
 
       if ($valitate->fails())
-        return MakeResponse::exception($valitate->errors());
+        return $this->response->exception($valitate->errors());
 
       $typeTicket->update(request()->all());
 
-      return MakeResponse::success($typeTicket->fresh()->format());
+      return $this->response->success($typeTicket->fresh()->format());
     } catch (\Exception $exception) {
 
-      return MakeResponse::exception($exception->getMessage());
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -144,22 +152,22 @@ class TypeTicketController extends Controller
     try {
 
       if (!request()->isJson())
-        return MakeResponse::unauthorized();
+        return $this->response->unauthorized();
 
       if (!is_numeric($id))
-        return MakeResponse::badRequest();
+        return $this->response->badRequest();
 
       $typeTicket = TypeTicket::whereId($id)->first();
 
       if (!isset($typeTicket))
-        return MakeResponse::noContent();
+        return $this->response->noContent();
 
       $typeTicket->delete();
 
-      return MakeResponse::success(null);
+      return $this->response->success(null);
     } catch (\Exception $exception) {
 
-      return MakeResponse::exception($exception->getMessage());
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -168,7 +176,7 @@ class TypeTicketController extends Controller
 
     try {
       if (!request()->isJson())
-        return MakeResponse::unauthorized();
+        return $this->response->unauthorized();
 
       $typeTicket = new JsonTypeTicket(TypeTicket::find($idTypeTicket));
 
@@ -177,13 +185,14 @@ class TypeTicketController extends Controller
         'url' => route('api.typeTickets.tickets', ['type_ticket' => $typeTicket->id]),
         'href' => route('api.typeTickets.tickets', ['type_ticket' => $typeTicket->id], false),
         'rel' => class_basename($typeTicket->tickets()->getRelated()),
+        'count' => $typeTicket->tickets->count(),
         'tickets' => $typeTicket->tickets->map->format()
       ];
 
-      return MakeResponse::success($typeTicket->tickets);
+      return $this->response->success($typeTicket->tickets);
     } catch (\Exception $exception) {
 
-      return MakeResponse::exception($exception->getMessage());
+      return $this->response->exception($exception->getMessage());
     }
   }
 }

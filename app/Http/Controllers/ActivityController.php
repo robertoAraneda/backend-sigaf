@@ -10,6 +10,13 @@ use App\Http\Resources\Json\Activity as JsonActivity;
 
 class ActivityController extends Controller
 {
+
+  protected $response;
+
+  public function __construct(MakeResponse $makeResponse)
+  {
+    $this->response = $makeResponse;
+  }
   /**
    * Display a listing of the resource.
    *
@@ -19,17 +26,17 @@ class ActivityController extends Controller
   {
     try {
       if (!request()->isJson())
-        return MakeResponse::unauthorized();
+        return $this->response->unauthorized();
 
       $activities = new ActivityCollection(Activity::all());
 
       if (!isset($activities))
-        return MakeResponse::noContent();
+        return $this->response->noContent();
 
-      return MakeResponse::success($activities);
+      return $this->response->success($activities);
     } catch (\Exception $exception) {
 
-      return MakeResponse::exception($exception->getMessage());
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -61,20 +68,20 @@ class ActivityController extends Controller
 
     try {
       if (!request()->isJson())
-        return MakeResponse::unauthorized();
+        return $this->response->unauthorized();
 
       if (!is_numeric($id))
-        return MakeResponse::badRequest();
+        return $this->response->badRequest();
 
       $activity = Activity::find($id);
 
       if (!isset($activity))
-        return MakeResponse::noContent();
+        return $this->response->noContent();
 
-      return MakeResponse::success($activity->format());
+      return $this->response->success($activity->format());
     } catch (\Exception $exception) {
 
-      return MakeResponse::exception($exception->getMessage());
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -112,21 +119,22 @@ class ActivityController extends Controller
   {
     try {
       if (!request()->isJson())
-        return MakeResponse::unauthorized();
+        return $this->response->unauthorized();
 
       $activity = new JsonActivity(Activity::find($idActivity));
 
       $activity->activityCourseRegisteredUsers = [
-        'activity' => $activity,
         'url' => route('api.activities.activityCourseRegisteredUsers', ['activity' => $activity->id]),
         'href' => route('api.activities.activityCourseRegisteredUsers', ['activity' => $activity->id], false),
         'rel' => class_basename($activity->activityCourseRegisteredUsers()->getRelated()),
+        'count' => $activity->activityCourseRegisteredUsers->count(),
+        'activity' => $activity,
         'activityCourseRegisteredUsers' => $activity->activityCourseRegisteredUsers->map->format()
       ];
 
-      return MakeResponse::success($activity->activityCourseRegisteredUsers);
+      return $this->response->success($activity->activityCourseRegisteredUsers);
     } catch (\Exception $exception) {
-      return MakeResponse::exception($exception->getMessage());
+      return $this->response->exception($exception->getMessage());
     }
   }
 }

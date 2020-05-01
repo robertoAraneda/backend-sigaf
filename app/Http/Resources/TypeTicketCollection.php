@@ -20,7 +20,7 @@ class TypeTicketCollection extends ResourceCollection
         'href' => route('api.typeTickets.index', [], false),
         'rel' => 'self'
       ],
-
+      'count' => $this->collection->count(),
       'typeTickets' => $this->collection->map->format()
     ];
   }
