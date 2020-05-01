@@ -75,11 +75,13 @@ Route::group([
   'middleware' => 'auth:api'
 ], function () {
   Route::apiResource('/type-tickets', 'TypeTicketController')->names('api.typeTickets');
-
   Route::apiResource('/activities', 'ActivityController')->names('api.activities');
+  Route::apiResource('/alerts', 'AlertController')->names('api.alerts');
+
+
+
 
   Route::apiResource('/status-ticket', 'StatusTicketController');
-  Route::apiResource('/alert', 'AlertController');
   Route::get('/course-registered-user', 'CourseRegisteredUserController@index');
   Route::get('/courses', 'CourseController@index');
   Route::get('/registered-user/{rut}', 'RegisteredUserController@findByRut');

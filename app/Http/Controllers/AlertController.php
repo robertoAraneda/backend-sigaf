@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\MakeResponse;
+use App\Http\Resources\AlertCollection;
 use App\Models\Alert;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AlertController extends Controller
 {
 
-  protected function validateData()
+  protected function validateData($request)
   {
-    return request()->validate([
+
+    return Validator::make($request, [
       'ticket_id' => 'required|integer',
       'user_id' => 'required|integer',
       'time' => 'required',
@@ -27,24 +31,18 @@ class AlertController extends Controller
    */
   public function index()
   {
-    try {
-      $alerts = Alert::orderBy('id')
-        ->get()
-        ->map
-        ->format();
 
-      return response()->json([
-        'success' => true,
-        'alerts' => $alerts,
-        'error' => null
-      ], 200);
+    try {
+
+      if (!request()->isJson())
+        return MakeResponse::unauthorized();
+
+      $alerts = new AlertCollection(Alert::all());
+
+      return MakeResponse::success($alerts);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'alerts' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return MakeResponse::exception($exception->getMessage());
     }
   }
 
@@ -56,25 +54,24 @@ class AlertController extends Controller
    */
   public function store()
   {
+
     try {
-      $dataStore = $this->validateData();
+      if (!request()->isJson())
+        return MakeResponse::unauthorized();
+
+      $valitate = $this->validateData(request()->all());
+
+      if ($valitate->fails())
+        return MakeResponse::exception($valitate->errors());
 
       $alert = new Alert();
 
-      $alert = $alert->create($dataStore);
+      $alert = $alert->create(request()->all());
 
-      return response()->json([
-        'success' => true,
-        'alert' => $alert->fresh()->format(),
-        'error' => null
-      ], 201);
+      return MakeResponse::created($alert->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'alert' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return MakeResponse::exception($exception->getMessage());
     }
   }
 
@@ -87,39 +84,21 @@ class AlertController extends Controller
   public function show($id)
   {
     try {
-      if (is_numeric($id)) {
-        $alert = Alert::whereId($id)->first();
+      if (!request()->isJson())
+        return MakeResponse::unauthorized();
 
-        if (isset($alert)) {
+      if (!is_numeric($id))
+        return MakeResponse::badRequest();
 
-          return response()->json([
-            'success' => true,
-            'alert' => $alert->format(),
-            'error' => null
-          ], 200);
-        } else {
+      $alert = Alert::find($id);
 
-          return response()->json([
-            'success' => false,
-            'alert' => null,
-            'error' => 'No Content'
-          ], 204);
-        }
-      } else {
+      if (!isset($alert))
+        return MakeResponse::noContent();
 
-        return response()->json([
-          'success' => false,
-          'alert' => null,
-          'error' => 'Bad Request'
-        ], 400);
-      }
+      return MakeResponse::success($alert->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'alert' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return MakeResponse::exception($exception->getMessage());
     }
   }
 
@@ -132,45 +111,30 @@ class AlertController extends Controller
    */
   public function update($id)
   {
+
     try {
 
-      if (is_numeric($id)) {
+      if (!request()->isJson())
+        return MakeResponse::unauthorized();
 
-        $alert = Alert::whereId($id)->first();
+      if (!is_numeric($id))
+        return MakeResponse::badRequest();
+      $alert = Alert::find($id);
 
-        if (isset($alert)) {
+      if (!isset($alert))
+        return MakeResponse::noContent();
 
-          $dataUpdate = $this->validateData();
+      $valitate = $this->validateData(request()->all());
 
-          $alert->update($dataUpdate);
+      if ($valitate->fails())
+        return MakeResponse::exception($valitate->errors());
 
-          return response()->json([
-            'success' => true,
-            'alert' => $alert->format(),
-            'error' => null
-          ], 200);
-        } else {
+      $alert->update(request()->all());
 
-          return response()->json([
-            'success' => false,
-            'alert' => null,
-            'error' => 'No Content'
-          ], 204);
-        }
-      } else {
-
-        return response()->json([
-          'success' => false,
-          'alert' => null,
-          'error' => 'Bad Request'
-        ], 400);
-      }
+      return MakeResponse::success($alert->fresh()->format());
     } catch (\Exception $exception) {
-      return response()->json([
-        'success' => false,
-        'alert' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+
+      return MakeResponse::exception($exception->getMessage());
     }
   }
 
@@ -183,41 +147,24 @@ class AlertController extends Controller
   public function destroy($id)
   {
     try {
-      if (is_numeric($id)) {
-        $alert = Alert::whereId($id)->first();
 
-        if (isset($alert)) {
+      if (!request()->isJson())
+        return MakeResponse::unauthorized();
 
-          $alert->delete();
+      if (!is_numeric($id))
+        return MakeResponse::badRequest();
 
-          return response()->json([
-            'success' => true,
-            'alert' => null,
-            'error' => null
-          ], 200);
-        } else {
+      $alert = Alert::find($id);
 
-          return response()->json([
-            'success' => false,
-            'alert' => null,
-            'error' => 'No Content'
-          ], 204);
-        }
-      } else {
+      if (!isset($alert))
+        return MakeResponse::noContent();
 
-        return response()->json([
-          'success' => false,
-          'alert' => null,
-          'error' => 'Bad Request'
-        ], 400);
-      }
+      $alert->delete();
+
+      return MakeResponse::success(null);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'alert' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return MakeResponse::exception($exception->getMessage());
     }
   }
 }

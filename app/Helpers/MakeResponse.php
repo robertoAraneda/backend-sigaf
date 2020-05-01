@@ -11,7 +11,8 @@ class MakeResponse
       'success' => true,
       'data' => $data,
       'error' => null,
-      'statusCode' => 200
+      'statusCode' => 200,
+      'message' => 'Consulta exitosa.'
     ], 200);
   }
 
@@ -21,7 +22,8 @@ class MakeResponse
       'success' => true,
       'data' => $data,
       'error' => null,
-      'statusCode' => 201
+      'statusCode' => 201,
+      'message' => 'Registro creado exitosamente.'
     ], 201);
   }
   public static function exception($exception)
@@ -30,7 +32,8 @@ class MakeResponse
       'success' => false,
       'data' => null,
       'error' => $exception,
-      'statusCode' => 500
+      'statusCode' => 500,
+      'message' => 'Error de grave. Contacte al administrador.'
     ], 500);
   }
   public static function unauthorized()
@@ -38,8 +41,9 @@ class MakeResponse
     return response()->json([
       'success' => false,
       'data' => null,
-      'error' => 'Sin autorización',
-      'statusCode' => 401
+      'error' => 'Unauthorized.',
+      'statusCode' => 401,
+      'message' => 'Sin autorización.'
     ], 401);
   }
   public static function badRequest()
@@ -47,8 +51,9 @@ class MakeResponse
     return response()->json([
       'success' => false,
       'data' => null,
-      'error' => 'Url mal formada. Detente!!',
-      'statusCode' => 400
+      'error' => 'Malformed URL.',
+      'statusCode' => 400,
+      'message' => 'Url no corresponde.'
     ], 400);
   }
   public static function noContent()
@@ -56,8 +61,9 @@ class MakeResponse
     return response()->json([
       'success' => false,
       'data' => null,
-      'error' => 'Elemento no encontrado',
-      'statusCode' => 204
-    ], 204);
+      'error' => 'No content',
+      'statusCode' => 204,
+      'message' => 'Registro no encontrado'
+    ], 200);
   }
 }
