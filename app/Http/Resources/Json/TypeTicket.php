@@ -25,7 +25,6 @@ class TypeTicket extends JsonResource
       'description' => $this->description,
       'created_at' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null,
       'updated_at' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('Y-m-d H:i:s') : null
-
     ];
   }
 }

@@ -7,6 +7,7 @@ use App\Http\Resources\ActivityCollection;
 use App\Models\Activity;
 use Illuminate\Http\Request;
 use App\Http\Resources\Json\Activity as JsonActivity;
+use Illuminate\Support\Facades\Validator;
 
 class ActivityController extends Controller
 {
@@ -16,6 +17,13 @@ class ActivityController extends Controller
   public function __construct(MakeResponse $makeResponse)
   {
     $this->response = $makeResponse;
+  }
+
+  protected function validateData($request)
+  {
+    return Validator::make($request, [
+      'weighing' => 'required|integer'
+    ]);
   }
   /**
    * Display a listing of the resource.
@@ -99,9 +107,33 @@ class ActivityController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function update(Request $request, $id)
+  public function update($id)
   {
-    //
+    try {
+
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      if (!is_numeric($id))
+        return $this->response->badRequest();
+
+      $activity = Activity::whereId($id)->first();
+
+      if (!isset($activity))
+        return $this->response->noContent();
+
+      $valitate = $this->validateData(request()->all());
+
+      if ($valitate->fails())
+        return $this->response->exception($valitate->errors());
+
+      $activity->update(request()->all());
+
+      return $this->response->success($activity->fresh()->format());
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 
   /**

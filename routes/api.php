@@ -77,6 +77,9 @@ Route::group([
   Route::apiResource('/type-tickets', 'TypeTicketController')->names('api.typeTickets');
   Route::apiResource('/activities', 'ActivityController')->names('api.activities');
   Route::apiResource('/alerts', 'AlertController')->names('api.alerts');
+  Route::apiResource('/categories', 'CategoryController')->names('api.categories');
+
+  Route::get('/activity-course-registered-users/{activity_course_registered_user}', 'ActivityCourseRegisteredUserController@show')->name('api.activityCourseRegisteredUsers.show');
 
 
 

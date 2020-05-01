@@ -2,11 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\MakeResponse;
+use App\Http\Resources\CategoryCollection;
 use App\Models\Category;
-use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+
+  protected $response;
+
+  public function __construct(MakeResponse $makeResponse)
+  {
+    $this->response = $makeResponse;
+  }
+
+
   /**
    * Display a listing of the resource.
    *
@@ -14,7 +24,20 @@ class CategoryController extends Controller
    */
   public function index()
   {
-    //
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $categories = new CategoryCollection(category::all());
+
+      if (!isset($categories))
+        return $this->response->noContent();
+
+      return $this->response->success($categories);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 
   public function store($categoryMoodle)
