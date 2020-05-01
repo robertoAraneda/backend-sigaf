@@ -85,7 +85,7 @@ class ActivityController extends Controller
       if (!isset($activity))
         return $this->response->noContent();
 
-      return $this->response->success($activity->format());
+      return $this->response->success(new JsonActivity($activity));
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
@@ -152,15 +152,22 @@ class ActivityController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $activity = new JsonActivity(Activity::find($idActivity));
+      $activity = Activity::find($idActivity);
 
-      $activity->activityCourseRegisteredUsers = [
+      $activity['links'] = [
         'url' => route('api.activities.activityCourseRegisteredUsers', ['activity' => $activity->id]),
         'href' => route('api.activities.activityCourseRegisteredUsers', ['activity' => $activity->id], false),
         'rel' => class_basename($activity->activityCourseRegisteredUsers()->getRelated()),
-        'count' => $activity->activityCourseRegisteredUsers->count(),
-        'activity' => $activity,
-        'activityCourseRegisteredUsers' => $activity->activityCourseRegisteredUsers->map->format()
+      ];
+
+      $activity['count'] = $activity->activityCourseRegisteredUsers->count();
+
+      $activity['activityCourseRegisteredUsers'] = [
+
+        'activity' => new JsonActivity($activity),
+        'activityCourseRegisteredUsers' => $activity->activityCourseRegisteredUsers->map(function ($activityRegisteredUser) {
+          return new JsonActivityCourseRegisteredUser($activityRegisteredUser);
+        })
       ];
 
       return $this->response->success($activity->activityCourseRegisteredUsers);

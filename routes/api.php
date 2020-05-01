@@ -79,6 +79,10 @@ Route::group([
   Route::apiResource('/alerts', 'AlertController')->names('api.alerts');
   Route::apiResource('/categories', 'CategoryController')->names('api.categories');
   Route::apiResource('/courses', 'CourseController')->names('api.courses');
+  Route::apiResource('/platforms', 'PlatformController')->names('api.platforms');
+  Route::apiResource('/tickets', 'TicketController')->names('api.tickets');
+
+
 
   Route::get('/activity-course-registered-users/{activity_course_registered_user}', 'ActivityCourseRegisteredUserController@show')->name('api.activityCourseRegisteredUsers.show');
 
@@ -89,7 +93,6 @@ Route::group([
   Route::get('/course-registered-user', 'CourseRegisteredUserController@index');
   Route::get('/courses', 'CourseController@index');
   Route::get('/registered-user/{rut}', 'RegisteredUserController@findByRut');
-  Route::apiResource('/tickets', 'TicketController');
   Route::get('/activity-course-registered-user/{id}', 'ActivityCourseRegisteredUserController@findByIdRegisteredUserCourse');
 
   //rels

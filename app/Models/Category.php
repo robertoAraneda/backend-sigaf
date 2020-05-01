@@ -19,7 +19,7 @@ class Category extends Model
         'href' => route('api.categories.show', ['category' => $this->id], false),
         'rel' => 'self'
       ],
-      'activity' => [
+      'category' => [
         'id' => $this->id,
         'description'  => $this->description,
         'platform'  => $this->platform,
