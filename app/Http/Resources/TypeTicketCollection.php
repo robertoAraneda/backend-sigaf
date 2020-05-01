@@ -16,9 +16,11 @@ class TypeTicketCollection extends ResourceCollection
   {
     return [
       'links' => [
-        'href' => route('api.typeTickets.index'),
+        'url' => route('api.typeTickets.index'),
+        'href' => route('api.typeTickets.index', [], false),
         'rel' => 'self'
       ],
+
       'typeTickets' => $this->collection->map->format()
     ];
   }

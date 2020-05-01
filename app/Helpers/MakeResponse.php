@@ -12,7 +12,17 @@ class MakeResponse
       'data' => $data,
       'error' => null,
       'statusCode' => 200
-    ]);
+    ], 200);
+  }
+
+  public static function created($data)
+  {
+    return response()->json([
+      'success' => true,
+      'data' => $data,
+      'error' => null,
+      'statusCode' => 201
+    ], 201);
   }
   public static function exception($exception)
   {
@@ -21,7 +31,7 @@ class MakeResponse
       'data' => null,
       'error' => $exception,
       'statusCode' => 500
-    ]);
+    ], 500);
   }
   public static function unauthorized()
   {
@@ -30,7 +40,7 @@ class MakeResponse
       'data' => null,
       'error' => 'Sin autorización',
       'statusCode' => 401
-    ]);
+    ], 401);
   }
   public static function badRequest()
   {
@@ -39,7 +49,7 @@ class MakeResponse
       'data' => null,
       'error' => 'Url mal formada. Detente!!',
       'statusCode' => 400
-    ]);
+    ], 400);
   }
   public static function noContent()
   {
@@ -48,6 +58,6 @@ class MakeResponse
       'data' => null,
       'error' => 'Elemento no encontrado',
       'statusCode' => 204
-    ]);
+    ], 204);
   }
 }

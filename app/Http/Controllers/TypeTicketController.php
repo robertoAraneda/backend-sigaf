@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use App\Helpers\MakeResponse;
 use App\Http\Resources\TypeTicketCollection;
 use App\Models\TypeTicket;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\Json\TypeTicket as TicketResource;
+use App\Http\Resources\Json\TypeTicket as JsonTypeTicket;
 
 class TypeTicketController extends Controller
 {
@@ -40,6 +39,8 @@ class TypeTicketController extends Controller
     }
   }
 
+
+
   /**
    * Store a newly created resource in storage.
    *
@@ -62,8 +63,9 @@ class TypeTicketController extends Controller
 
       $typeTicket = $typeTicket->create(request()->all());
 
-      return MakeResponse::success($typeTicket->format());
+      return MakeResponse::created($typeTicket->format());
     } catch (\Exception $exception) {
+
       return MakeResponse::exception($exception->getMessage());
     }
   }
@@ -102,7 +104,7 @@ class TypeTicketController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function update(Request $request, $id)
+  public function update($id)
   {
     try {
 
@@ -168,17 +170,12 @@ class TypeTicketController extends Controller
       if (!request()->isJson())
         return MakeResponse::unauthorized();
 
-
-      $typeTicket = new TicketResource(TypeTicket::find($idTypeTicket));
-
-
-
-      if (!isset($typeTicket))
-        return MakeResponse::noContent();
+      $typeTicket = new JsonTypeTicket(TypeTicket::find($idTypeTicket));
 
       $typeTicket->tickets = [
         'typeTicket' => $typeTicket,
-        'href' => route('api.typeTickets.tickets', ['type_ticket' => $typeTicket->id]),
+        'url' => route('api.typeTickets.tickets', ['type_ticket' => $typeTicket->id]),
+        'href' => route('api.typeTickets.tickets', ['type_ticket' => $typeTicket->id], false),
         'rel' => class_basename($typeTicket->tickets()->getRelated()),
         'tickets' => $typeTicket->tickets->map->format()
       ];

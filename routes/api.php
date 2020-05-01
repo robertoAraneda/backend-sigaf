@@ -84,5 +84,6 @@ Route::group([
   Route::apiResource('/tickets', 'TicketController');
   Route::get('/activity-course-registered-user/{id}', 'ActivityCourseRegisteredUserController@findByIdRegisteredUserCourse');
 
+  //rels
   Route::get('/type-tickets/{type_ticket}/tickets', 'TypeTicketController@tickets')->name('api.typeTickets.tickets');
 });

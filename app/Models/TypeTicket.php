@@ -15,7 +15,8 @@ class TypeTicket extends Model
   {
     return [
       'links' => [
-        'href' => route('api.typeTickets.show', ['type_ticket' => $this->id]),
+        'url' => route('api.typeTickets.show', ['type_ticket' => $this->id]),
+        'href' => route('api.typeTickets.show', ['type_ticket' => $this->id], false),
         'rel' => 'self'
       ],
       'typeTicket' => [
