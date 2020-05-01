@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Activity;
+
 use App\Models\ActivityCourseRegisteredUser;
-use Illuminate\Http\Request;
 
 class ActivityCourseRegisteredUserController extends Controller
 {

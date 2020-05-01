@@ -6,6 +6,7 @@ use App\Helpers\MakeResponse;
 use App\Http\Resources\ActivityCollection;
 use App\Models\Activity;
 use Illuminate\Http\Request;
+use App\Http\Resources\Json\Activity as JsonActivity;
 
 class ActivityController extends Controller
 {
@@ -105,5 +106,27 @@ class ActivityController extends Controller
   public function destroy($id)
   {
     //
+  }
+
+  public function activityCourseRegisteredUsers($idActivity)
+  {
+    try {
+      if (!request()->isJson())
+        return MakeResponse::unauthorized();
+
+      $activity = new JsonActivity(Activity::find($idActivity));
+
+      $activity->activityCourseRegisteredUsers = [
+        'activity' => $activity,
+        'url' => route('api.activities.activityCourseRegisteredUsers', ['activity' => $activity->id]),
+        'href' => route('api.activities.activityCourseRegisteredUsers', ['activity' => $activity->id], false),
+        'rel' => class_basename($activity->activityCourseRegisteredUsers()->getRelated()),
+        'activityCourseRegisteredUsers' => $activity->activityCourseRegisteredUsers->map->format()
+      ];
+
+      return MakeResponse::success($activity->activityCourseRegisteredUsers);
+    } catch (\Exception $exception) {
+      return MakeResponse::exception($exception->getMessage());
+    }
   }
 }
