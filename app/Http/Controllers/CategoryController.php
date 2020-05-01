@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Helpers\MakeResponse;
 use App\Http\Resources\CategoryCollection;
 use App\Models\Category;
+use App\Http\Resources\Json\Course as JsonCourse;
+use App\Http\Resources\Json\Category as JsonCategory;
 
 class CategoryController extends Controller
 {
@@ -56,7 +58,23 @@ class CategoryController extends Controller
 
   public function show($id)
   {
-    //
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      if (!is_numeric($id))
+        return $this->response->badRequest();
+
+      $category = Category::find($id);
+
+      if (!isset($category))
+        return $this->response->noContent();
+
+      return $this->response->success($category->format());
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 
   public function findByIdCategoryMoodle($idCategoryMoodle)
@@ -94,5 +112,31 @@ class CategoryController extends Controller
   public function destroy($id)
   {
     //
+  }
+
+  public function courses($idCategory)
+  {
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $category = Category::find($idCategory);
+
+      $category['links'] = [
+        'url' => route('api.categories.courses', ['category' => $category->id]),
+        'href' => route('api.categories.courses', ['category' => $category->id], false),
+        'rel' => class_basename($category->courses()->getRelated())
+      ];
+
+      $category['count'] = $category->courses->count();
+
+      $category['courses'] = $category->courses->map(function ($course) {
+        return new JsonCourse($course);
+      });
+
+      return $this->response->success($category);
+    } catch (\Exception $exception) {
+      return $this->response->exception($exception->getMessage());
+    }
   }
 }

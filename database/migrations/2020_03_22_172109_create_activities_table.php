@@ -15,7 +15,7 @@ class CreateActivitiesTable extends Migration
   {
     Schema::create('activities', function (Blueprint $table) {
       $table->bigIncrements('id');
-      $table->string('description', 100);
+      $table->string('description', 255);
       $table->string('type', 25);
       $table->unsignedInteger('weighing')->default(10);
       $table->unsignedBigInteger('id_activity_moodle');

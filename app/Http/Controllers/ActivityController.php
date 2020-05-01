@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Helpers\MakeResponse;
 use App\Http\Resources\ActivityCollection;
 use App\Models\Activity;
-use Illuminate\Http\Request;
 use App\Http\Resources\Json\Activity as JsonActivity;
 use Illuminate\Support\Facades\Validator;
 

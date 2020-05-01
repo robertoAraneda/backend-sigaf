@@ -35,4 +35,9 @@ class Category extends Model
   {
     return $this->belongsTo(Platform::class);
   }
+
+  public function courses()
+  {
+    return $this->hasMany(Course::class);
+  }
 }

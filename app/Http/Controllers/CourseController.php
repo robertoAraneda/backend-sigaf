@@ -2,12 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\MakeResponse;
 use App\Models\Course;
 use Illuminate\Http\Request;
+use App\Http\Resources\Json\Course as JsonCourse;
 
 
 class CourseController extends Controller
 {
+
+
+  protected $response;
+
+  public function __construct(MakeResponse $makeResponse)
+  {
+    $this->response = $makeResponse;
+  }
+
   /**
    * Display a listing of the resource.
    *
@@ -46,6 +57,23 @@ class CourseController extends Controller
    */
   public function show($id)
   {
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      if (!is_numeric($id))
+        return $this->response->badRequest();
+
+      $course = Course::find($id);
+
+      if (!isset($course))
+        return $this->response->noContent();
+
+      return $this->response->success(new JsonCourse($course));
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 
 
