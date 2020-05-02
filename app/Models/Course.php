@@ -23,10 +23,10 @@ class Course extends Model
       'properties' => [
         'id' => $this->id,
         'description'  => $this->description,
-        'id_category_moodle'  => $this->id_category_moodle,
+        'idCategoryMoodle'  => $this->id_category_moodle,
         'status'  => $this->status,
-        'created_at' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null,
-        'updated_at' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('Y-m-d H:i:s') : null
+        'createdAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('d-m-Y') : null,
+        'updatedAt' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('d-m-Y') : null
       ],
       'nestedObject' => [
         'category' => new JsonCategory($this->category)
@@ -87,5 +87,10 @@ class Course extends Model
   public function activities()
   {
     return $this->hasMany(Activity::class);
+  }
+
+  public function registeredUsers()
+  {
+    return $this->hasMany(CourseRegisteredUser::class);
   }
 }
