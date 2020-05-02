@@ -25,8 +25,8 @@ class Category extends JsonResource
         'description' => $this->description,
         'idCategoryMoodle' => $this->id_category_moodle,
         'status' => $this->status,
-        'createdAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null,
-        'updatedAt' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('Y-m-d H:i:s') : null
+        'createdAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('d-m-Y') : null,
+        'updatedAt' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('d-m-Y') : null
       ],
     ];
   }

@@ -18,7 +18,7 @@ class CategoryCollection extends ResourceCollection
     return [
       'links' => [
         'href' => route('api.categories.index', [], false),
-        'title' => 'Lista de categorias desde Moodle',
+        'title' => 'Lista de categorías desde Moodle',
         'rel' => 'self'
       ],
       'quantity' => $this->collection->count(),
