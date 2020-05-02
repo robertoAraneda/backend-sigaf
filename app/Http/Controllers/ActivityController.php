@@ -6,7 +6,7 @@ use App\Helpers\MakeResponse;
 use App\Http\Resources\ActivityCollection;
 use App\Models\Activity;
 use App\Http\Resources\Json\Activity as JsonActivity;
-use App\Http\Resources\Json\ActivityCourseRegisteredUser as JsonActivityCourseRegisteredUser;
+use App\Http\Resources\Json\ActivityCourseRegisteredUser as JsonActivityCourseUser;
 use Illuminate\Support\Facades\Validator;
 
 class ActivityController extends Controller
@@ -86,7 +86,7 @@ class ActivityController extends Controller
       if (!isset($activity))
         return $this->response->noContent();
 
-      return $this->response->success(new JsonActivity($activity));
+      return $this->response->success($activity->format());
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
@@ -147,26 +147,34 @@ class ActivityController extends Controller
     //
   }
 
-  public function activityCourseRegisteredUsers($idActivity)
+  public function activityCourseUsers($id)
   {
     try {
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $activity = new JsonActivity(Activity::find($idActivity));
+      $checkModel = Activity::find($id);
 
-      $activity['activityCourseRegisteredUsers'] = [
-        'activity' => $activity,
-        'url' => route('api.activities.activityCourseRegisteredUsers', ['activity' => $activity->id]),
-        'href' => route('api.activities.activityCourseRegisteredUsers', ['activity' => $activity->id], false),
-        'rel' => class_basename($activity->activityCourseRegisteredUsers()->getRelated()),
-        'count' => $activity->activityCourseRegisteredUsers->count(),
-        'activityCourseRegisteredUsers' => $activity->activityCourseRegisteredUsers->map(function ($activityCourseRegisteredUser) {
-          return new JsonActivityCourseRegisteredUser($activityCourseRegisteredUser);
-        })
+      if (!isset($checkModel))
+        return $this->response->noContent();
+
+      $model = new JsonActivity($checkModel);
+
+      $model->activityCourseUsers = [
+        'activity' => $model,
+        'relationships' => [
+          'links' => [
+            'href' => route('api.activities.activityCourseUsers', ['id' => $model->id], false),
+            'rel' => '/rels/activityCourseUsers',
+          ],
+          'quantity' => $model->activityCourseUsers->count(),
+          'collection' => $model->activityCourseUsers->map(function ($activityCourseUser) {
+            return new JsonActivityCourseUser($activityCourseUser);
+          })
+        ]
       ];
 
-      return $this->response->success($activity->activityCourseRegisteredUsers);
+      return $this->response->success($model->activityCourseUsers);
     } catch (\Exception $exception) {
       return $this->response->exception($exception->getMessage());
     }

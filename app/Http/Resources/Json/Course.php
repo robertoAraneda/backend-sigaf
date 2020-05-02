@@ -21,10 +21,9 @@ class Course extends JsonResource
         'href' => route('api.courses.show', ['course' => $this->id], false),
         'rel' => 'self'
       ],
-      'course' => [
+      'properties' => [
         'id' => $this->id,
         'description'  => $this->description,
-        'category'  =>  new Category($this->category),
         'id_course_moodle'  => $this->id_course_moodle,
         'status'  => $this->status,
         'created_at' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null,

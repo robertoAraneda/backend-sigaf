@@ -74,7 +74,7 @@ class PlatformController extends Controller
       if (!isset($model))
         return $this->response->noContent();
 
-      return $this->response->success(new JsonPlatform($model));
+      return $this->response->success($model->format());
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());

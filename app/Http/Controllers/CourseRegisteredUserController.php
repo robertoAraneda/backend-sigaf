@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ActivityCourseRegisteredUser;
 use App\Models\CourseRegisteredUser;
-use Illuminate\Http\Request;
+use App\Http\Resources\Json\ActivityCourseRegisteredUser as JsonActivityCourseUser;
+use App\Http\Resources\Json\CourseRegisteredUser as JsonCourseRegisteredUser;
 
 class CourseRegisteredUserController extends Controller
 {
@@ -86,5 +86,38 @@ class CourseRegisteredUserController extends Controller
   public function destroy($id)
   {
     //
+  }
+
+  public function activityCourseUsers($id)
+  {
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $checkModel = CourseRegisteredUser::find($id);
+
+      if (!isset($checkModel))
+        return $this->response->noContent();
+
+      $model = new JsonCourseRegisteredUser($checkModel);
+
+      $model->activityCourseUsers = [
+        'activity' => $model,
+        'relationships' => [
+          'links' => [
+            'href' => route('api.activities.activityCourseUsers', ['id' => $model->id], false),
+            'rel' => '/rels/activityCourseUsers',
+          ],
+          'quantity' => $model->activityCourseUsers->count(),
+          'collection' => $model->activityCourseUsers->map(function ($activityCourseUser) {
+            return new JsonActivityCourseUser($activityCourseUser);
+          })
+        ]
+      ];
+
+      return $this->response->success($model->activityCourseUsers);
+    } catch (\Exception $exception) {
+      return $this->response->exception($exception->getMessage());
+    }
   }
 }

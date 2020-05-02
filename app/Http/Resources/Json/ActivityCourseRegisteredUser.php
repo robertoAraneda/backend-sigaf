@@ -17,13 +17,10 @@ class ActivityCourseRegisteredUser extends JsonResource
   {
     return [
       'links' => [
-        'url' => route('api.activityCourseRegisteredUsers.show', ['activity_course_registered_user' => $this->id]),
-        'href' => route('api.activityCourseRegisteredUsers.show', ['activity_course_registered_user' => $this->id], false),
+        'href' => route('api.activityCourseUsers.show', ['activity_course_user' => $this->id], false),
         'rel' => 'self'
       ],
       'id' => $this->id,
-      'activity' => new Activity($this->activity),
-      'courseRegisteredUser' => new CourseRegisteredUser($this->courseRegisteredUser),
       'status_moodle' => $this->status_moodle,
       'qualification_moodle' => $this->qualification_moodle,
       'created_at' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null,

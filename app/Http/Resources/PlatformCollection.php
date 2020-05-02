@@ -23,9 +23,7 @@ class PlatformCollection extends ResourceCollection
         'rel' => 'self'
       ],
       'quantity' => $this->collection->count(),
-      'collection' => $this->collection->map(function ($platform) {
-        return new Platform($platform);
-      })
+      'collection' => $this->collection->map->format()
     ];
   }
 }

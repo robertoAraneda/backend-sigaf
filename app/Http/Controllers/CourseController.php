@@ -6,6 +6,8 @@ use App\Helpers\MakeResponse;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use App\Http\Resources\Json\Course as JsonCourse;
+use App\Http\Resources\Json\Activity as JsonActivity;
+use App\Http\Resources\CourseCollection;
 
 
 class CourseController extends Controller
@@ -26,9 +28,20 @@ class CourseController extends Controller
    */
   public function index()
   {
-    $courses = Course::all();
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-    return response()->json(['data' => $courses, 'success' => true]);
+      $collection = new CourseCollection(Course::orderBy('id')->get());
+
+      if (!isset($collection))
+        return $this->response->noContent();
+
+      return $this->response->success($collection);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 
   /**
@@ -69,7 +82,7 @@ class CourseController extends Controller
       if (!isset($course))
         return $this->response->noContent();
 
-      return $this->response->success(new JsonCourse($course));
+      return $this->response->success($course->format());
       // return $this->response->success($course->links());
     } catch (\Exception $exception) {
 
@@ -106,5 +119,38 @@ class CourseController extends Controller
   public function destroy($id)
   {
     //
+  }
+
+  public function activities($id)
+  {
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $checkModel = Course::find($id);
+
+      if (!isset($checkModel))
+        return $this->response->noContent();
+
+      $model = new JsonCourse($checkModel);
+
+      $model->activities = [
+        'course' => $model,
+        'relationships' => [
+          'links' => [
+            'href' => route('api.courses.activities', ['id' => $model->id], false),
+            'rel' => '/rels/activities',
+          ],
+          'quantity' => $model->activities->count(),
+          'collection' => $model->activities->map(function ($activity) {
+            return new JsonActivity($activity);
+          })
+        ]
+      ];
+
+      return $this->response->success($model->activities);
+    } catch (\Exception $exception) {
+      return $this->response->exception($exception->getMessage());
+    }
   }
 }
