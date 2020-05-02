@@ -122,20 +122,33 @@ class PlatformController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $model = new JsonPlatform(Platform::find($id));
+      $checkModel = Platform::find($id);
+
+      if (!isset($checkModel))
+        return $this->response->noContent();
+
+      $model = new JsonPlatform($checkModel);
+
 
       $model->categories = [
+
         'platform' => $model,
 
-        'href' => route('api.platforms.categories', ['id' => $model->id], false),
+        'relationships' =>
+        [
+          'links' => [
+            'href' => route('api.platforms.categories', ['id' => $model->id], false),
 
-        'rel' => '/rels/categories',
+            'rel' => '/rels/categories'
+          ],
 
-        'quantity' => $model->categories->count(),
+          'quantity' => $model->categories->count(),
 
-        'categories' => $model->categories->map(function ($category) {
-          return new JsonCategory($category);
-        })
+          'collection' => $model->categories->map(function ($category) {
+            return new JsonCategory($category);
+          })
+        ]
+
       ];
 
       return $this->response->success($model->categories);

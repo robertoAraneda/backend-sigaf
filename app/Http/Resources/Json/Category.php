@@ -17,7 +17,6 @@ class Category extends JsonResource
   {
     return [
       'links' => [
-        'url' => route('api.categories.show', ['category' => $this->id]),
         'href' => route('api.categories.show', ['category' => $this->id], false),
         'rel' => 'self'
       ],
