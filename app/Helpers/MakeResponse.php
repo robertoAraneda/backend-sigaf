@@ -33,7 +33,7 @@ class MakeResponse
       'data' => null,
       'error' => $exception,
       'statusCode' => 500,
-      'message' => 'Error de grave. Contacte al administrador.'
+      'message' => 'Error grave. Contacte al administrador.'
     ], 500);
   }
   public function unauthorized()
