@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\MakeResponse;
 use App\Models\Platform;
 use App\Http\Resources\Json\Platform as JsonPlatform;
+use App\Http\Resources\Json\Category as JsonCategory;
 use App\Http\Resources\PlatformCollection;
 
 
@@ -112,5 +113,35 @@ class PlatformController extends Controller
   public function destroy($id)
   {
     //
+  }
+
+  public function categories($id)
+  {
+
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $model = new JsonPlatform(Platform::find($id));
+
+      $model->categories = [
+        'platform' => $model,
+
+        'href' => route('api.platforms.categories', ['id' => $model->id], false),
+
+        'rel' => '/rels/categories',
+
+        'quantity' => $model->categories->count(),
+
+        'categories' => $model->categories->map(function ($category) {
+          return new JsonCategory($category);
+        })
+      ];
+
+      return $this->response->success($model->categories);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 }
