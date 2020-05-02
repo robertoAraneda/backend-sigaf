@@ -17,11 +17,10 @@ class Platform extends JsonResource
   {
     return [
       'links' => [
-        'url' => route('api.platforms.show', ['platform' => $this->id]),
         'href' => route('api.platforms.show', ['platform' => $this->id], false),
         'rel' => 'self'
       ],
-      'platform' => [
+      'properties' => [
         'id' => $this->id,
         'description'  => $this->description,
         'status'  => $this->status,

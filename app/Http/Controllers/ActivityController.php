@@ -6,6 +6,7 @@ use App\Helpers\MakeResponse;
 use App\Http\Resources\ActivityCollection;
 use App\Models\Activity;
 use App\Http\Resources\Json\Activity as JsonActivity;
+use App\Http\Resources\Json\ActivityCourseRegisteredUser as JsonActivityCourseRegisteredUser;
 use Illuminate\Support\Facades\Validator;
 
 class ActivityController extends Controller
@@ -152,21 +153,16 @@ class ActivityController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $activity = Activity::find($idActivity);
+      $activity = new JsonActivity(Activity::find($idActivity));
 
-      $activity['links'] = [
+      $activity['activityCourseRegisteredUsers'] = [
+        'activity' => $activity,
         'url' => route('api.activities.activityCourseRegisteredUsers', ['activity' => $activity->id]),
         'href' => route('api.activities.activityCourseRegisteredUsers', ['activity' => $activity->id], false),
         'rel' => class_basename($activity->activityCourseRegisteredUsers()->getRelated()),
-      ];
-
-      $activity['count'] = $activity->activityCourseRegisteredUsers->count();
-
-      $activity['activityCourseRegisteredUsers'] = [
-
-        'activity' => new JsonActivity($activity),
-        'activityCourseRegisteredUsers' => $activity->activityCourseRegisteredUsers->map(function ($activityRegisteredUser) {
-          return new JsonActivityCourseRegisteredUser($activityRegisteredUser);
+        'count' => $activity->activityCourseRegisteredUsers->count(),
+        'activityCourseRegisteredUsers' => $activity->activityCourseRegisteredUsers->map(function ($activityCourseRegisteredUser) {
+          return new JsonActivityCourseRegisteredUser($activityCourseRegisteredUser);
         })
       ];
 

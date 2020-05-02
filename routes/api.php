@@ -98,5 +98,8 @@ Route::group([
   //rels
   Route::get('/type-tickets/{type_ticket}/tickets', 'TypeTicketController@tickets')->name('api.typeTickets.tickets');
   Route::get('/activities/{activity}/activity-course-registered-users', 'ActivityController@activityCourseRegisteredUsers')->name('api.activities.activityCourseRegisteredUsers');
-  Route::get('categories/{category}/courses', 'CategoryController@courses')->name('api.categories.courses');
+  Route::get('/categories/{category}/courses', 'CategoryController@courses')->name('api.categories.courses');
+  Route::get('/courses/{course}/activities', 'CourseController@activities')->name('api.courses.activities');
+  Route::get('/course-registered-users/{id}/activities', 'CourseRegisteredUserController@activities')->name('api.courseRegisteredUsers.activities');
+  Route::get('/platforms/{id}/categories', 'PlatformController@categories')->name('api.platforms.categories');
 });

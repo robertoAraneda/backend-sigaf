@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Json\Activity;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ActivityCollection extends ResourceCollection
@@ -21,7 +22,9 @@ class ActivityCollection extends ResourceCollection
         'rel' => 'self'
       ],
       'count' => $this->collection->count(),
-      'activities' => $this->collection->map->format()
+      'activities' => $this->collection->map(function ($activity) {
+        return new Activity($activity);
+      })
     ];
   }
 }

@@ -2,10 +2,12 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Json\Platform;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class PlatformCollection extends ResourceCollection
 {
+
   /**
    * Transform the resource collection into an array.
    *
@@ -16,12 +18,14 @@ class PlatformCollection extends ResourceCollection
   {
     return [
       'links' => [
-        'url' => route('api.platforms.index'),
         'href' => route('api.platforms.index', [], false),
+        'title' => 'Plataformas disponibles desde Moodle',
         'rel' => 'self'
       ],
-      'count' => $this->collection->count(),
-      'platforms' => $this->collection->map->format()
+      'quantity' => $this->collection->count(),
+      'collection' => $this->collection->map(function ($platform) {
+        return new Platform($platform);
+      })
     ];
   }
 }

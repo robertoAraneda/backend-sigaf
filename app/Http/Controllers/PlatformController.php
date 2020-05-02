@@ -2,12 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
+use App\Helpers\MakeResponse;
 use App\Models\Platform;
-use Illuminate\Http\Request;
+use App\Http\Resources\Json\Platform as JsonPlatform;
+use App\Http\Resources\PlatformCollection;
+
 
 class PlatformController extends Controller
 {
+
+  protected $response;
+
+  public function __construct(MakeResponse $makeResponse = null)
+  {
+    $this->response = $makeResponse;
+  }
+
   /**
    * Display a listing of the resource.
    *
@@ -15,7 +25,17 @@ class PlatformController extends Controller
    */
   public function index()
   {
-    //
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $collection = new PlatformCollection(Platform::orderBy('id')->get());
+
+      return $this->response->success($collection);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 
   /**
@@ -31,6 +51,33 @@ class PlatformController extends Controller
     $platform->description = $platformMoodle['nombre'];
 
     $platform->save();
+  }
+
+  /**
+   * Display the specified resource.
+   *
+   * @param  int  $id
+   * @return \Illuminate\Http\Response
+   */
+  public function show($id)
+  {
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      if (!is_numeric($id))
+        return $this->response->badRequest();
+
+      $model = Platform::find($id);
+
+      if (!isset($model))
+        return $this->response->noContent();
+
+      return $this->response->success(new JsonPlatform($model));
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 
   /**

@@ -70,6 +70,7 @@ class CourseController extends Controller
         return $this->response->noContent();
 
       return $this->response->success(new JsonCourse($course));
+      // return $this->response->success($course->links());
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());

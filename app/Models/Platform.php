@@ -6,14 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Platform extends Model
 {
-    protected $guarded = [];
+  protected $guarded = [];
 
-    protected $table = 'platforms';
+  protected $table = 'platforms';
 
-    public function categories(){
-        return $this->hasMany(Category::class);
-    }
-
-
-
+  public function categories()
+  {
+    return $this->hasMany(Category::class);
+  }
 }

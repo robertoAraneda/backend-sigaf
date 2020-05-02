@@ -11,23 +11,39 @@ class Course extends Model
 
   protected $table = 'courses';
 
-  public function format()
+  public function links()
   {
     return [
-      'links' => [
-        'url' => route('api.categories.show', ['category' => $this->id]),
-        'href' => route('api.categories.show', ['category' => $this->id], false),
-        'rel' => 'self'
-      ],
-      'activity' => [
+      'class' => 'course',
+      'properties' => [
         'id' => $this->id,
         'description'  => $this->description,
-        'platform'  => $this->platform,
         'id_category_moodle'  => $this->id_category_moodle,
         'status'  => $this->status,
         'created_at' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null,
         'updated_at' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('Y-m-d H:i:s') : null
-      ]
+      ],
+      'entities' => [
+        [
+          'class' => 'category',
+          'rel' => '/rels/category',
+          'properties' => [
+            'id' => $this->category->id,
+            'description' => $this->category->description
+          ],
+          'links' => [
+            'href' => route('api.categories.show', ['category' => $this->id], false),
+            'title' => 'Categoria asociada',
+            'rel' => 'self'
+          ]
+        ],
+      ],
+      'links' => [
+        'rel' => 'self',
+        'title' => 'Detalle curso',
+        'href' => route('api.courses.show', ['course' => $this->id], false),
+      ],
+
     ];
   }
 
