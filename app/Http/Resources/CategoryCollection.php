@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Json\Category;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class CategoryCollection extends ResourceCollection
@@ -16,12 +17,14 @@ class CategoryCollection extends ResourceCollection
   {
     return [
       'links' => [
-        'url' => route('api.categories.index'),
         'href' => route('api.categories.index', [], false),
+        'title' => 'Lista de categorias desde Moodle',
         'rel' => 'self'
       ],
-      'count' => $this->collection->count(),
-      'categories' => $this->collection->map->format()
+      'quantity' => $this->collection->count(),
+      'categories' => $this->collection->map(function ($category) {
+        return new Category($category);
+      })
     ];
   }
 }

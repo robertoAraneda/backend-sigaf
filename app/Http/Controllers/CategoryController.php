@@ -113,26 +113,34 @@ class CategoryController extends Controller
     //
   }
 
-  public function courses($idCategory)
+  public function courses($id)
   {
     try {
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $category = new JsonCategory(Category::find($idCategory));
+      $checkModel = Category::find($id);
 
-      $category->courses = [
-        'url' => route('api.categories.courses', ['category' => $category->id]),
-        'href' => route('api.categories.courses', ['category' => $category->id], false),
-        'rel' => class_basename($category->courses()->getRelated()),
-        'count' => $category->courses->count(),
-        'category' => $category,
-        'courses' => $category->courses->map(function ($category) {
-          return new JsonCategory($category);
-        })
+      if (!isset($checkModel))
+        return $this->response->noContent();
+
+      $model = new JsonCategory($checkModel);
+
+      $model->courses = [
+        'category' => $model,
+        'relationships' => [
+          'links' => [
+            'href' => route('api.categories.courses', ['id' => $model->id], false),
+            'rel' => '/rels/courses',
+          ],
+          'quantity' => $model->courses->count(),
+          'collection' => $model->courses->map(function ($category) {
+            return new JsonCategory($category);
+          })
+        ]
       ];
 
-      return $this->response->success($category->courses);
+      return $this->response->success($model->courses);
     } catch (\Exception $exception) {
       return $this->response->exception($exception->getMessage());
     }
