@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\MakeResponse;
 use App\Http\Resources\CategoryCollection;
 use App\Models\Category;
+use App\Http\Resources\Json\Course as JsonCourse;
 use App\Http\Resources\Json\Category as JsonCategory;
 
 class CategoryController extends Controller
@@ -12,7 +13,7 @@ class CategoryController extends Controller
 
   protected $response;
 
-  public function __construct(MakeResponse $makeResponse)
+  public function __construct(MakeResponse $makeResponse = null)
   {
     $this->response = $makeResponse;
   }
@@ -29,12 +30,12 @@ class CategoryController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $categories = new CategoryCollection(category::all());
+      $collection = new CategoryCollection(Category::orderBy('id')->get());
 
-      if (!isset($categories))
+      if (!isset($collection))
         return $this->response->noContent();
 
-      return $this->response->success($categories);
+      return $this->response->success($collection);
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
@@ -69,7 +70,7 @@ class CategoryController extends Controller
       if (!isset($category))
         return $this->response->noContent();
 
-      return $this->response->success(new JsonCategory($category));
+      return $this->response->success($category->format());
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
@@ -134,8 +135,8 @@ class CategoryController extends Controller
             'rel' => '/rels/courses',
           ],
           'quantity' => $model->courses->count(),
-          'collection' => $model->courses->map(function ($category) {
-            return new JsonCategory($category);
+          'collection' => $model->courses->map(function ($course) {
+            return new JsonCourse($course);
           })
         ]
       ];

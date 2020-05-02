@@ -11,7 +11,7 @@ class ActivityCourseRegisteredUserController extends Controller
 
   protected $response;
 
-  public function __construct(MakeResponse $makeResponse)
+  public function __construct(MakeResponse $makeResponse = null)
   {
     $this->response = $makeResponse;
   }

@@ -22,9 +22,7 @@ class CategoryCollection extends ResourceCollection
         'rel' => 'self'
       ],
       'quantity' => $this->collection->count(),
-      'categories' => $this->collection->map(function ($category) {
-        return new Category($category);
-      })
+      'categories' => $this->collection->map->format()
     ];
   }
 }

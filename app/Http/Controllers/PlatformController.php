@@ -129,7 +129,6 @@ class PlatformController extends Controller
 
       $model = new JsonPlatform($checkModel);
 
-
       $model->categories = [
 
         'platform' => $model,
