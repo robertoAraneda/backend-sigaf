@@ -22,8 +22,8 @@ class Platform extends Model
         'id' => $this->id,
         'description'  => $this->description,
         'status'  => $this->status,
-        'created_at' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null,
-        'updated_at' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('Y-m-d H:i:s') : null
+        'created_at' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('d-m-Y') : null,
+        'updated_at' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('d-m-Y') : null
       ],
       'nestedObject' => null,
       'collections' => [
