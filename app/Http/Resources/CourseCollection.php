@@ -17,11 +17,11 @@ class CourseCollection extends ResourceCollection
     return [
       'links' => [
         'href' => route('api.courses.index', [], false),
-        'title' => 'Lista de cursos desde Moodle',
+        'title' => 'Cursos disponibles desde Moodle',
         'rel' => 'self'
       ],
-      'quantity' => $this->collection->count(),
-      'collection' => $this->collection->map->format()
+      'numberOfElements' => $this->collection->count(),
+      'collections' => $this->collection->map->format()
     ];
   }
 }

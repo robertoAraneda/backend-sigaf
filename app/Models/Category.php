@@ -64,7 +64,7 @@ class Category extends Model
   }
 
   /**
-   * Get the courses for the category
+   * Get a list of courses for the category
    *
    */
   public function courses()

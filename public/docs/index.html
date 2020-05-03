@@ -233,6 +233,352 @@
 </tbody>
 </table>
 <!-- END_48c461c31bbd959a9d53f9f1a44a2b8c -->
+<h1>Course management</h1>
+<!-- START_6aef3c403afb1eafcfdd51b7136e1998 -->
+<h2>Display a listing of courses resources.</h2>
+<p><br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small></p>
+<blockquote>
+<p>Example request:</p>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "data": {
+        "links": {
+            "href": "\/api\/v2\/courses",
+            "title": "Cursos disponibles desde Moodle",
+            "rel": "self"
+        },
+        "numberOfElements": 2,
+        "collections": [
+            {
+                "links": {
+                    "href": "\/api\/v2\/courses\/1",
+                    "rel": "self"
+                },
+                "properties": {
+                    "id": 1,
+                    "description": "Curso: Estrategias didáctica de la Enseñanza Media Técnico Profesional (Plantilla)",
+                    "idCategoryMoodle": null,
+                    "status": 0,
+                    "createdAt": "27-04-2020",
+                    "updatedAt": "27-04-2020"
+                },
+                "nestedObject": {
+                    "category": {
+                        "links": {
+                            "href": "\/api\/v2\/categories\/1",
+                            "rel": "self"
+                        },
+                        "properties": {
+                            "id": 1,
+                            "description": "Estrategias didáctica TP (2020)",
+                            "idCategoryMoodle": 953,
+                            "status": 1,
+                            "createdAt": "27-04-2020",
+                            "updatedAt": "27-04-2020"
+                        }
+                    }
+                },
+                "relationships": {
+                    "activities": {
+                        "numberOfElements": 0,
+                        "links": {
+                            "href": "\/api\/v2\/courses\/1\/activities",
+                            "rel": "\/rels\/activities"
+                        }
+                    },
+                    "registeredUsers": {
+                        "numberOfElements": 0,
+                        "links": {
+                            "href": "\/api\/v2\/courses\/1\/registered-users",
+                            "rel": "\/rels\/registeredUsers"
+                        }
+                    }
+                }
+            },
+            {
+                "links": {
+                    "href": "\/api\/v2\/courses\/1",
+                    "rel": "self"
+                },
+                "properties": {
+                    "id": 1,
+                    "description": "Curso: Estrategias didáctica de la Enseñanza Media Técnico Profesional (Plantilla)",
+                    "idCategoryMoodle": null,
+                    "status": 0,
+                    "createdAt": "27-04-2020",
+                    "updatedAt": "27-04-2020"
+                },
+                "nestedObject": {
+                    "category": {
+                        "links": {
+                            "href": "\/api\/v2\/categories\/1",
+                            "rel": "self"
+                        },
+                        "properties": {
+                            "id": 1,
+                            "description": "Estrategias didáctica TP (2020)",
+                            "idCategoryMoodle": 953,
+                            "status": 1,
+                            "createdAt": "27-04-2020",
+                            "updatedAt": "27-04-2020"
+                        }
+                    }
+                },
+                "relationships": {
+                    "activities": {
+                        "numberOfElements": 0,
+                        "links": {
+                            "href": "\/api\/v2\/courses\/1\/activities",
+                            "rel": "\/rels\/activities"
+                        }
+                    },
+                    "registeredUsers": {
+                        "numberOfElements": 0,
+                        "links": {
+                            "href": "\/api\/v2\/courses\/1\/registered-users",
+                            "rel": "\/rels\/registeredUsers"
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/v2/courses</code></p>
+<!-- END_6aef3c403afb1eafcfdd51b7136e1998 -->
+<!-- START_9cae39f7fccfcdc203368f2df17d7f90 -->
+<h2>Display the course resource.</h2>
+<p><br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small></p>
+<blockquote>
+<p>Example request:</p>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "data": [
+        {
+            "links": {
+                "url": "http:\/\/localhost:8002\/api\/v2\/courses\/1",
+                "href": "\/api\/v2\/courses\/1",
+                "rel": "self"
+            },
+            "properties": {
+                "id": 1,
+                "description": "Curso: Estrategias didáctica de la Enseñanza Media Técnico Profesional (Plantilla)",
+                "idCourseMoodle": 8970,
+                "status": 0,
+                "createdAt": "27-04-2020",
+                "updatedAt": "27-04-2020"
+            }
+        },
+        {
+            "links": {
+                "url": "http:\/\/localhost:8002\/api\/v2\/courses\/1",
+                "href": "\/api\/v2\/courses\/1",
+                "rel": "self"
+            },
+            "properties": {
+                "id": 1,
+                "description": "Curso: Estrategias didáctica de la Enseñanza Media Técnico Profesional (Plantilla)",
+                "idCourseMoodle": 8970,
+                "status": 0,
+                "createdAt": "27-04-2020",
+                "updatedAt": "27-04-2020"
+            }
+        }
+    ]
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/v2/courses/{course}</code></p>
+<h4>URL Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>course</code></td>
+<td>required</td>
+<td>The ID of the course resource.</td>
+</tr>
+</tbody>
+</table>
+<!-- END_9cae39f7fccfcdc203368f2df17d7f90 -->
+<!-- START_1a90c202772a13ec11f64fefc2c9f686 -->
+<h2>Display a list of activities resources related to course resource.</h2>
+<p><br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small></p>
+<blockquote>
+<p>Example request:</p>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "course": "course",
+    "relationships": {
+        "links": {
+            "href": "url",
+            "rel": "\/rels\/activities"
+        },
+        "collections": {
+            "numberOfElements": "number",
+            "data": "array"
+        }
+    }
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/v2/courses/{course}/activities</code></p>
+<h4>URL Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>course</code></td>
+<td>required</td>
+<td>The ID of the course resource.</td>
+</tr>
+</tbody>
+</table>
+<!-- END_1a90c202772a13ec11f64fefc2c9f686 -->
+<!-- START_b567ab6792156a05b47237e3305891db -->
+<h2>Display a list of registered users resources related to course resource.</h2>
+<p><br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small></p>
+<blockquote>
+<p>Example request:</p>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "registeredUser": "registeredUser",
+    "relationships": {
+        "links": {
+            "href": "url",
+            "rel": "\/rels\/registeredUsers"
+        },
+        "collections": {
+            "numberOfElements": "number",
+            "data": "array"
+        }
+    }
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/v2/courses/{course}/registered-users</code></p>
+<h4>URL Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>course</code></td>
+<td>required</td>
+<td>The ID of the course resource.</td>
+</tr>
+</tbody>
+</table>
+<!-- END_b567ab6792156a05b47237e3305891db -->
+<!-- START_64cdd93694bf7d08118e7bef1448b7f0 -->
+<h2>Display the specific registered user resource related to course resource.</h2>
+<p><br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small></p>
+<blockquote>
+<p>Example request:</p>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "courseRegisteredUser": "courseRegisteredUser",
+    "course": "course",
+    "relationships": {
+        "collections": {
+            "numberOfElements": "number",
+            "links": {
+                "href": "url",
+                "rel": "\/rels\/activities"
+            }
+        }
+    }
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/v2/courses/{course}/registered-users/{registered_user}</code></p>
+<h4>URL Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>course</code></td>
+<td>required</td>
+<td>The ID of the course resource.</td>
+</tr>
+<tr>
+<td><code>registered_user</code></td>
+<td>required</td>
+<td>The ID of the registered user resource.</td>
+</tr>
+</tbody>
+</table>
+<!-- END_64cdd93694bf7d08118e7bef1448b7f0 -->
+<!-- START_71f0ae5d034033482e3c78abc4309118 -->
+<h2>Display a list of activities resources related to Course for the specific user resource.</h2>
+<p><br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small></p>
+<blockquote>
+<p>Example request:</p>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "courseRegisteredUser": "courseRegisteredUser",
+    "relationships": {
+        "links": {
+            "href": "url",
+            "rel": "\/rels\/activities"
+        },
+        "collections": {
+            "numberOfElements": "number",
+            "data": "array"
+        }
+    }
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/v2/courses/{course}/registered-users/{registered_user}/activities</code></p>
+<h4>URL Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>course</code></td>
+<td>required</td>
+<td>The ID of the course resource.</td>
+</tr>
+<tr>
+<td><code>registered_user</code></td>
+<td>required</td>
+<td>The ID of the registered user resource.</td>
+</tr>
+</tbody>
+</table>
+<!-- END_71f0ae5d034033482e3c78abc4309118 -->
 <h1>Platform management</h1>
 <!-- START_9f24b60bae02f95478d704bb25231992 -->
 <h2>Display a listing of Platforms.</h2>
@@ -356,7 +702,7 @@
 </table>
 <!-- END_919d5242b4eeaebcef7ee75e66e7d585 -->
 <!-- START_abe9f0711abd831f26874700307ce522 -->
-<h2>Display a list of a categories from platform.</h2>
+<h2>Display a list of a categories related to Platform.</h2>
 <p><br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small></p>
 <blockquote>
 <p>Example request:</p>
@@ -390,7 +736,7 @@
 <tr>
 <td><code>platform</code></td>
 <td>required</td>
-<td>The ID of the platform.</td>
+<td>The ID of the Platform.</td>
 </tr>
 </tbody>
 </table>
@@ -559,30 +905,6 @@
 <h3>HTTP Request</h3>
 <p><code>DELETE api/v2/alerts/{alert}</code></p>
 <!-- END_93a5f02287248f6585ad332675bf391a -->
-<!-- START_6aef3c403afb1eafcfdd51b7136e1998 -->
-<h2>Display a listing of the resource.</h2>
-<blockquote>
-<p>Example request:</p>
-</blockquote>
-<h3>HTTP Request</h3>
-<p><code>GET api/v2/courses</code></p>
-<!-- END_6aef3c403afb1eafcfdd51b7136e1998 -->
-<!-- START_9cae39f7fccfcdc203368f2df17d7f90 -->
-<h2>Display the specified resource.</h2>
-<blockquote>
-<p>Example request:</p>
-</blockquote>
-<h3>HTTP Request</h3>
-<p><code>GET api/v2/courses/{course}</code></p>
-<!-- END_9cae39f7fccfcdc203368f2df17d7f90 -->
-<!-- START_dc0a2fdb709a4a3f124eccbd8a1043f0 -->
-<h2>Remove the specified resource from storage.</h2>
-<blockquote>
-<p>Example request:</p>
-</blockquote>
-<h3>HTTP Request</h3>
-<p><code>DELETE api/v2/courses/{course}</code></p>
-<!-- END_dc0a2fdb709a4a3f124eccbd8a1043f0 -->
 <!-- START_17f4254a84e218331d6388f5f6cffb19 -->
 <h2>Display a listing of the resource.</h2>
 <blockquote>
@@ -820,38 +1142,6 @@
 <h3>HTTP Request</h3>
 <p><code>GET api/v2/activities/{activity}/activity-course-users</code></p>
 <!-- END_b15051f09964060c2749b7d8fd8b3239 -->
-<!-- START_1a90c202772a13ec11f64fefc2c9f686 -->
-<h2>api/v2/courses/{course}/activities</h2>
-<blockquote>
-<p>Example request:</p>
-</blockquote>
-<h3>HTTP Request</h3>
-<p><code>GET api/v2/courses/{course}/activities</code></p>
-<!-- END_1a90c202772a13ec11f64fefc2c9f686 -->
-<!-- START_b567ab6792156a05b47237e3305891db -->
-<h2>api/v2/courses/{course}/registered-users</h2>
-<blockquote>
-<p>Example request:</p>
-</blockquote>
-<h3>HTTP Request</h3>
-<p><code>GET api/v2/courses/{course}/registered-users</code></p>
-<!-- END_b567ab6792156a05b47237e3305891db -->
-<!-- START_64cdd93694bf7d08118e7bef1448b7f0 -->
-<h2>api/v2/courses/{course}/registered-users/{registered_user}</h2>
-<blockquote>
-<p>Example request:</p>
-</blockquote>
-<h3>HTTP Request</h3>
-<p><code>GET api/v2/courses/{course}/registered-users/{registered_user}</code></p>
-<!-- END_64cdd93694bf7d08118e7bef1448b7f0 -->
-<!-- START_71f0ae5d034033482e3c78abc4309118 -->
-<h2>api/v2/courses/{course}/registered-users/{registered_user}/activities</h2>
-<blockquote>
-<p>Example request:</p>
-</blockquote>
-<h3>HTTP Request</h3>
-<p><code>GET api/v2/courses/{course}/registered-users/{registered_user}/activities</code></p>
-<!-- END_71f0ae5d034033482e3c78abc4309118 -->
 <!-- START_56af8b0e7f974bae5560f64ff636f82b -->
 <h2>api/v2/registered-users/{registered_user}/courses</h2>
 <blockquote>

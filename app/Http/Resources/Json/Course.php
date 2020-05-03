@@ -26,8 +26,12 @@ class Course extends JsonResource
         'description'  => $this->description,
         'idCourseMoodle'  => $this->id_course_moodle,
         'status'  => $this->status,
-        'created_at' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('d-m-Y') : null,
-        'updated_at' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('d-m-y') : null
+        'createdAt' => $this->created_at != null
+          ?  Carbon::parse($this->created_at)->format('d-m-Y')
+          : null,
+        'updatedAt' => $this->updated_at != null
+          ?  Carbon::parse($this->updated_at)->format('d-m-Y')
+          : null
       ]
     ];
   }
