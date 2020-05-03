@@ -95,12 +95,12 @@ class CourseController extends Controller
       if (!is_numeric($course))
         return $this->response->badRequest();
 
-      $getModel = Course::find($course);
+      $courseModel = Course::find($course);
 
-      if (!isset($getModel))
+      if (!isset($courseModel))
         return $this->response->noContent();
 
-      return $this->response->success($getModel->format());
+      return $this->response->success($courseModel->format());
       // return $this->response->success($course->links());
     } catch (\Exception $exception) {
 
@@ -156,28 +156,30 @@ class CourseController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $checkModel = Course::find($course);
+      $courseModel = Course::find($course);
 
-      if (!isset($checkModel))
+      if (!isset($courseModel))
         return $this->response->noContent();
 
-      $getModel = new JsonCourse($checkModel);
+      $courseFormated = new JsonCourse($courseModel);
 
-      $getModel->activities = [
-        'course' => $getModel,
+      $courseFormated->activities = [
+        'course' => $courseFormated,
         'relationships' => [
           'links' => [
-            'href' => route('api.courses.activities', ['course' => $getModel->id], false),
+            'href' => route('api.courses.activities', ['course' => $courseFormated->id], false),
             'rel' => '/rels/activities',
           ],
-          'quantity' => $getModel->activities->count(),
-          'collection' => $getModel->activities->map(function ($activity) {
-            return new JsonActivity($activity);
-          })
+          'collection' => [
+            'numberOfElemets' => $courseFormated->activities->count(),
+            'data' =>  $courseFormated->activities->map(function ($activity) {
+              return new JsonActivity($activity);
+            })
+          ]
         ]
       ];
 
-      return $this->response->success($getModel->activities);
+      return $this->response->success($courseFormated->activities);
     } catch (\Exception $exception) {
       return $this->response->exception($exception->getMessage());
     }
@@ -211,10 +213,10 @@ class CourseController extends Controller
       if (!isset($courseModel))
         return $this->response->noContent();
 
-      $courseFormat = new JsonCourse($courseModel);
+      $courseFormated = new JsonCourse($courseModel);
 
-      $courseFormat->registeredUsers = [
-        'course' => $courseFormat,
+      $courseFormated->registeredUsers = [
+        'course' => $courseFormated,
         'relationships' => [
           'links' => [
             'href' => route(
@@ -227,14 +229,14 @@ class CourseController extends Controller
 
           'collection' => [
             'numberOfElements' => $courseModel->registeredUsers->count(),
-            'data' => $courseFormat->registeredUsers->map(function ($courseRegisteredUser) {
+            'data' => $courseFormated->registeredUsers->map(function ($courseRegisteredUser) {
               return new JsonCourseRegisteredUser($courseRegisteredUser);
             })
           ]
         ]
       ];
 
-      return $this->response->success($courseFormat->registeredUsers);
+      return $this->response->success($courseFormated->registeredUsers);
     } catch (\Exception $exception) {
       return $this->response->exception($exception->getMessage());
     }
@@ -367,7 +369,6 @@ class CourseController extends Controller
 
             'rel' => '/rels/activities'
           ],
-
           'collection' => [
             'numberOfElements' => $courseRegisteredUser->activityCourseUsers()->count(),
             'data' => $courseRegisteredUser->activityCourseUsers->map(function ($activity) {
@@ -375,8 +376,8 @@ class CourseController extends Controller
             })
           ]
         ]
-
       ];
+
       return $this->response->success($courseRegisteredUser->activityCourseUsers);
     } catch (\Exception $exception) {
 

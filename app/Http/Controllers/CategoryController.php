@@ -29,7 +29,7 @@ class CategoryController extends Controller
 
 
   /**
-   * Display a listing of Categories.
+   * Display a listing of categories resources.
    *
    * @return App\Helpers\MakeResponse
    * @authenticated 
@@ -76,15 +76,15 @@ class CategoryController extends Controller
 
 
   /**
-   * Display the specified resource.
+   * Display the category resource.
    *
-   * @param  int  $id
+   * @param  int  $category
    * @return App\Helpers\MakeResponse
    * @authenticated 
    * @apiResourceCollection App\Http\Resources\Json\Category
    * @apiResourceModel App\Models\Category
    * 
-   * @urlParam category required The ID of the platform.
+   * @urlParam category required The ID of the category resource.
    */
   public function show($category)
   {
@@ -95,12 +95,12 @@ class CategoryController extends Controller
       if (!is_numeric($category))
         return $this->response->badRequest();
 
-      $getModel = Category::find($category);
+      $categoryModel = Category::find($category);
 
-      if (!isset($getModel))
+      if (!isset($categoryModel))
         return $this->response->noContent();
 
-      return $this->response->success($getModel->format());
+      return $this->response->success($categoryModel->format());
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
@@ -162,9 +162,9 @@ class CategoryController extends Controller
 
 
   /**
-   * Display a list of courses related to Category.
+   * Display a list of courses resources related to category resource.
    *
-   * @param  int  $id
+   * @param  int  $category
    * @return App\Helpers\MakeResponse
    * 
    * @authenticated 
@@ -176,7 +176,7 @@ class CategoryController extends Controller
    *   }
    * }
    * 
-   * @urlParam category required The ID of the Category.
+   * @urlParam category required The ID of the category resource.
    */
   public function courses($category)
   {
@@ -184,35 +184,35 @@ class CategoryController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $checkModel = Category::find($category);
+      $categoryModel = Category::find($category);
 
-      if (!isset($checkModel))
+      if (!isset($categoryModel))
         return $this->response->noContent();
 
-      $getModel = new JsonCategory($checkModel);
+      $categoryFormated = new JsonCategory($categoryModel);
 
-      $getModel->getModelcourses = [
-        'category' => $getModel,
+      $categoryFormated->courses = [
+        'category' => $categoryFormated,
         'relationships' => [
           'links' => [
             'href' => route(
               'api.categories.courses',
-              ['category' => $getModel->id],
+              ['category' => $categoryFormated->id],
               false
             ),
             'rel' => '/rels/courses',
           ],
 
           'collection' => [
-            'numberOfElements' => $getModel->courses->count(),
-            'data' => $getModel->courses->map(function ($course) {
+            'numberOfElements' => $categoryFormated->courses->count(),
+            'data' => $categoryFormated->courses->map(function ($course) {
               return new JsonCourse($course);
             })
           ]
         ]
       ];
 
-      return $this->response->success($getModel->courses);
+      return $this->response->success($categoryFormated->courses);
     } catch (\Exception $exception) {
       return $this->response->exception($exception->getMessage());
     }

@@ -26,7 +26,7 @@ class PlatformController extends Controller
   }
 
   /**
-   * Display a listing of Platforms.
+   * Display a listing of platforms resources.
    *
    * @return App\Helpers\MakeResponse
    * @authenticated 
@@ -64,16 +64,16 @@ class PlatformController extends Controller
   }
 
   /**
-   * Display the platform.
+   * Display the platform resource.
    *
-   * @param  int  $id
+   * @param  int  $platform
    * @return App\Helpers\MakeResponse
    * 
    * @authenticated 
    * @apiResourceCollection App\Http\Resources\Json\Platform
    * @apiResourceModel App\Models\Platform
    * 
-   * @urlParam platform required The ID of the platform.
+   * @urlParam platform required The ID of the platform resource.
    * 
    */
   public function show($platform)
@@ -85,12 +85,12 @@ class PlatformController extends Controller
       if (!is_numeric($platform))
         return $this->response->badRequest();
 
-      $getModel = Platform::find($platform);
+      $platformModel = Platform::find($platform);
 
-      if (!isset($getModel))
+      if (!isset($platformModel))
         return $this->response->noContent();
 
-      return $this->response->success($getModel->format());
+      return $this->response->success($platformModel->format());
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
@@ -127,9 +127,9 @@ class PlatformController extends Controller
   }
 
   /**
-   * Display a list of a categories related to Platform.
+   * Display a list of a categories resources related to platform resource.
    *
-   * @param  int  $id
+   * @param  int  $platform
    * @return App\Helpers\MakeResponse
    * 
    * @authenticated 
@@ -141,7 +141,7 @@ class PlatformController extends Controller
    *   }
    * }
    * 
-   * @urlParam platform required The ID of the Platform.
+   * @urlParam platform required The ID of the platform resource.
    */
   public function categories($platform)
   {
@@ -150,31 +150,31 @@ class PlatformController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $checkModel = Platform::find($platform);
+      $platformModel = Platform::find($platform);
 
-      if (!isset($checkModel))
+      if (!isset($platformModel))
         return $this->response->noContent();
 
-      $model = new JsonPlatform($checkModel);
+      $platformFormated = new JsonPlatform($platformModel);
 
-      $model->categories = [
+      $platformFormated->categories = [
 
-        'platform' => $model,
+        'platform' => $platformFormated,
 
         'relationships' =>
         [
           'links' => [
             'href' => route(
               'api.platforms.categories',
-              ['platform' => $model->id],
+              ['platform' => $platformFormated->id],
               false
             ),
 
             'rel' => '/rels/categories'
           ],
           'collections' => [
-            'numberOfElements' => $model->categories->count(),
-            'data' => $model->categories->map(function ($category) {
+            'numberOfElements' => $platformFormated->categories->count(),
+            'data' => $platformFormated->categories->map(function ($category) {
               return new JsonCategory($category);
             })
           ]
@@ -182,7 +182,7 @@ class PlatformController extends Controller
 
       ];
 
-      return $this->response->success($model->categories);
+      return $this->response->success($platformFormated->categories);
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
