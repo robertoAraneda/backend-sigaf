@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\Json\Platform;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class PlatformCollection extends ResourceCollection

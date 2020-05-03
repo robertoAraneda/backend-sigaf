@@ -7,6 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class Platform extends JsonResource
 {
+
   /**
    * Transform the resource into an array.
    *
@@ -24,8 +25,8 @@ class Platform extends JsonResource
         'id' => $this->id,
         'description'  => $this->description,
         'status'  => $this->status,
-        'created_at' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('d-m-Y') : null,
-        'updated_at' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('d-m-Y') : null
+        'createdAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('d-m-Y') : null,
+        'updatedAt' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('d-m-Y') : null
       ]
     ];
   }

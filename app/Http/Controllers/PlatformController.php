@@ -84,7 +84,7 @@ class PlatformController extends Controller
   /**
    * Display the specified resource.
    *
-   * @param  int  $id
+   * @param  int  $description
    * @return \Illuminate\Http\Response
    */
   public function findByDescription($description)
@@ -95,6 +95,12 @@ class PlatformController extends Controller
     return $platform;
   }
 
+  /**
+   * Updated the specified resource.
+   *
+   * @param  int  $id
+   * @param  int  $platformMoodle
+   */
   public function update($id, $platformMoodle)
   {
     $platform = Platform::whereId($id)->first();
@@ -105,16 +111,11 @@ class PlatformController extends Controller
   }
 
   /**
-   * Remove the specified resource from storage.
+   * Display a list of a specified resource.
    *
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function destroy($id)
-  {
-    //
-  }
-
   public function categories($id)
   {
 
@@ -136,16 +137,20 @@ class PlatformController extends Controller
         'relationships' =>
         [
           'links' => [
-            'href' => route('api.platforms.categories', ['id' => $model->id], false),
+            'href' => route(
+              'api.platforms.categories',
+              ['platform' => $model->id],
+              false
+            ),
 
             'rel' => '/rels/categories'
           ],
-
-          'quantity' => $model->categories->count(),
-
-          'collection' => $model->categories->map(function ($category) {
-            return new JsonCategory($category);
-          })
+          'collection' => [
+            'quantity' => $model->categories->count(),
+            'data' => $model->categories->map(function ($category) {
+              return new JsonCategory($category);
+            })
+          ]
         ]
 
       ];
