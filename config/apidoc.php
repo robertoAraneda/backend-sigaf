@@ -53,7 +53,7 @@ return [
      * The base URL to be used in examples and the Postman collection.
      * By default, this will be the value of config('app.url').
      */
-  'base_url' => 'http://localhost:8002/',
+  'base_url' => 'http://localhost:8002',
 
   /*
      * Generate a Postman collection in addition to HTML docs.
@@ -70,12 +70,12 @@ return [
     /*
          * The name for the exported Postman collection. Default: config('app.name')." API"
          */
-    'name' => null,
+    'name' => 'API SIGAF',
 
     /*
          * The description for the exported Postman collection.
          */
-    'description' => null,
+    'description' => 'Urls para aplicación SIGAF',
 
     /*
          * The "Auth" section that should appear in the postman collection. See the schema docs for more information:
@@ -137,7 +137,17 @@ return [
              * Note that the route must be referenced by name here (wildcards are supported).
              */
       'exclude' => [
-        // 'users.create', 'admin.*'
+        'sync.*',
+        'passport.*',
+        'api.platforms.store',
+        'api.platforms.update',
+        'api.platforms.delete',
+        'api.categories.store',
+        'api.categories.update',
+        'api.categories.delete',
+        'api.courses.store',
+        'api.courses.update',
+        'api.courses.delete'
       ],
 
       /*
@@ -150,7 +160,7 @@ return [
         'headers' => [
           'Content-Type' => 'application/json',
           'Accept' => 'application/json',
-          // 'Authorization' => 'Bearer {token}',
+          'Authorization' => 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiNmE2YjA2MjQ5NDU0ODMyYzU3ZjNmOTNmZGRmZjdjYWRiMTE5NTc4OWYxNWI2N2VkMWMzNjhkODRlNmQ4YTU5OTQxNmNhMzAwNjc3MWYwOGMiLCJpYXQiOjE1ODgyOTAwOTcsIm5iZiI6MTU4ODI5MDA5NywiZXhwIjoxNjE5ODI2MDk3LCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.hHCZJMWfm21nM9SNbR2Ywchw4bmWmlXNkkLtNMKEQoe1zTdZB3A3OOd5cniT3t-r7cqaBA5ZbCQqtbjHgqaY4BaDIUwXBDvD2K_8ozDTw5yXad_1De0-OB2zbggxGAO7u1LwlsRywZ0EwQb1co32fMbIYgj6vwXj_SZKGDlkJ64AClVo7gscxc9OvL0X56neU5hqkmywdrQkoHs0na-8Ix_G--cy3E4qqGy3UDA-BJpfJv9ad_z0KUMD7bYig2V4s446IXf3hiwoapglseMAM2gdlb9vdJY8PN9DKAZWkqdfTWrNpTw-qPUuSbvrcvgbXyzwyYC6LVxCdc25fFG_FOwD5wr4LlNEX6PdwRadXLbiCmKq3t8iiTaa4kDVtIyb9kQSOODQBl4OzC_Ni8YY-EPJwbnfcZkaKqCxvTiZVqC6yeKDcUncgCssqIIMLyEuvlsGKdogDr2PxZc-8rS_tR-G-iBVwTUDcTuv1IcG4vLp2Tz40qnR9bmt6D1-TpsTd8aTMcsnrL4yf9A_IFFhx3rVxSVKm1ZY0rF-6gCuVLYlQxQbrYx2zj4p-sHYM8oZytjayQ0c2sD1h1t1EUtmDgXo3-67TJXyXddvigdc6LXOIAWQqclFHC9MtWzzWV8bL7o0XhwFJsL73Xymck7eE0zkC-QWeOqxySq0OhcuOSw',
           // 'Api-Version' => 'v2',
         ],
 

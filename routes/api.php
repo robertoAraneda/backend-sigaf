@@ -22,35 +22,35 @@ use Illuminate\Support\Facades\Route;
 
 
 /**routes para sincronizar la app de forma masiva (inicial) */
-Route::get('/fetch/all', 'SynchronizeController@synchronizeAppInit');
-Route::get('/fetch/all/platforms-categories', 'SynchronizeController@syncronizeAppPlatformsCategoriesDaily');
-Route::get('/fetch/all/courses', 'SynchronizeController@synchronizeAppCoursesActive');
-Route::get('/fetch/all/activities', 'SynchronizeController@syncronizeAppActivitiesActive');
-Route::get('/fetch/all/user-registered', 'SynchronizeController@syncronizeAppRegisteredUsersActiveInit');
-Route::get('/fetch/all/user-registered-activities', 'SynchronizeController@syncronizeAppRegisteredUserActivitiesActiveInit');
+Route::get('/fetch/all', 'SynchronizeController@synchronizeAppInit')->name('sync.all');
+Route::get('/fetch/all/platforms-categories', 'SynchronizeController@syncronizeAppPlatformsCategoriesDaily')->name('sync.platforms');
+Route::get('/fetch/all/courses', 'SynchronizeController@synchronizeAppCoursesActive')->name('sync.courses');
+Route::get('/fetch/all/activities', 'SynchronizeController@syncronizeAppActivitiesActive')->name('sync.activities');
+Route::get('/fetch/all/user-registered', 'SynchronizeController@syncronizeAppRegisteredUsersActiveInit')->name('sync.users');
+Route::get('/fetch/all/user-registered-activities', 'SynchronizeController@syncronizeAppRegisteredUserActivitiesActiveInit')->name('sync.usersActivities');
 
 
 /** routes para sincronizar la app de forma manual (diaria) */
-Route::get('/fetch/daily', 'SynchronizeController@syncronizeAppDaily');
+Route::get('/fetch/daily', 'SynchronizeController@syncronizeAppDaily')->name('sync.daily.all');
 
-Route::get('/fetch/daily/user-registered', 'SynchronizeController@syncronizeAppRegisteredUsersActive');
-Route::get('/fetch/daily/user-registered-activities', 'SynchronizeController@syncronizeAppRegisteredUserActivitiesActive');
+Route::get('/fetch/daily/user-registered', 'SynchronizeController@syncronizeAppRegisteredUsersActive')->name('sync.daily.users');
+Route::get('/fetch/daily/user-registered-activities', 'SynchronizeController@syncronizeAppRegisteredUserActivitiesActive')->name('sync.daily.usersActivities');
 
 
 /**rutas api */
 
-Route::apiResource('/final-status', 'FinalStatusController');
-Route::apiResource('/type-ticket', 'TypeTicketController');
-Route::apiResource('/motive-ticket', 'MotiveTicketController');
-Route::apiResource('/priority-ticket', 'PriorityTicketController');
-Route::apiResource('/profile', 'ProfileController');
-Route::apiResource('/role', 'RoleController');
-Route::apiResource('/status-detail-ticket', 'StatusDetailTicketController');
-Route::apiResource('/status-ticket', 'StatusTicketController');
-Route::apiResource('/classroom', 'ClassroomController');
-Route::apiResource('/ticket-detail', 'TicketDetailController');
-Route::apiResource('/ticket', 'TicketController');
-Route::apiResource('/alert', 'AlertController');
+// Route::apiResource('/final-status', 'FinalStatusController');
+// Route::apiResource('/type-ticket', 'TypeTicketController');
+// Route::apiResource('/motive-ticket', 'MotiveTicketController');
+// Route::apiResource('/priority-ticket', 'PriorityTicketController');
+// Route::apiResource('/profile', 'ProfileController');
+// Route::apiResource('/role', 'RoleController');
+// Route::apiResource('/status-detail-ticket', 'StatusDetailTicketController');
+// Route::apiResource('/status-ticket', 'StatusTicketController');
+// Route::apiResource('/classroom', 'ClassroomController');
+// Route::apiResource('/ticket-detail', 'TicketDetailController');
+// Route::apiResource('/ticket', 'TicketController');
+// Route::apiResource('/alert', 'AlertController');
 
 /**rutas files */
 

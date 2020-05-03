@@ -8,7 +8,9 @@ use App\Http\Resources\Json\Platform as JsonPlatform;
 use App\Http\Resources\Json\Category as JsonCategory;
 use App\Http\Resources\PlatformCollection;
 
-
+/**
+ * @group Platform management
+ */
 class PlatformController extends Controller
 {
 
@@ -23,6 +25,9 @@ class PlatformController extends Controller
    * Display a listing of the resource.
    *
    * @return \Illuminate\Http\Response
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\PlatformCollection
+   * @apiResourceModel App\Models\Platform
    */
   public function index()
   {
@@ -55,21 +60,28 @@ class PlatformController extends Controller
   }
 
   /**
-   * Display the specified resource.
+   * Display the platform.
    *
    * @param  int  $id
    * @return \Illuminate\Http\Response
+   * 
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\Platform
+   * @apiResourceModel App\Models\Platform
+   * 
+   * @urlParam platform required The ID of the platform.
+   * 
    */
-  public function show($id)
+  public function show($platform)
   {
     try {
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      if (!is_numeric($id))
+      if (!is_numeric($platform))
         return $this->response->badRequest();
 
-      $model = Platform::find($id);
+      $model = Platform::find($platform);
 
       if (!isset($model))
         return $this->response->noContent();
@@ -111,19 +123,30 @@ class PlatformController extends Controller
   }
 
   /**
-   * Display a list of a specified resource.
+   * Display a list of a categories from platform.
    *
    * @param  int  $id
    * @return \Illuminate\Http\Response
+   * 
+   * @authenticated 
+   * @response {
+   *  "platform": "platform",
+   *  "relationships":{
+   *    "links": {"href": "url", "rel": "/rels/categories"},
+   *    "collections": {"numberOfElements": "number", "data": "array"}
+   *   }
+   * }
+   * 
+   * @urlParam platform required The ID of the platform.
    */
-  public function categories($id)
+  public function categories($platform)
   {
 
     try {
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $checkModel = Platform::find($id);
+      $checkModel = Platform::find($platform);
 
       if (!isset($checkModel))
         return $this->response->noContent();
