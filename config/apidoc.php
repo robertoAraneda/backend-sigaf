@@ -147,7 +147,10 @@ return [
         'api.categories.delete',
         'api.courses.store',
         'api.courses.update',
-        'api.courses.delete'
+        'api.courses.delete',
+        'api.activities.store',
+        'api.activities.update',
+        'api.activities.delete'
       ],
 
       /*
@@ -266,6 +269,7 @@ return [
   'example_languages' => [
     // 'bash',
     // 'javascript',
+    // 'php'
   ],
 
   /*

@@ -17,14 +17,12 @@ class ActivityCollection extends ResourceCollection
   {
     return [
       'links' => [
-        'url' => route('api.activities.index'),
         'href' => route('api.activities.index', [], false),
+        'title' => 'Actividades disponibles desde Moodle',
         'rel' => 'self'
       ],
-      'count' => $this->collection->count(),
-      '' => $this->collection->map(function ($activity) {
-        return new Activity($activity);
-      })
+      'numberOfElements' => $this->collection->count(),
+      'collections' => $this->collection->map->format()
     ];
   }
 }

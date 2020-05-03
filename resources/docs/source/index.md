@@ -18,11 +18,164 @@ Welcome to the generated API reference.
 
 <!-- END_INFO -->
 
+#Activity management
+
+
+<!-- START_95d2e24a602465170307b4b9a18ae6da -->
+## Display a listing of courses resources.
+
+<br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small>
+> Example request:
+
+
+> Example response (200):
+
+```json
+{
+    "data": {
+        "links": {
+            "href": "\/api\/v2\/activities",
+            "title": "Actividades disponibles desde Moodle",
+            "rel": "self"
+        },
+        "numberOfElements": 2,
+        "collections": [
+            {
+                "links": {
+                    "href": "\/api\/v2\/activities\/3",
+                    "rel": "self"
+                },
+                "properties": {
+                    "id": 3,
+                    "description": "Tarea: Unidad 2.1",
+                    "type": "Tareas",
+                    "weighing": 10,
+                    "idActivityMoodle": 631096,
+                    "createdAt": "27-04-2020",
+                    "updatedAt": "27-04-2020"
+                },
+                "nestedObjects": {
+                    "course": {
+                        "links": {
+                            "url": "http:\/\/localhost:8002\/api\/v2\/courses\/2",
+                            "href": "\/api\/v2\/courses\/2",
+                            "rel": "self"
+                        },
+                        "properties": {
+                            "id": 2,
+                            "description": "Curso: Estrategias didáctica de la Enseñanza Media Técnico Profesional",
+                            "idCourseMoodle": 9135,
+                            "status": 1,
+                            "createdAt": "27-04-2020",
+                            "updatedAt": "27-04-2020"
+                        }
+                    }
+                },
+                "relationships": {
+                    "activityCourseUser": {
+                        "numberOfElements": 383,
+                        "links": {
+                            "href": "\/api\/v2\/activities\/3\/activity-course-users",
+                            "rel": "\/rels\/activityCourseUser"
+                        }
+                    }
+                }
+            },
+            {
+                "links": {
+                    "href": "\/api\/v2\/activities\/3",
+                    "rel": "self"
+                },
+                "properties": {
+                    "id": 3,
+                    "description": "Tarea: Unidad 2.1",
+                    "type": "Tareas",
+                    "weighing": 10,
+                    "idActivityMoodle": 631096,
+                    "createdAt": "27-04-2020",
+                    "updatedAt": "27-04-2020"
+                },
+                "nestedObjects": {
+                    "course": {
+                        "links": {
+                            "url": "http:\/\/localhost:8002\/api\/v2\/courses\/2",
+                            "href": "\/api\/v2\/courses\/2",
+                            "rel": "self"
+                        },
+                        "properties": {
+                            "id": 2,
+                            "description": "Curso: Estrategias didáctica de la Enseñanza Media Técnico Profesional",
+                            "idCourseMoodle": 9135,
+                            "status": 1,
+                            "createdAt": "27-04-2020",
+                            "updatedAt": "27-04-2020"
+                        }
+                    }
+                },
+                "relationships": {
+                    "activityCourseUser": {
+                        "numberOfElements": 383,
+                        "links": {
+                            "href": "\/api\/v2\/activities\/3\/activity-course-users",
+                            "rel": "\/rels\/activityCourseUser"
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}
+```
+
+### HTTP Request
+`GET api/v2/activities`
+
+
+<!-- END_95d2e24a602465170307b4b9a18ae6da -->
+
+<!-- START_5031520e66564b6d4ef65585d3d3551f -->
+## Display the specified resource.
+
+> Example request:
+
+
+
+### HTTP Request
+`GET api/v2/activities/{activity}`
+
+
+<!-- END_5031520e66564b6d4ef65585d3d3551f -->
+
+<!-- START_4fa1b6b9495a9918d140622c9561ae10 -->
+## Remove the specified resource from storage.
+
+> Example request:
+
+
+
+### HTTP Request
+`DELETE api/v2/activities/{activity}`
+
+
+<!-- END_4fa1b6b9495a9918d140622c9561ae10 -->
+
+<!-- START_b15051f09964060c2749b7d8fd8b3239 -->
+## api/v2/activities/{activity}/activity-course-users
+> Example request:
+
+
+
+### HTTP Request
+`GET api/v2/activities/{activity}/activity-course-users`
+
+
+<!-- END_b15051f09964060c2749b7d8fd8b3239 -->
+
 #Category management
 
 
 <!-- START_94d07e72ebb9866562ac55dedcf3994d -->
-## Display a listing of Categories.
+## Display a listing of categories resources.
 
 <br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small>
 > Example request:
@@ -124,7 +277,7 @@ Welcome to the generated API reference.
 <!-- END_94d07e72ebb9866562ac55dedcf3994d -->
 
 <!-- START_34cff46a3c56ad904f624d8e5ffb2c39 -->
-## Display the specified resource.
+## Display the category resource.
 
 <br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small>
 > Example request:
@@ -174,12 +327,12 @@ Welcome to the generated API reference.
 
 Parameter | Status | Description
 --------- | ------- | ------- | -------
-    `category` |  required  | The ID of the platform.
+    `category` |  required  | The ID of the category resource.
 
 <!-- END_34cff46a3c56ad904f624d8e5ffb2c39 -->
 
 <!-- START_48c461c31bbd959a9d53f9f1a44a2b8c -->
-## Display a list of courses related to Category.
+## Display a list of courses resources related to category resource.
 
 <br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small>
 > Example request:
@@ -210,7 +363,7 @@ Parameter | Status | Description
 
 Parameter | Status | Description
 --------- | ------- | ------- | -------
-    `category` |  required  | The ID of the Category.
+    `category` |  required  | The ID of the category resource.
 
 <!-- END_48c461c31bbd959a9d53f9f1a44a2b8c -->
 
@@ -249,7 +402,7 @@ Parameter | Status | Description
                     "createdAt": "27-04-2020",
                     "updatedAt": "27-04-2020"
                 },
-                "nestedObject": {
+                "nestedObjects": {
                     "category": {
                         "links": {
                             "href": "\/api\/v2\/categories\/1",
@@ -295,7 +448,7 @@ Parameter | Status | Description
                     "createdAt": "27-04-2020",
                     "updatedAt": "27-04-2020"
                 },
-                "nestedObject": {
+                "nestedObjects": {
                     "category": {
                         "links": {
                             "href": "\/api\/v2\/categories\/1",
@@ -546,7 +699,7 @@ Parameter | Status | Description
 
 
 <!-- START_9f24b60bae02f95478d704bb25231992 -->
-## Display a listing of Platforms.
+## Display a listing of platforms resources.
 
 <br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small>
 > Example request:
@@ -618,7 +771,7 @@ Parameter | Status | Description
 <!-- END_9f24b60bae02f95478d704bb25231992 -->
 
 <!-- START_919d5242b4eeaebcef7ee75e66e7d585 -->
-## Display the platform.
+## Display the platform resource.
 
 <br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small>
 > Example request:
@@ -666,12 +819,12 @@ Parameter | Status | Description
 
 Parameter | Status | Description
 --------- | ------- | ------- | -------
-    `platform` |  required  | The ID of the platform.
+    `platform` |  required  | The ID of the platform resource.
 
 <!-- END_919d5242b4eeaebcef7ee75e66e7d585 -->
 
 <!-- START_abe9f0711abd831f26874700307ce522 -->
-## Display a list of a categories related to Platform.
+## Display a list of a categories resources related to platform resource.
 
 <br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small>
 > Example request:
@@ -702,7 +855,7 @@ Parameter | Status | Description
 
 Parameter | Status | Description
 --------- | ------- | ------- | -------
-    `platform` |  required  | The ID of the Platform.
+    `platform` |  required  | The ID of the platform resource.
 
 <!-- END_abe9f0711abd831f26874700307ce522 -->
 
@@ -839,73 +992,6 @@ Parameter | Status | Description
 
 
 <!-- END_69f5a4f9642c39219ff5d452cb9037d0 -->
-
-<!-- START_95d2e24a602465170307b4b9a18ae6da -->
-## Display a listing of the resource.
-
-> Example request:
-
-
-
-### HTTP Request
-`GET api/v2/activities`
-
-
-<!-- END_95d2e24a602465170307b4b9a18ae6da -->
-
-<!-- START_235ccdf3590f1ae1cb5f31870da4a44b -->
-## Store a newly created resource in storage.
-
-> Example request:
-
-
-
-### HTTP Request
-`POST api/v2/activities`
-
-
-<!-- END_235ccdf3590f1ae1cb5f31870da4a44b -->
-
-<!-- START_5031520e66564b6d4ef65585d3d3551f -->
-## Display the specified resource.
-
-> Example request:
-
-
-
-### HTTP Request
-`GET api/v2/activities/{activity}`
-
-
-<!-- END_5031520e66564b6d4ef65585d3d3551f -->
-
-<!-- START_c1ec476708f89a753305ee46ca76535c -->
-## Update the specified resource in storage.
-
-> Example request:
-
-
-
-### HTTP Request
-`PUT api/v2/activities/{activity}`
-
-`PATCH api/v2/activities/{activity}`
-
-
-<!-- END_c1ec476708f89a753305ee46ca76535c -->
-
-<!-- START_4fa1b6b9495a9918d140622c9561ae10 -->
-## Remove the specified resource from storage.
-
-> Example request:
-
-
-
-### HTTP Request
-`DELETE api/v2/activities/{activity}`
-
-
-<!-- END_4fa1b6b9495a9918d140622c9561ae10 -->
 
 <!-- START_191ae651323ecb4e160c0629af473219 -->
 ## Display a listing of the resource.
@@ -1341,18 +1427,6 @@ Parameter | Status | Description
 
 
 <!-- END_bf9f8ba67e81ec80180d58efef9a4af3 -->
-
-<!-- START_b15051f09964060c2749b7d8fd8b3239 -->
-## api/v2/activities/{activity}/activity-course-users
-> Example request:
-
-
-
-### HTTP Request
-`GET api/v2/activities/{activity}/activity-course-users`
-
-
-<!-- END_b15051f09964060c2749b7d8fd8b3239 -->
 
 <!-- START_56af8b0e7f974bae5560f64ff636f82b -->
 ## api/v2/registered-users/{registered_user}/courses

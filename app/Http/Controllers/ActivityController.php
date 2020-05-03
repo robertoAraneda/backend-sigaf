@@ -9,9 +9,17 @@ use App\Http\Resources\Json\Activity as JsonActivity;
 use App\Http\Resources\Json\ActivityCourseRegisteredUser as JsonActivityCourseUser;
 use Illuminate\Support\Facades\Validator;
 
+/**
+ * @group Activity management
+ */
 class ActivityController extends Controller
 {
 
+  /**
+   * Property for make a response.
+   *
+   * @var  App\Helpers\MakeResponse  $response
+   */
   protected $response;
 
   public function __construct(MakeResponse $makeResponse = null)
@@ -25,10 +33,14 @@ class ActivityController extends Controller
       'weighing' => 'required|integer'
     ]);
   }
+
   /**
-   * Display a listing of the resource.
+   * Display a listing of courses resources.
    *
-   * @return \Illuminate\Http\Response
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\ActivityCollection
+   * @apiResourceModel App\Models\Activity
    */
   public function index()
   {

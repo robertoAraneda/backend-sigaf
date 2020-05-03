@@ -78,8 +78,9 @@ class CourseController extends Controller
   /**
    * Display the course resource.
    *
-   * @param  int  $id
+   * @param  int  $course
    * @return App\Helpers\MakeResponse
+   * 
    * @authenticated 
    * @apiResourceCollection App\Http\Resources\Json\Course
    * @apiResourceModel App\Models\Course
