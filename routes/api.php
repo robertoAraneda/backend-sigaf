@@ -98,16 +98,19 @@ Route::group([
   Route::get('/type-tickets/{type_ticket}/tickets', 'TypeTicketController@tickets')->name('api.typeTickets.tickets');
   Route::get('/activities/{activity}/activity-course-users', 'ActivityController@activityCourseUsers')->name('api.activities.activityCourseUsers');
   Route::get('/categories/{category}/courses', 'CategoryController@courses')->name('api.categories.courses');
+
   Route::get('/courses/{course}/activities', 'CourseController@activities')->name('api.courses.activities');
   Route::get('/courses/{course}/registered-users', 'CourseController@registeredUsers')->name('api.courses.registeredUsers');
   Route::get('/courses/{course}/registered-users/{registered_user}', 'CourseController@registeredUser')->name('api.courses.registeredUsers.show');
   Route::get('/courses/{course}/registered-users/{registered_user}/activities', 'CourseController@userActivities')->name('api.courses.registeredUsers.activities');
+
+
   Route::get('/course-users/{course_user}/activities', 'CourseRegisteredUserController@activities')->name('api.courseRegisteredUsers.activities');
   Route::get('/platforms/{platform}/categories', 'PlatformController@categories')->name('api.platforms.categories');
 
   Route::get('/registered-users/{registered_user}/courses', 'RegisteredUserController@courses')->name('api.registeredUsers.courses');
-
   Route::get('/registered-users/{registered_user}/courses/{course}', 'RegisteredUserController@course')->name('api.registeredUsers.courses.show');
-
   Route::get('/registered-users/{registered_user}/courses/{course}/activities', 'RegisteredUserController@activities')->name('api.registeredUsers.activities');
+
+  Route::get('/registered-users/{registered_user}/tickets', 'RegisteredUserController@tickets')->name('api.registeredUsers.tickets');
 });

@@ -144,7 +144,7 @@ class CourseController extends Controller
         'course' => $model,
         'relationships' => [
           'links' => [
-            'href' => route('api.courses.activities', ['id' => $model->id], false),
+            'href' => route('api.courses.activities', ['course' => $model->id], false),
             'rel' => '/rels/activities',
           ],
           'quantity' => $model->activities->count(),
@@ -177,7 +177,7 @@ class CourseController extends Controller
         'courseRegisteredUser' => $model,
         'relationships' => [
           'links' => [
-            'href' => route('api.courses.registeredUsers', ['id' => $model->id], false),
+            'href' => route('api.courses.registeredUsers', ['course' => $model->id], false),
             'rel' => '/rels/registeredUsers',
           ],
           'quantity' => $model->registeredUsers->count(),
@@ -212,6 +212,7 @@ class CourseController extends Controller
 
       $model->courses = [
 
+        'registeredUser' => $checkModel,
         'relationships' =>
         [
           'links' => [
