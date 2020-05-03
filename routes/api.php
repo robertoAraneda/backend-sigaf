@@ -83,6 +83,7 @@ Route::group([
   Route::apiResource('/tickets', 'TicketController')->names('api.tickets');
   Route::apiResource('/status-tickets', 'StatusTicketController')->names('api.statusTickets');
   Route::apiResource('/priority-tickets', 'PriorityTicketController')->names('api.priorityTickets');
+  Route::apiResource('/motive-tickets', 'MotiveTicketController')->names('api.motiveTickets');
 
   Route::get('/activity-course-registered-users/{activity_course_registered_user}', 'ActivityCourseRegisteredUserController@show')->name('api.activityCourseRegisteredUsers.show');
 
@@ -98,4 +99,5 @@ Route::group([
   Route::get('categories/{category}/courses', 'CategoryController@courses')->name('api.categories.courses');
   Route::get('/status-tickets/{status_ticket}/tickets', 'StatusTicketController@tickets')->name('api.statusTickets.tickets');
   Route::get('/priority-tickets/{priority_ticket}/tickets', 'PriorityTicketController@tickets')->name('api.priorityTickets.tickets');
+  Route::get('/motive-tickets/{motive_ticket}/tickets', 'MotiveTicketController@tickets')->name('api.motiveTickets.tickets');
 });
