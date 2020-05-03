@@ -12,6 +12,11 @@ class Category extends Model
 
   protected $guarded = [];
 
+  /**
+   * Get the Category formated
+   *
+   * @return array
+   */
   public function format()
   {
     return [
@@ -24,28 +29,43 @@ class Category extends Model
         'description' => $this->description,
         'idCategoryMoodle' => $this->id_category_moodle,
         'status' => $this->status,
-        'createdAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('d-m-Y') : null,
-        'updatedAt' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('d-m-Y') : null
+        'createdAt' => $this->created_at != null
+          ?  Carbon::parse($this->created_at)->format('d-m-Y')
+          : null,
+        'updatedAt' => $this->updated_at != null
+          ?  Carbon::parse($this->updated_at)->format('d-m-Y')
+          : null
       ],
-      'nestedObject' => [
+      'nestedObjects' => [
         'platform' => new JsonPlatform($this->platform)
       ],
-      'collections' => [
-        'courses' => [
-          'links' => [
-            'href' => route('api.categories.courses', ['id' => $this->id], false),
-            'rel' => '/rels/courses'
-          ]
+      'relationships' => [
+        'numberOfElements' => $this->courses()->count(),
+        'links' => [
+          'href' => route(
+            'api.categories.courses',
+            ['category' => $this->id],
+            false
+          ),
+          'rel' => '/rels/courses'
         ]
       ]
     ];
   }
 
-  public function platform()
+  /**
+   * Get the platform for the category
+   *
+   */
+  function platform()
   {
     return $this->belongsTo(Platform::class);
   }
 
+  /**
+   * Get the courses for the category
+   *
+   */
   public function courses()
   {
     return $this->hasMany(Course::class);

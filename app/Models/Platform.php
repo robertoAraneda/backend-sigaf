@@ -38,19 +38,19 @@ class Platform extends Model
           ?  Carbon::parse($this->updated_at)->format('d-m-Y')
           : null
       ],
-      'nestedObject' => null,
-      'collections' => [
-        'categories' => [
-          'links' => [
-            'href' => route(
-              'api.platforms.categories', //nombre de la ruta (names en cada Route en archivo api.php)
-              ['platform' => $this->id], //parametros necesarios para construir la URL
-              false //obtener ruta relativa
-            ),
-            'rel' => '/rels/categories' //relación con la clase principal
-          ]
+      'nestedObjects' => null,
+      'relationships' => [
+        'numberOfElements' => $this->categories()->count(),
+        'links' => [
+          'href' => route(
+            'api.platforms.categories', //nombre de la ruta (names en cada Route en archivo api.php)
+            ['platform' => $this->id], //parametros necesarios para construir la URL
+            false //obtener ruta relativa
+          ),
+          'rel' => '/rels/categories' //relación con la clase principal
         ]
       ]
+
     ];
   }
 

@@ -21,8 +21,8 @@ class CategoryCollection extends ResourceCollection
         'title' => 'Lista de categorías desde Moodle',
         'rel' => 'self'
       ],
-      'quantity' => $this->collection->count(),
-      'categories' => $this->collection->map->format()
+      'numberOfElements' => $this->collection->count(),
+      'collections' => $this->collection->map->format()
     ];
   }
 }

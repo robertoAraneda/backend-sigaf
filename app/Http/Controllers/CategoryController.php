@@ -11,6 +11,12 @@ use App\Http\Resources\Json\Category as JsonCategory;
 class CategoryController extends Controller
 {
 
+
+  /**
+   * Property for make a response.
+   *
+   * @var  App\Helpers\MakeResponse  $response
+   */
   protected $response;
 
   public function __construct(MakeResponse $makeResponse = null)
@@ -22,7 +28,7 @@ class CategoryController extends Controller
   /**
    * Display a listing of the resource.
    *
-   * @return \Illuminate\Http\Response
+   * @return App\Helpers\MakeResponse
    */
   public function index()
   {
@@ -42,6 +48,12 @@ class CategoryController extends Controller
     }
   }
 
+  /**
+   * Store a newly created resource in storage.
+   *
+   * @param  Object $categoryMoodle
+   * @return Object $category
+   */
   public function store($categoryMoodle)
   {
     $category = new Category();
@@ -56,6 +68,13 @@ class CategoryController extends Controller
     return $category;
   }
 
+
+  /**
+   * Display the specified resource.
+   *
+   * @param  int  $id
+   * @return App\Helpers\MakeResponse
+   */
   public function show($id)
   {
     try {
@@ -77,22 +96,44 @@ class CategoryController extends Controller
     }
   }
 
+  /**
+   * Display the specified resource.
+   *
+   * @param  int  $idCategoryMoodle
+   * @return Object $category
+   */
   public function findByIdCategoryMoodle($idCategoryMoodle)
   {
-    $category = Category::where('id_category_moodle', $idCategoryMoodle)->first();
+    $category = Category::where('id_category_moodle', $idCategoryMoodle)
+      ->first();
 
     return $category;
   }
 
+  /**
+   * Display the specified resource.
+   *
+   * @param  int  $idCategoryMoodle
+   * @param  int  $idPlatform
+   * @return Object $category
+   */
   public function findByIdPlatformAndCategoryMoodle($idCategoryMoodle, $idPlatform)
   {
 
-    $category = Category::where('id_category_moodle', $idCategoryMoodle)->where('platform_id', $idPlatform)->first();
+    $category = Category::where('id_category_moodle', $idCategoryMoodle)
+      ->where('platform_id', $idPlatform)
+      ->first();
 
     return $category;
   }
 
-
+  /**
+   * Updated the specified resource.
+   *
+   * @param  int  $id
+   * @param  int  $categoryMoodle
+   * @return Object $category
+   */
   public function update($id, $categoryMoodle)
   {
 
@@ -109,11 +150,12 @@ class CategoryController extends Controller
   }
 
 
-  public function destroy($id)
-  {
-    //
-  }
-
+  /**
+   * Display a list of courses.
+   *
+   * @param  int  $id
+   * @return App\Helpers\MakeResponse
+   */
   public function courses($id)
   {
     try {
@@ -131,13 +173,20 @@ class CategoryController extends Controller
         'category' => $model,
         'relationships' => [
           'links' => [
-            'href' => route('api.categories.courses', ['id' => $model->id], false),
+            'href' => route(
+              'api.categories.courses',
+              ['category' => $model->id],
+              false
+            ),
             'rel' => '/rels/courses',
           ],
-          'quantity' => $model->courses->count(),
-          'collection' => $model->courses->map(function ($course) {
-            return new JsonCourse($course);
-          })
+
+          'collection' => [
+            'numberOfElements' => $model->courses->count(),
+            'data' => $model->courses->map(function ($course) {
+              return new JsonCourse($course);
+            })
+          ]
         ]
       ];
 

@@ -21,8 +21,8 @@ class PlatformCollection extends ResourceCollection
         'title' => 'Plataformas disponibles desde Moodle',
         'rel' => 'self'
       ],
-      'quantity' => $this->collection->count(),
-      'collection' => $this->collection->map->format()
+      'numberOfElements' => $this->collection->count(),
+      'collections' => $this->collection->map->format()
     ];
   }
 }

@@ -145,8 +145,8 @@ class PlatformController extends Controller
 
             'rel' => '/rels/categories'
           ],
-          'collection' => [
-            'quantity' => $model->categories->count(),
+          'collections' => [
+            'numberOfElements' => $model->categories->count(),
             'data' => $model->categories->map(function ($category) {
               return new JsonCategory($category);
             })
