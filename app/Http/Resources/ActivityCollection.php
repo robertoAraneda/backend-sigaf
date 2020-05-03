@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Json\Activity;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ActivityCollection extends ResourceCollection
@@ -16,12 +17,12 @@ class ActivityCollection extends ResourceCollection
   {
     return [
       'links' => [
-        'url' => route('api.activities.index'),
         'href' => route('api.activities.index', [], false),
+        'title' => 'Actividades disponibles desde Moodle',
         'rel' => 'self'
       ],
-      'count' => $this->collection->count(),
-      'activities' => $this->collection->map->format()
+      'numberOfElements' => $this->collection->count(),
+      'collections' => $this->collection->map->format()
     ];
   }
 }

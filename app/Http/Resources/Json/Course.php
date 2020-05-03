@@ -21,14 +21,17 @@ class Course extends JsonResource
         'href' => route('api.courses.show', ['course' => $this->id], false),
         'rel' => 'self'
       ],
-      'course' => [
+      'properties' => [
         'id' => $this->id,
         'description'  => $this->description,
-        'category'  =>  new Category($this->category),
-        'id_course_moodle'  => $this->id_course_moodle,
+        'idCourseMoodle'  => $this->id_course_moodle,
         'status'  => $this->status,
-        'created_at' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null,
-        'updated_at' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('Y-m-d H:i:s') : null
+        'createdAt' => $this->created_at != null
+          ?  Carbon::parse($this->created_at)->format('d-m-Y')
+          : null,
+        'updatedAt' => $this->updated_at != null
+          ?  Carbon::parse($this->updated_at)->format('d-m-Y')
+          : null
       ]
     ];
   }

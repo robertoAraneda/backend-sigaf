@@ -6,14 +6,23 @@ use App\Helpers\MakeResponse;
 use App\Http\Resources\ActivityCollection;
 use App\Models\Activity;
 use App\Http\Resources\Json\Activity as JsonActivity;
+use App\Http\Resources\Json\ActivityCourseRegisteredUser as JsonActivityCourseUser;
 use Illuminate\Support\Facades\Validator;
 
+/**
+ * @group Activity management
+ */
 class ActivityController extends Controller
 {
 
+  /**
+   * Property for make a response.
+   *
+   * @var  App\Helpers\MakeResponse  $response
+   */
   protected $response;
 
-  public function __construct(MakeResponse $makeResponse)
+  public function __construct(MakeResponse $makeResponse = null)
   {
     $this->response = $makeResponse;
   }
@@ -24,10 +33,14 @@ class ActivityController extends Controller
       'weighing' => 'required|integer'
     ]);
   }
+
   /**
-   * Display a listing of the resource.
+   * Display a listing of courses resources.
    *
-   * @return \Illuminate\Http\Response
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\ActivityCollection
+   * @apiResourceModel App\Models\Activity
    */
   public function index()
   {
@@ -85,7 +98,7 @@ class ActivityController extends Controller
       if (!isset($activity))
         return $this->response->noContent();
 
-      return $this->response->success(new JsonActivity($activity));
+      return $this->response->success($activity->format());
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
@@ -146,31 +159,34 @@ class ActivityController extends Controller
     //
   }
 
-  public function activityCourseRegisteredUsers($idActivity)
+  public function activityCourseUsers($id)
   {
     try {
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $activity = Activity::find($idActivity);
+      $checkModel = Activity::find($id);
 
-      $activity['links'] = [
-        'url' => route('api.activities.activityCourseRegisteredUsers', ['activity' => $activity->id]),
-        'href' => route('api.activities.activityCourseRegisteredUsers', ['activity' => $activity->id], false),
-        'rel' => class_basename($activity->activityCourseRegisteredUsers()->getRelated()),
+      if (!isset($checkModel))
+        return $this->response->noContent();
+
+      $model = new JsonActivity($checkModel);
+
+      $model->activityCourseUsers = [
+        'activity' => $model,
+        'relationships' => [
+          'links' => [
+            'href' => route('api.activities.activityCourseUsers', ['id' => $model->id], false),
+            'rel' => '/rels/activityCourseUsers',
+          ],
+          'quantity' => $model->activityCourseUsers->count(),
+          'collection' => $model->activityCourseUsers->map(function ($activityCourseUser) {
+            return new JsonActivityCourseUser($activityCourseUser);
+          })
+        ]
       ];
 
-      $activity['count'] = $activity->activityCourseRegisteredUsers->count();
-
-      $activity['activityCourseRegisteredUsers'] = [
-
-        'activity' => new JsonActivity($activity),
-        'activityCourseRegisteredUsers' => $activity->activityCourseRegisteredUsers->map(function ($activityRegisteredUser) {
-          return new JsonActivityCourseRegisteredUser($activityRegisteredUser);
-        })
-      ];
-
-      return $this->response->success($activity->activityCourseRegisteredUsers);
+      return $this->response->success($model->activityCourseUsers);
     } catch (\Exception $exception) {
       return $this->response->exception($exception->getMessage());
     }

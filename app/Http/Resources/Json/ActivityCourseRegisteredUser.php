@@ -17,17 +17,20 @@ class ActivityCourseRegisteredUser extends JsonResource
   {
     return [
       'links' => [
-        'url' => route('api.activityCourseRegisteredUsers.show', ['activityCourseRegisteredUser' => $this->id]),
-        'href' => route('api.activityCourseRegisteredUsers.show', ['activityCourseRegisteredUser' => $this->id], false),
+        'href' => route('api.activityCourseUsers.show', ['activity_course_user' => $this->id], false),
         'rel' => 'self'
       ],
-      'id' => $this->id,
-      'activity' => $this->activity,
-      'courseRegisteredUser' => new Platform($this->courseRegisteredUser),
-      'status_moodle' => $this->status_moodle,
-      'qualification_moodle' => $this->qualification_moodle,
-      'created_at' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null,
-      'updated_at' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('Y-m-d H:i:s') : null
+      'properties' => [
+        'id' => $this->id,
+        'status_moodle' => $this->status_moodle,
+        'qualification_moodle' => $this->qualification_moodle,
+        'created_at' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null,
+        'updated_at' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('Y-m-d H:i:s') : null
+      ],
+      'anidatedObject' => [
+        'activity' => $this->activity
+      ]
+
     ];
   }
 }

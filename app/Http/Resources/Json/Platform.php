@@ -7,6 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class Platform extends JsonResource
 {
+
   /**
    * Transform the resource into an array.
    *
@@ -17,16 +18,15 @@ class Platform extends JsonResource
   {
     return [
       'links' => [
-        'url' => route('api.platforms.show', ['platform' => $this->id]),
         'href' => route('api.platforms.show', ['platform' => $this->id], false),
         'rel' => 'self'
       ],
-      'platform' => [
+      'properties' => [
         'id' => $this->id,
         'description'  => $this->description,
         'status'  => $this->status,
-        'created_at' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null,
-        'updated_at' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('Y-m-d H:i:s') : null
+        'createdAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('d-m-Y') : null,
+        'updatedAt' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('d-m-Y') : null
       ]
     ];
   }
