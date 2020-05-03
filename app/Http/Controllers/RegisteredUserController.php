@@ -2,13 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\MakeResponse;
+use App\Http\Resources\RegisteredUserCollection;
 use App\Imports\RegisteredUserImport;
 use App\Models\RegisteredUser;
-use Illuminate\Http\Request;
+use App\Http\Resources\Json\RegisteredUser as JsonRegisteredUser;
+use App\Http\Resources\Json\Course as JsonCourse;
+use App\Http\Resources\Json\ActivityCourseRegisteredUser as JsonActivityCourseRegisteredUser;
+use App\Models\ActivityCourseRegisteredUser;
+use App\Models\Course;
+use App\Models\CourseRegisteredUser;
+
 use Maatwebsite\Excel\Facades\Excel;
 
 class RegisteredUserController extends Controller
 {
+
+  protected $response;
+
+  public function __construct(MakeResponse $makeResponse = null)
+  {
+    $this->response = $makeResponse;
+  }
   /**
    * Display a listing of the resource.
    *
@@ -16,7 +31,17 @@ class RegisteredUserController extends Controller
    */
   public function index()
   {
-    $registeredUsers = RegisteredUser::all();
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $collection = new RegisteredUserCollection(RegisteredUser::orderBy('id')->get());
+
+      return $this->response->success($collection);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 
   /**
@@ -50,7 +75,23 @@ class RegisteredUserController extends Controller
    */
   public function show($id)
   {
-    //
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      if (!is_numeric($id))
+        return $this->response->badRequest();
+
+      $model = RegisteredUser::find($id);
+
+      if (!isset($model))
+        return $this->response->noContent();
+
+      return $this->response->success($model->format());
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 
   public function findByIdRegisteredUserMoodle($idRegisteredUserMoodle)
@@ -122,5 +163,141 @@ class RegisteredUserController extends Controller
 
 
     // return redirect('/')->with('success', 'All good!');
+  }
+
+  public function course($idUser, $idCourse)
+  {
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $checkModel = RegisteredUser::find($idUser);
+
+      if (!isset($checkModel))
+        return $this->response->noContent();
+
+      $model = new JsonRegisteredUser($checkModel);
+
+      $course = Course::find($idCourse);
+
+      $model->courses = [
+
+        'relationships' =>
+        [
+          'links' => [
+            'href' => route('api.registeredUsers.courses.show', ['registered_user' => $model->id, 'course' => $idCourse], false),
+            'rel' => '/rels/courses'
+          ],
+
+          'collection' => [
+            'course' => new JsonCourse($course),
+            'links' => [
+              'href' => route('api.registeredUsers.activities', ['registered_user' => $model->id, 'course' => $course->id], false),
+              'rel' => '/rels/activities'
+            ]
+          ]
+        ]
+
+      ];
+
+      return $this->response->success($model->courses);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
+  }
+
+  public function courses($idUser)
+  {
+
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $checkModel = RegisteredUser::find($idUser);
+
+      if (!isset($checkModel))
+        return $this->response->noContent();
+
+      $model = new JsonRegisteredUser($checkModel);
+
+      $courseRegisteredUsers = $model->courseRegisteredUsers->load('course');
+
+      $model->courses = [];
+      foreach ($courseRegisteredUsers as $courseRegisteredUser) {
+        $model->courses[] = [
+
+          'relationships' =>
+          [
+            'links' => [
+              'href' => route('api.registeredUsers.courses.show', ['registered_user' => $model->id, 'course' => $courseRegisteredUser->course->id], false),
+
+              'rel' => '/rels/courses'
+            ],
+
+            'quantity' => $courseRegisteredUsers->count(),
+
+            'collection' => [
+              'course' => $courseRegisteredUser,
+              'links' => [
+                'href' => route('api.registeredUsers.activities', ['registered_user' => $model->id, 'course' => $courseRegisteredUser->course->id], false),
+                'rel' => '/rels/activities'
+              ]
+            ]
+          ]
+
+        ];
+      }
+
+      $model->courses['registeredUser'] = $model;
+
+      return $this->response->success($model->courses);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
+  }
+
+  public function activities($idUser, $idCourse)
+  {
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $checkModel = CourseRegisteredUser::where('registered_user_id', $idUser)->where('course_id', $idCourse)->with('registeredUser')->first();
+
+
+
+      if (!isset($checkModel))
+        return $this->response->noContent();
+
+      $collections = ActivityCourseRegisteredUser::where('course_registered_user_id', $checkModel->id)->get();
+
+
+
+      $collections->activities = [
+
+        'registeredUser' => $checkModel,
+        'relationships' =>
+        [
+          'links' => [
+            'href' => route('api.registeredUsers.activities', ['registered_user' => $checkModel->registered_user_id, 'course' => $checkModel->course_id], false),
+
+            'rel' => '/rels/activities'
+          ],
+
+          'quantity' => $collections->count(),
+
+          'collection' => $collections->map(function ($activity) {
+            return new JsonActivityCourseRegisteredUser($activity);
+          })
+        ]
+
+      ];
+      return $this->response->success($collections->activities);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 }

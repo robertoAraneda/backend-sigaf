@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Json\RegisteredUser;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class RegisteredUserCollection extends ResourceCollection
@@ -14,6 +15,13 @@ class RegisteredUserCollection extends ResourceCollection
    */
   public function toArray($request)
   {
-    return parent::toArray($request);
+    return [
+      'links' => [
+        'href' => route('api.registeredUsers.index', [], false),
+        'rel' => 'self'
+      ],
+      'quantity' => $this->collection->count(),
+      'collection' => $this->collection->map->format()
+    ];
   }
 }

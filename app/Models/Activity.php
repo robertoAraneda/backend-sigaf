@@ -35,7 +35,7 @@ class Activity extends Model
       'collections' => [
         'activityCourseUser' => [
           'links' => [
-            'href' => route('api.activities.activityCourseUser', ['id' => $this->id], false),
+            'href' => route('api.activities.activityCourseUsers', ['id' => $this->id], false),
             'rel' => '/rels/activityCourseUser'
           ]
         ]

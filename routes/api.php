@@ -102,4 +102,10 @@ Route::group([
   Route::get('/courses/{id}/registered-users', 'CourseController@registeredUsers')->name('api.courses.registeredUsers');
   Route::get('/course-registered-users/{id}/activities', 'CourseRegisteredUserController@activities')->name('api.courseRegisteredUsers.activities');
   Route::get('/platforms/{id}/categories', 'PlatformController@categories')->name('api.platforms.categories');
+
+  Route::get('/registered-users/{registered_user}/courses', 'RegisteredUserController@courses')->name('api.registeredUsers.courses');
+
+  Route::get('/registered-users/{registered_user}/courses/{course}', 'RegisteredUserController@course')->name('api.registeredUsers.courses.show');
+
+  Route::get('/registered-users/{registered_user}/courses/{course}/activities', 'RegisteredUserController@activities')->name('api.registeredUsers.activities');
 });

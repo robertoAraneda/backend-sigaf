@@ -22,7 +22,7 @@ class ActivityCollection extends ResourceCollection
         'rel' => 'self'
       ],
       'count' => $this->collection->count(),
-      'activities' => $this->collection->map(function ($activity) {
+      '' => $this->collection->map(function ($activity) {
         return new Activity($activity);
       })
     ];
