@@ -29,6 +29,7 @@ class StatusTicket extends Model
         'tickets' => [
           'links' => [
             'href' => route('api.statusTickets.tickets', ['status_ticket' => $this->id], false),
+            'quantity' => $this->tickets()->count(),
             'rel' => '/rels/tickets'
           ]
         ]

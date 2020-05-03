@@ -182,7 +182,7 @@ class StatusTicketController extends Controller
         'relationships' => [
           'links' => [
             'href' => route('api.statusTickets.tickets', ['status_ticket' => $statusTicket->id], false),
-            'rel' => class_basename($statusTicket->tickets()->getRelated()),
+            'rel' => '/rels/tickets',
           ],
           'quantity' => $statusTicket->tickets->count(),
           'collection' => $statusTicket->tickets->map(function ($ticket) {

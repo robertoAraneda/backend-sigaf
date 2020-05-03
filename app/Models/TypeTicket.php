@@ -29,6 +29,7 @@ class TypeTicket extends Model
         'tickets' => [
           'links' => [
             'href' => route('api.typeTickets.tickets', ['type_ticket' => $this->id], false),
+            'quantity' => $this->tickets()->count(),
             'rel' => '/rels/tickets'
           ]
         ]

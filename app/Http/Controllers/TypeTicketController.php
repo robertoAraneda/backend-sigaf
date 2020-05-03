@@ -185,7 +185,7 @@ class TypeTicketController extends Controller
         'relationship' => [
           'links' => [
             'href' => route('api.typeTickets.tickets', ['type_ticket' => $typeTicket->id], false),
-            'rel' => class_basename($typeTicket->tickets()->getRelated())
+            'rel' => '/rels/tickets'
           ],
           'quantity' => $typeTicket->tickets->count(),
           'collection' => $typeTicket->tickets->map(function ($ticket) {
