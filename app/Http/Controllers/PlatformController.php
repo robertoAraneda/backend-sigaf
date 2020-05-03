@@ -13,7 +13,11 @@ use App\Http\Resources\PlatformCollection;
  */
 class PlatformController extends Controller
 {
-
+  /**
+   * Property for make a response.
+   *
+   * @var  App\Helpers\MakeResponse  $response
+   */
   protected $response;
 
   public function __construct(MakeResponse $makeResponse = null)
@@ -22,9 +26,9 @@ class PlatformController extends Controller
   }
 
   /**
-   * Display a listing of the resource.
+   * Display a listing of Platforms.
    *
-   * @return \Illuminate\Http\Response
+   * @return App\Helpers\MakeResponse
    * @authenticated 
    * @apiResourceCollection App\Http\Resources\PlatformCollection
    * @apiResourceModel App\Models\Platform
@@ -63,7 +67,7 @@ class PlatformController extends Controller
    * Display the platform.
    *
    * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @return App\Helpers\MakeResponse
    * 
    * @authenticated 
    * @apiResourceCollection App\Http\Resources\Json\Platform
@@ -81,12 +85,12 @@ class PlatformController extends Controller
       if (!is_numeric($platform))
         return $this->response->badRequest();
 
-      $model = Platform::find($platform);
+      $getModel = Platform::find($platform);
 
-      if (!isset($model))
+      if (!isset($getModel))
         return $this->response->noContent();
 
-      return $this->response->success($model->format());
+      return $this->response->success($getModel->format());
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
@@ -97,7 +101,7 @@ class PlatformController extends Controller
    * Display the specified resource.
    *
    * @param  int  $description
-   * @return \Illuminate\Http\Response
+   * @return Object $category
    */
   public function findByDescription($description)
   {
@@ -123,10 +127,10 @@ class PlatformController extends Controller
   }
 
   /**
-   * Display a list of a categories from platform.
+   * Display a list of a categories related to Platform.
    *
    * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @return App\Helpers\MakeResponse
    * 
    * @authenticated 
    * @response {
@@ -137,7 +141,7 @@ class PlatformController extends Controller
    *   }
    * }
    * 
-   * @urlParam platform required The ID of the platform.
+   * @urlParam platform required The ID of the Platform.
    */
   public function categories($platform)
   {

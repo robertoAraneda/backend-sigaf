@@ -8,6 +8,9 @@ use App\Models\Category;
 use App\Http\Resources\Json\Course as JsonCourse;
 use App\Http\Resources\Json\Category as JsonCategory;
 
+/**
+ * @group Category management
+ */
 class CategoryController extends Controller
 {
 
@@ -26,9 +29,12 @@ class CategoryController extends Controller
 
 
   /**
-   * Display a listing of the resource.
+   * Display a listing of Categories.
    *
    * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\CategoryCollection
+   * @apiResourceModel App\Models\Category
    */
   public function index()
   {
@@ -74,22 +80,27 @@ class CategoryController extends Controller
    *
    * @param  int  $id
    * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\Category
+   * @apiResourceModel App\Models\Category
+   * 
+   * @urlParam category required The ID of the platform.
    */
-  public function show($id)
+  public function show($category)
   {
     try {
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      if (!is_numeric($id))
+      if (!is_numeric($category))
         return $this->response->badRequest();
 
-      $category = Category::find($id);
+      $getModel = Category::find($category);
 
-      if (!isset($category))
+      if (!isset($getModel))
         return $this->response->noContent();
 
-      return $this->response->success($category->format());
+      return $this->response->success($getModel->format());
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
@@ -151,46 +162,57 @@ class CategoryController extends Controller
 
 
   /**
-   * Display a list of courses.
+   * Display a list of courses related to Category.
    *
    * @param  int  $id
    * @return App\Helpers\MakeResponse
+   * 
+   * @authenticated 
+   * @response {
+   *  "category": "category",
+   *  "relationships":{
+   *    "links": {"href": "url", "rel": "/rels/courses"},
+   *    "collections": {"numberOfElements": "number", "data": "array"}
+   *   }
+   * }
+   * 
+   * @urlParam category required The ID of the Category.
    */
-  public function courses($id)
+  public function courses($category)
   {
     try {
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $checkModel = Category::find($id);
+      $checkModel = Category::find($category);
 
       if (!isset($checkModel))
         return $this->response->noContent();
 
-      $model = new JsonCategory($checkModel);
+      $getModel = new JsonCategory($checkModel);
 
-      $model->courses = [
-        'category' => $model,
+      $getModel->getModelcourses = [
+        'category' => $getModel,
         'relationships' => [
           'links' => [
             'href' => route(
               'api.categories.courses',
-              ['category' => $model->id],
+              ['category' => $getModel->id],
               false
             ),
             'rel' => '/rels/courses',
           ],
 
           'collection' => [
-            'numberOfElements' => $model->courses->count(),
-            'data' => $model->courses->map(function ($course) {
+            'numberOfElements' => $getModel->courses->count(),
+            'data' => $getModel->courses->map(function ($course) {
               return new JsonCourse($course);
             })
           ]
         ]
       ];
 
-      return $this->response->success($model->courses);
+      return $this->response->success($getModel->courses);
     } catch (\Exception $exception) {
       return $this->response->exception($exception->getMessage());
     }

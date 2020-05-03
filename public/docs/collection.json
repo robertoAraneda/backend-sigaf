@@ -2,17 +2,135 @@
     "variables": [],
     "info": {
         "name": "API SIGAF",
-        "_postman_id": "daec37e6-7ab9-4de6-b45e-abec6ad57a63",
+        "_postman_id": "ef72bc7d-fb2e-4b6d-a41e-f345090e1a26",
         "description": "Urls para aplicaci\u00f3n SIGAF",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.0.0\/collection.json"
     },
     "item": [
         {
+            "name": "Category management",
+            "description": "",
+            "item": [
+                {
+                    "name": "Display a listing of Categories.",
+                    "request": {
+                        "url": {
+                            "protocol": "http",
+                            "host": "localhost:8002",
+                            "path": "api\/v2\/categories",
+                            "query": []
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiNmE2YjA2MjQ5NDU0ODMyYzU3ZjNmOTNmZGRmZjdjYWRiMTE5NTc4OWYxNWI2N2VkMWMzNjhkODRlNmQ4YTU5OTQxNmNhMzAwNjc3MWYwOGMiLCJpYXQiOjE1ODgyOTAwOTcsIm5iZiI6MTU4ODI5MDA5NywiZXhwIjoxNjE5ODI2MDk3LCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.hHCZJMWfm21nM9SNbR2Ywchw4bmWmlXNkkLtNMKEQoe1zTdZB3A3OOd5cniT3t-r7cqaBA5ZbCQqtbjHgqaY4BaDIUwXBDvD2K_8ozDTw5yXad_1De0-OB2zbggxGAO7u1LwlsRywZ0EwQb1co32fMbIYgj6vwXj_SZKGDlkJ64AClVo7gscxc9OvL0X56neU5hqkmywdrQkoHs0na-8Ix_G--cy3E4qqGy3UDA-BJpfJv9ad_z0KUMD7bYig2V4s446IXf3hiwoapglseMAM2gdlb9vdJY8PN9DKAZWkqdfTWrNpTw-qPUuSbvrcvgbXyzwyYC6LVxCdc25fFG_FOwD5wr4LlNEX6PdwRadXLbiCmKq3t8iiTaa4kDVtIyb9kQSOODQBl4OzC_Ni8YY-EPJwbnfcZkaKqCxvTiZVqC6yeKDcUncgCssqIIMLyEuvlsGKdogDr2PxZc-8rS_tR-G-iBVwTUDcTuv1IcG4vLp2Tz40qnR9bmt6D1-TpsTd8aTMcsnrL4yf9A_IFFhx3rVxSVKm1ZY0rF-6gCuVLYlQxQbrYx2zj4p-sHYM8oZytjayQ0c2sD1h1t1EUtmDgXo3-67TJXyXddvigdc6LXOIAWQqclFHC9MtWzzWV8bL7o0XhwFJsL73Xymck7eE0zkC-QWeOqxySq0OhcuOSw"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "[]"
+                        },
+                        "description": "",
+                        "response": []
+                    }
+                },
+                {
+                    "name": "Display the specified resource.",
+                    "request": {
+                        "url": {
+                            "protocol": "http",
+                            "host": "localhost:8002",
+                            "path": "api\/v2\/categories\/:category",
+                            "query": [],
+                            "variable": [
+                                {
+                                    "id": "category",
+                                    "key": "category",
+                                    "value": "sed",
+                                    "description": "The ID of the platform."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiNmE2YjA2MjQ5NDU0ODMyYzU3ZjNmOTNmZGRmZjdjYWRiMTE5NTc4OWYxNWI2N2VkMWMzNjhkODRlNmQ4YTU5OTQxNmNhMzAwNjc3MWYwOGMiLCJpYXQiOjE1ODgyOTAwOTcsIm5iZiI6MTU4ODI5MDA5NywiZXhwIjoxNjE5ODI2MDk3LCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.hHCZJMWfm21nM9SNbR2Ywchw4bmWmlXNkkLtNMKEQoe1zTdZB3A3OOd5cniT3t-r7cqaBA5ZbCQqtbjHgqaY4BaDIUwXBDvD2K_8ozDTw5yXad_1De0-OB2zbggxGAO7u1LwlsRywZ0EwQb1co32fMbIYgj6vwXj_SZKGDlkJ64AClVo7gscxc9OvL0X56neU5hqkmywdrQkoHs0na-8Ix_G--cy3E4qqGy3UDA-BJpfJv9ad_z0KUMD7bYig2V4s446IXf3hiwoapglseMAM2gdlb9vdJY8PN9DKAZWkqdfTWrNpTw-qPUuSbvrcvgbXyzwyYC6LVxCdc25fFG_FOwD5wr4LlNEX6PdwRadXLbiCmKq3t8iiTaa4kDVtIyb9kQSOODQBl4OzC_Ni8YY-EPJwbnfcZkaKqCxvTiZVqC6yeKDcUncgCssqIIMLyEuvlsGKdogDr2PxZc-8rS_tR-G-iBVwTUDcTuv1IcG4vLp2Tz40qnR9bmt6D1-TpsTd8aTMcsnrL4yf9A_IFFhx3rVxSVKm1ZY0rF-6gCuVLYlQxQbrYx2zj4p-sHYM8oZytjayQ0c2sD1h1t1EUtmDgXo3-67TJXyXddvigdc6LXOIAWQqclFHC9MtWzzWV8bL7o0XhwFJsL73Xymck7eE0zkC-QWeOqxySq0OhcuOSw"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "[]"
+                        },
+                        "description": "",
+                        "response": []
+                    }
+                },
+                {
+                    "name": "Display a list of courses related to Category.",
+                    "request": {
+                        "url": {
+                            "protocol": "http",
+                            "host": "localhost:8002",
+                            "path": "api\/v2\/categories\/:category\/courses",
+                            "query": [],
+                            "variable": [
+                                {
+                                    "id": "category",
+                                    "key": "category",
+                                    "value": "deserunt",
+                                    "description": "The ID of the Category."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiNmE2YjA2MjQ5NDU0ODMyYzU3ZjNmOTNmZGRmZjdjYWRiMTE5NTc4OWYxNWI2N2VkMWMzNjhkODRlNmQ4YTU5OTQxNmNhMzAwNjc3MWYwOGMiLCJpYXQiOjE1ODgyOTAwOTcsIm5iZiI6MTU4ODI5MDA5NywiZXhwIjoxNjE5ODI2MDk3LCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.hHCZJMWfm21nM9SNbR2Ywchw4bmWmlXNkkLtNMKEQoe1zTdZB3A3OOd5cniT3t-r7cqaBA5ZbCQqtbjHgqaY4BaDIUwXBDvD2K_8ozDTw5yXad_1De0-OB2zbggxGAO7u1LwlsRywZ0EwQb1co32fMbIYgj6vwXj_SZKGDlkJ64AClVo7gscxc9OvL0X56neU5hqkmywdrQkoHs0na-8Ix_G--cy3E4qqGy3UDA-BJpfJv9ad_z0KUMD7bYig2V4s446IXf3hiwoapglseMAM2gdlb9vdJY8PN9DKAZWkqdfTWrNpTw-qPUuSbvrcvgbXyzwyYC6LVxCdc25fFG_FOwD5wr4LlNEX6PdwRadXLbiCmKq3t8iiTaa4kDVtIyb9kQSOODQBl4OzC_Ni8YY-EPJwbnfcZkaKqCxvTiZVqC6yeKDcUncgCssqIIMLyEuvlsGKdogDr2PxZc-8rS_tR-G-iBVwTUDcTuv1IcG4vLp2Tz40qnR9bmt6D1-TpsTd8aTMcsnrL4yf9A_IFFhx3rVxSVKm1ZY0rF-6gCuVLYlQxQbrYx2zj4p-sHYM8oZytjayQ0c2sD1h1t1EUtmDgXo3-67TJXyXddvigdc6LXOIAWQqclFHC9MtWzzWV8bL7o0XhwFJsL73Xymck7eE0zkC-QWeOqxySq0OhcuOSw"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "[]"
+                        },
+                        "description": "",
+                        "response": []
+                    }
+                }
+            ]
+        },
+        {
             "name": "Platform management",
             "description": "",
             "item": [
                 {
-                    "name": "Display a listing of the resource.",
+                    "name": "Display a listing of Platforms.",
                     "request": {
                         "url": {
                             "protocol": "http",
@@ -55,7 +173,7 @@
                                 {
                                     "id": "platform",
                                     "key": "platform",
-                                    "value": "beatae",
+                                    "value": "illum",
                                     "description": "The ID of the platform."
                                 }
                             ]
@@ -95,7 +213,7 @@
                                 {
                                     "id": "platform",
                                     "key": "platform",
-                                    "value": "voluptates",
+                                    "value": "sit",
                                     "description": "The ID of the platform."
                                 }
                             ]
@@ -747,70 +865,6 @@
                             "query": []
                         },
                         "method": "DELETE",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiNmE2YjA2MjQ5NDU0ODMyYzU3ZjNmOTNmZGRmZjdjYWRiMTE5NTc4OWYxNWI2N2VkMWMzNjhkODRlNmQ4YTU5OTQxNmNhMzAwNjc3MWYwOGMiLCJpYXQiOjE1ODgyOTAwOTcsIm5iZiI6MTU4ODI5MDA5NywiZXhwIjoxNjE5ODI2MDk3LCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.hHCZJMWfm21nM9SNbR2Ywchw4bmWmlXNkkLtNMKEQoe1zTdZB3A3OOd5cniT3t-r7cqaBA5ZbCQqtbjHgqaY4BaDIUwXBDvD2K_8ozDTw5yXad_1De0-OB2zbggxGAO7u1LwlsRywZ0EwQb1co32fMbIYgj6vwXj_SZKGDlkJ64AClVo7gscxc9OvL0X56neU5hqkmywdrQkoHs0na-8Ix_G--cy3E4qqGy3UDA-BJpfJv9ad_z0KUMD7bYig2V4s446IXf3hiwoapglseMAM2gdlb9vdJY8PN9DKAZWkqdfTWrNpTw-qPUuSbvrcvgbXyzwyYC6LVxCdc25fFG_FOwD5wr4LlNEX6PdwRadXLbiCmKq3t8iiTaa4kDVtIyb9kQSOODQBl4OzC_Ni8YY-EPJwbnfcZkaKqCxvTiZVqC6yeKDcUncgCssqIIMLyEuvlsGKdogDr2PxZc-8rS_tR-G-iBVwTUDcTuv1IcG4vLp2Tz40qnR9bmt6D1-TpsTd8aTMcsnrL4yf9A_IFFhx3rVxSVKm1ZY0rF-6gCuVLYlQxQbrYx2zj4p-sHYM8oZytjayQ0c2sD1h1t1EUtmDgXo3-67TJXyXddvigdc6LXOIAWQqclFHC9MtWzzWV8bL7o0XhwFJsL73Xymck7eE0zkC-QWeOqxySq0OhcuOSw"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "[]"
-                        },
-                        "description": "",
-                        "response": []
-                    }
-                },
-                {
-                    "name": "Display a listing of the resource.",
-                    "request": {
-                        "url": {
-                            "protocol": "http",
-                            "host": "localhost:8002",
-                            "path": "api\/v2\/categories",
-                            "query": []
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiNmE2YjA2MjQ5NDU0ODMyYzU3ZjNmOTNmZGRmZjdjYWRiMTE5NTc4OWYxNWI2N2VkMWMzNjhkODRlNmQ4YTU5OTQxNmNhMzAwNjc3MWYwOGMiLCJpYXQiOjE1ODgyOTAwOTcsIm5iZiI6MTU4ODI5MDA5NywiZXhwIjoxNjE5ODI2MDk3LCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.hHCZJMWfm21nM9SNbR2Ywchw4bmWmlXNkkLtNMKEQoe1zTdZB3A3OOd5cniT3t-r7cqaBA5ZbCQqtbjHgqaY4BaDIUwXBDvD2K_8ozDTw5yXad_1De0-OB2zbggxGAO7u1LwlsRywZ0EwQb1co32fMbIYgj6vwXj_SZKGDlkJ64AClVo7gscxc9OvL0X56neU5hqkmywdrQkoHs0na-8Ix_G--cy3E4qqGy3UDA-BJpfJv9ad_z0KUMD7bYig2V4s446IXf3hiwoapglseMAM2gdlb9vdJY8PN9DKAZWkqdfTWrNpTw-qPUuSbvrcvgbXyzwyYC6LVxCdc25fFG_FOwD5wr4LlNEX6PdwRadXLbiCmKq3t8iiTaa4kDVtIyb9kQSOODQBl4OzC_Ni8YY-EPJwbnfcZkaKqCxvTiZVqC6yeKDcUncgCssqIIMLyEuvlsGKdogDr2PxZc-8rS_tR-G-iBVwTUDcTuv1IcG4vLp2Tz40qnR9bmt6D1-TpsTd8aTMcsnrL4yf9A_IFFhx3rVxSVKm1ZY0rF-6gCuVLYlQxQbrYx2zj4p-sHYM8oZytjayQ0c2sD1h1t1EUtmDgXo3-67TJXyXddvigdc6LXOIAWQqclFHC9MtWzzWV8bL7o0XhwFJsL73Xymck7eE0zkC-QWeOqxySq0OhcuOSw"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "[]"
-                        },
-                        "description": "",
-                        "response": []
-                    }
-                },
-                {
-                    "name": "Display the specified resource.",
-                    "request": {
-                        "url": {
-                            "protocol": "http",
-                            "host": "localhost:8002",
-                            "path": "api\/v2\/categories\/:category",
-                            "query": []
-                        },
-                        "method": "GET",
                         "header": [
                             {
                                 "key": "Content-Type",
@@ -1832,38 +1886,6 @@
                             "protocol": "http",
                             "host": "localhost:8002",
                             "path": "api\/v2\/activities\/:activity\/activity-course-users",
-                            "query": []
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiNmE2YjA2MjQ5NDU0ODMyYzU3ZjNmOTNmZGRmZjdjYWRiMTE5NTc4OWYxNWI2N2VkMWMzNjhkODRlNmQ4YTU5OTQxNmNhMzAwNjc3MWYwOGMiLCJpYXQiOjE1ODgyOTAwOTcsIm5iZiI6MTU4ODI5MDA5NywiZXhwIjoxNjE5ODI2MDk3LCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.hHCZJMWfm21nM9SNbR2Ywchw4bmWmlXNkkLtNMKEQoe1zTdZB3A3OOd5cniT3t-r7cqaBA5ZbCQqtbjHgqaY4BaDIUwXBDvD2K_8ozDTw5yXad_1De0-OB2zbggxGAO7u1LwlsRywZ0EwQb1co32fMbIYgj6vwXj_SZKGDlkJ64AClVo7gscxc9OvL0X56neU5hqkmywdrQkoHs0na-8Ix_G--cy3E4qqGy3UDA-BJpfJv9ad_z0KUMD7bYig2V4s446IXf3hiwoapglseMAM2gdlb9vdJY8PN9DKAZWkqdfTWrNpTw-qPUuSbvrcvgbXyzwyYC6LVxCdc25fFG_FOwD5wr4LlNEX6PdwRadXLbiCmKq3t8iiTaa4kDVtIyb9kQSOODQBl4OzC_Ni8YY-EPJwbnfcZkaKqCxvTiZVqC6yeKDcUncgCssqIIMLyEuvlsGKdogDr2PxZc-8rS_tR-G-iBVwTUDcTuv1IcG4vLp2Tz40qnR9bmt6D1-TpsTd8aTMcsnrL4yf9A_IFFhx3rVxSVKm1ZY0rF-6gCuVLYlQxQbrYx2zj4p-sHYM8oZytjayQ0c2sD1h1t1EUtmDgXo3-67TJXyXddvigdc6LXOIAWQqclFHC9MtWzzWV8bL7o0XhwFJsL73Xymck7eE0zkC-QWeOqxySq0OhcuOSw"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "[]"
-                        },
-                        "description": "",
-                        "response": []
-                    }
-                },
-                {
-                    "name": "Display a list of courses.",
-                    "request": {
-                        "url": {
-                            "protocol": "http",
-                            "host": "localhost:8002",
-                            "path": "api\/v2\/categories\/:category\/courses",
                             "query": []
                         },
                         "method": "GET",
