@@ -96,12 +96,14 @@ Route::group([
 
   //rels
   Route::get('/type-tickets/{type_ticket}/tickets', 'TypeTicketController@tickets')->name('api.typeTickets.tickets');
-  Route::get('/activities/{id}/activity-course-users', 'ActivityController@activityCourseUsers')->name('api.activities.activityCourseUsers');
-  Route::get('/categories/{id}/courses', 'CategoryController@courses')->name('api.categories.courses');
-  Route::get('/courses/{id}/activities', 'CourseController@activities')->name('api.courses.activities');
-  Route::get('/courses/{id}/registered-users', 'CourseController@registeredUsers')->name('api.courses.registeredUsers');
-  Route::get('/course-registered-users/{id}/activities', 'CourseRegisteredUserController@activities')->name('api.courseRegisteredUsers.activities');
-  Route::get('/platforms/{id}/categories', 'PlatformController@categories')->name('api.platforms.categories');
+  Route::get('/activities/{activity}/activity-course-users', 'ActivityController@activityCourseUsers')->name('api.activities.activityCourseUsers');
+  Route::get('/categories/{category}/courses', 'CategoryController@courses')->name('api.categories.courses');
+  Route::get('/courses/{course}/activities', 'CourseController@activities')->name('api.courses.activities');
+  Route::get('/courses/{course}/registered-users', 'CourseController@registeredUsers')->name('api.courses.registeredUsers');
+  Route::get('/courses/{course}/registered-users/{registered_user}', 'CourseController@registeredUser')->name('api.courses.registeredUsers.show');
+  Route::get('/courses/{course}/registered-users/{registered_user}/activities', 'CourseController@userActivities')->name('api.courses.registeredUsers.activities');
+  Route::get('/course-users/{course_user}/activities', 'CourseRegisteredUserController@activities')->name('api.courseRegisteredUsers.activities');
+  Route::get('/platforms/{platform}/categories', 'PlatformController@categories')->name('api.platforms.categories');
 
   Route::get('/registered-users/{registered_user}/courses', 'RegisteredUserController@courses')->name('api.registeredUsers.courses');
 

@@ -34,8 +34,14 @@ class Course extends Model
       'collections' => [
         'activities' => [
           'links' => [
-            'href' => route('api.courses.activities', ['id' => $this->id], false),
+            'href' => route('api.courses.activities', ['course' => $this->id], false),
             'rel' => '/rels/activities'
+          ]
+        ],
+        'registeredUsers' => [
+          'links' => [
+            'href' => route('api.courses.registeredUsers', ['course' => $this->id], false),
+            'rel' => '/rels/registeredUsers'
           ]
         ]
       ]

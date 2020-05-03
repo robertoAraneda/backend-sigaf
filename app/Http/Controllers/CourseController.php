@@ -6,11 +6,15 @@ use App\Helpers\MakeResponse;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use App\Http\Resources\Json\Course as JsonCourse;
+use App\Http\Resources\Json\RegisteredUser as JsonRegisteredUser;
 use App\Http\Resources\Json\Activity as JsonActivity;
 use App\Http\Resources\Json\CourseRegisteredUser as JsonCourseRegisteredUser;
+use App\Http\Resources\Json\ActivityCourseRegisteredUser as JsonActivityCourseRegisteredUser;
 use App\Http\Resources\CourseCollection;
 use App\Http\Resources\RegisteredUserCollection;
+use App\Models\ActivityCourseRegisteredUser;
 use App\Models\CourseRegisteredUser;
+use App\Models\RegisteredUser;
 
 class CourseController extends Controller
 {
@@ -185,6 +189,93 @@ class CourseController extends Controller
 
       return $this->response->success($model->registeredUsers);
     } catch (\Exception $exception) {
+      return $this->response->exception($exception->getMessage());
+    }
+  }
+
+
+
+  public function registeredUser($idCourse, $idUser)
+  {
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $checkModel = RegisteredUser::find($idUser);
+
+      if (!isset($checkModel))
+        return $this->response->noContent();
+
+      $model = new JsonRegisteredUser($checkModel);
+
+      $course = Course::find($idCourse);
+
+      $model->courses = [
+
+        'relationships' =>
+        [
+          'links' => [
+            'href' => route('api.courses.registeredUsers.show', ['registered_user' => $model->id, 'course' => $idCourse], false),
+            'rel' => '/rels/courses'
+          ],
+
+          'collection' => [
+            'course' => new JsonCourse($course),
+            'links' => [
+              'href' => route('api.courses.registeredUsers.activities', ['registered_user' => $model->id, 'course' => $course->id], false),
+              'rel' => '/rels/activities'
+            ]
+          ]
+        ]
+
+      ];
+
+      return $this->response->success($model->courses);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
+  }
+
+  public function userActivities($idCourse, $idUser)
+  {
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $checkModel = CourseRegisteredUser::where('registered_user_id', $idUser)->where('course_id', $idCourse)->with('registeredUser')->first();
+
+
+
+      if (!isset($checkModel))
+        return $this->response->noContent();
+
+      $collections = ActivityCourseRegisteredUser::where('course_registered_user_id', $checkModel->id)->get();
+
+
+
+      $collections->activities = [
+
+        'registeredUser' => $checkModel,
+        'relationships' =>
+        [
+          'links' => [
+            'href' => route('api.registeredUsers.activities', ['registered_user' => $checkModel->registered_user_id, 'course' => $checkModel->course_id], false),
+
+            'rel' => '/rels/activities'
+          ],
+
+          'quantity' => $collections->count(),
+
+          'collection' => $collections->map(function ($activity) {
+            return new JsonActivityCourseRegisteredUser($activity);
+          })
+        ]
+
+      ];
+      return $this->response->success($collections->activities);
+    } catch (\Exception $exception) {
+
       return $this->response->exception($exception->getMessage());
     }
   }
