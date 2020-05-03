@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class TypeTicketCollection extends ResourceCollection
+class MotiveTicketCollection extends ResourceCollection
 {
   /**
    * Transform the resource collection into an array.
@@ -16,12 +16,12 @@ class TypeTicketCollection extends ResourceCollection
   {
     return [
       'links' => [
-        'href' => route('api.typeTickets.index', [], false),
-        'title' => 'Listado de Tipos de Ticket',
+        'href' => route('api.motiveTickets.index', [], false),
+        'title' => 'Listado de Motivos de Ticket',
         'rel' => 'self'
       ],
       'quantity' => $this->collection->count(),
-      'typeTickets' => $this->collection->map->format()
+      'motiveTickets' => $this->collection->map->format()
     ];
   }
 }

@@ -2,15 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\MakeResponse;
+use App\Http\Resources\Json\StatusTicket as JsonStatusTicket;
+use App\Http\Resources\Json\Ticket as JsonTicket;
+use App\Http\Resources\StatusTicketCollection;
 use App\Models\StatusTicket;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class StatusTicketController extends Controller
 {
+  protected $response;
 
-  protected function validateData()
+  public function __construct(MakeResponse $makeResponse = null)
   {
-    return request()->validate([
+    $this->response = $makeResponse;
+  }
+
+  protected function validateData($request)
+  {
+    return Validator::make($request, [
       'description' => 'required|max:25'
     ]);
   }
@@ -21,26 +31,17 @@ class StatusTicketController extends Controller
    */
   public function index()
   {
-
     try {
 
-      $statusTickets = StatusTicket::orderBy('id')
-        ->get()
-        ->map
-        ->format();
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-      return response()->json([
-        'success' => true,
-        'statusTickets' => $statusTickets,
-        'error' => null,
-      ], 200);
+      $statusTickets = new StatusTicketCollection(StatusTicket::all());
+
+      return $this->response->success($statusTickets);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'statusTickets' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -55,24 +56,22 @@ class StatusTicketController extends Controller
 
     try {
 
-      $dataStore = $this->validateData();
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $validate = $this->validateData(request()->all());
+
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
 
       $statusTicket = new StatusTicket();
 
-      $statusTicket = $statusTicket->create($dataStore);
+      $statusTicket = $statusTicket->create(request()->all());
 
-      return response()->json([
-        'success' => true,
-        'statusTicket' => $statusTicket->fresh()->format(),
-        'error' => null,
-      ], 201);
+      return $this->response->created(new JsonStatusTicket($statusTicket));
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'statusTicket' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -86,41 +85,21 @@ class StatusTicketController extends Controller
   {
 
     try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-      if (is_numeric($id)) {
+      if (!is_numeric($id))
+        return $this->response->badRequest();
 
-        $statusTicket = StatusTicket::whereId($id)->first();
+      $statusTicket = StatusTicket::find($id);
 
-        if (isset($statusTicket)) {
+      if (!isset($statusTicket))
+        return $this->response->noContent();
 
-          return response()->json([
-            'success' => true,
-            'statusTicket' => $statusTicket->format(),
-            'error' => null,
-          ], 200);
-        } else {
-
-          return response()->json([
-            'success' => false,
-            'statusTicket' => null,
-            'error' => 'No Content',
-          ], 204);
-        }
-      } else {
-
-        return response()->json([
-          'success' => false,
-          'statusTicket' => null,
-          'error' => 'Bad Request',
-        ], 400);
-      }
+      return $this->response->success($statusTicket->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'statusTicket' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -135,50 +114,30 @@ class StatusTicketController extends Controller
   {
 
     try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-      if (is_numeric($id)) {
+      if (!is_numeric($id))
+        return $this->response->badRequest();
 
-        $dataUpdate = $this->validateData();
+      $statusTicket = StatusTicket::find($id);
 
-        $statusTicket = StatusTicket::whereId($id)->first();
+      if (!isset($statusTicket))
+        return $this->response->noContent();
 
-        if (isset($statusTicket)) {
+      $validate = $this->validateData(request()->all());
 
-          $statusTicket->update($dataUpdate);
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
 
-          return response()->json([
-            'success' => true,
-            'statusTicket' => $statusTicket->fresh()->format(),
-            'error' => null,
-          ], 200);
-        } else {
+      $statusTicket->update(request()->all());
 
-          return response()->json([
-            'success' => false,
-            'statusTicket' => null,
-            'error' => 'No Content',
-          ], 204);
-        }
-      } else {
-
-        return response()->json([
-          'success' => false,
-          'statusTicket' => null,
-          'error' => 'Bad Request',
-        ], 400);
-      }
+      return $this->response->success(new JsonStatusTicket($statusTicket->fresh()));
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'statusTicket' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
-
-
-
 
   /**
    * Remove the specified resource from storage.
@@ -190,43 +149,52 @@ class StatusTicketController extends Controller
   {
 
     try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-      if (is_numeric($id)) {
+      if (!is_numeric($id))
+        return $this->response->badRequest();
 
-        $statusTicket = StatusTicket::whereId($id)->first();
+      $statusTicket = StatusTicket::find($id);
 
-        if (isset($statusTicket)) {
+      if (!isset($statusTicket))
+        return $this->response->noContent();
 
-          $statusTicket->delete();
+      $statusTicket->delete();
 
-          return response()->json([
-            'success' => true,
-            'statusTicket' => null,
-            'error' => null,
-          ], 200);
-        } else {
-
-          return response()->json([
-            'success' => false,
-            'statusTicket' => null,
-            'error' => 'No Content'
-          ], 204);
-        }
-      } else {
-
-        return response()->json([
-          'success' => false,
-          'statusTicket' => null,
-          'error' => 'Bad Request',
-        ], 400);
-      }
+      return $this->response->success(null);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'statusTicket' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
+    }
+  }
+
+  public function tickets($idStatusTicket)
+  {
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $statusTicket = StatusTicket::find($idStatusTicket);
+
+      $statusTicket->tickets = [
+        'statusTicket' => $statusTicket,
+        'relationships' => [
+          'links' => [
+            'href' => route('api.statusTickets.tickets', ['status_ticket' => $statusTicket->id], false),
+            'rel' => '/rels/tickets',
+          ],
+          'quantity' => $statusTicket->tickets->count(),
+          'collection' => $statusTicket->tickets->map(function ($ticket) {
+            return new JsonTicket($ticket);
+          })
+        ]
+      ];
+
+      return $this->response->success($statusTicket->tickets);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
     }
   }
 }
