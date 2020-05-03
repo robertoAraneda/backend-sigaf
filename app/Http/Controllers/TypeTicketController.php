@@ -98,7 +98,7 @@ class TypeTicketController extends Controller
       if (!isset($typeTicket))
         return $this->response->noContent();
 
-      return $this->response->success(new JsonTypeTicket($typeTicket));
+      return $this->response->success($typeTicket->format());
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
@@ -182,18 +182,16 @@ class TypeTicketController extends Controller
 
       $typeTicket->tickets = [
         'typeTicket' => $typeTicket,
-
-        'url' => route('api.typeTickets.tickets', ['type_ticket' => $typeTicket->id]),
-
-        'href' => route('api.typeTickets.tickets', ['type_ticket' => $typeTicket->id], false),
-
-        'rel' => class_basename($typeTicket->tickets()->getRelated()),
-
-        'count' => $typeTicket->tickets->count(),
-
-        'tickets' => $typeTicket->tickets->map(function ($ticket) {
-          return new JsonTicket($ticket);
-        })
+        'relationship' => [
+          'links' => [
+            'href' => route('api.typeTickets.tickets', ['type_ticket' => $typeTicket->id], false),
+            'rel' => class_basename($typeTicket->tickets()->getRelated())
+          ],
+          'quantity' => $typeTicket->tickets->count(),
+          'collection' => $typeTicket->tickets->map(function ($ticket) {
+            return new JsonTicket($ticket);
+          })
+        ]
       ];
 
       return $this->response->success($typeTicket->tickets);

@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\Json\StatusTicket;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class StatusTicketCollection extends ResourceCollection
@@ -17,11 +16,11 @@ class StatusTicketCollection extends ResourceCollection
   {
     return [
       'links' => [
-        'url' => route('api.statusTickets.index'),
         'href' => route('api.statusTickets.index', [], false),
+        'title' => 'Listado de Estados de Ticket',
         'rel' => 'self'
       ],
-      'count' => $this->collection->count(),
+      'quantity' => $this->collection->count(),
       'statusTickets' => $this->collection->map->format()
     ];
   }

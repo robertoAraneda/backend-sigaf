@@ -21,8 +21,8 @@ class StatusTicket extends Model
       'properties' => [
         'id' => $this->id,
         'description' => $this->description,
-        'created_at' => $this->created_at != null ? Carbon::parse($this->created_at)->format('d-m-Y') : null,
-        'updated_at' => $this->updated_at != null ? Carbon::parse($this->updated_at)->format('d-m-Y') : null
+        'createdAt' => $this->created_at != null ? Carbon::parse($this->created_at)->format('d-m-Y') : null,
+        'updatedAt' => $this->updated_at != null ? Carbon::parse($this->updated_at)->format('d-m-Y') : null
       ],
       'nestedObject' => null,
       'collections' => [
@@ -33,7 +33,6 @@ class StatusTicket extends Model
           ]
         ]
       ]
-
     ];
   }
 

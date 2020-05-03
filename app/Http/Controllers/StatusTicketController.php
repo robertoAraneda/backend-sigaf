@@ -88,7 +88,7 @@ class StatusTicketController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      if (is_numeric($id))
+      if (!is_numeric($id))
         return $this->response->badRequest();
 
       $statusTicket = StatusTicket::find($id);
@@ -117,7 +117,7 @@ class StatusTicketController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      if (is_numeric($id))
+      if (!is_numeric($id))
         return $this->response->badRequest();
 
       $statusTicket = StatusTicket::find($id);
@@ -152,7 +152,7 @@ class StatusTicketController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      if (is_numeric($id))
+      if (!is_numeric($id))
         return $this->response->badRequest();
 
       $statusTicket = StatusTicket::find($id);
@@ -189,7 +189,6 @@ class StatusTicketController extends Controller
             return new JsonTicket($ticket);
           })
         ]
-
       ];
 
       return $this->response->success($statusTicket->tickets);
