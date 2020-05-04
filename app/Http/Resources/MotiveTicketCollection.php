@@ -16,12 +16,16 @@ class MotiveTicketCollection extends ResourceCollection
   {
     return [
       'links' => [
-        'href' => route('api.motiveTickets.index', [], false),
+        'href' => route(
+          'api.motiveTickets.index',
+          [],
+          false
+        ),
         'title' => 'Listado de Motivos de Ticket',
         'rel' => 'self'
       ],
-      'quantity' => $this->collection->count(),
-      'motiveTickets' => $this->collection->map->format()
+      'numberOfElements' => $this->collection->count(),
+      'collections' => $this->collection->map->format()
     ];
   }
 }
