@@ -16,12 +16,16 @@ class StatusTicketCollection extends ResourceCollection
   {
     return [
       'links' => [
-        'href' => route('api.statusTickets.index', [], false),
+        'href' => route(
+          'api.statusTickets.index',
+          [],
+          false
+        ),
         'title' => 'Listado de Estados de Ticket',
         'rel' => 'self'
       ],
-      'quantity' => $this->collection->count(),
-      'statusTickets' => $this->collection->map->format()
+      'numberOfElements' => $this->collection->count(),
+      'collections' => $this->collection->map->format()
     ];
   }
 }

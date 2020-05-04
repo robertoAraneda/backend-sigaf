@@ -16,12 +16,16 @@ class TypeTicketCollection extends ResourceCollection
   {
     return [
       'links' => [
-        'href' => route('api.typeTickets.index', [], false),
+        'href' => route(
+          'api.typeTickets.index',
+          [],
+          false
+        ),
         'title' => 'Listado de Tipos de Ticket',
         'rel' => 'self'
       ],
-      'quantity' => $this->collection->count(),
-      'typeTickets' => $this->collection->map->format()
+      'numberOfElements' => $this->collection->count(),
+      'collections' => $this->collection->map->format()
     ];
   }
 }

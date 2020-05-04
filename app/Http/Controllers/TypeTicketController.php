@@ -11,7 +11,11 @@ use App\Http\Resources\Json\Ticket as JsonTicket;
 
 class TypeTicketController extends Controller
 {
-
+  /**
+   * Property for make a response.
+   *
+   * @var  App\Helpers\MakeResponse  $response
+   */
   protected $response;
 
   public function __construct(MakeResponse $makeResponse = null)
@@ -19,7 +23,11 @@ class TypeTicketController extends Controller
     $this->response = $makeResponse;
   }
 
-
+  /**
+   * Validate the description field.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   */
   protected function validateData($request)
   {
     return Validator::make($request, [
@@ -28,9 +36,12 @@ class TypeTicketController extends Controller
   }
 
   /**
-   * Display a listing of the resource.
+   * Display a listing of the type tickets resources.
    *
-   * @return \Illuminate\Http\Response
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\TypeTicketCollection
+   * @apiResourceModel App\Models\TypeTicket
    */
   public function index()
   {
@@ -53,8 +64,10 @@ class TypeTicketController extends Controller
   /**
    * Store a newly created resource in storage.
    *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
+   *  @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\TypeTicket
+   * @apiResourceModel App\Models\TypeTicket
    */
   public function store()
   {
@@ -81,24 +94,29 @@ class TypeTicketController extends Controller
   /**
    * Display the specified resource.
    *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @param  int  $typeTicket
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\TypeTicket
+   * @apiResourceModel App\Models\TypeTicket
+   * 
+   * @urlParam type_ticket required The ID of the type ticket resource.
    */
-  public function show($id)
+  public function show($type_ticket)
   {
     try {
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      if (!is_numeric($id))
+      if (!is_numeric($type_ticket))
         return $this->response->badRequest();
 
-      $typeTicket = TypeTicket::find($id);
+      $typeTicketModel = TypeTicket::find($type_ticket);
 
-      if (!isset($typeTicket))
+      if (!isset($typeTicketModel))
         return $this->response->noContent();
 
-      return $this->response->success($typeTicket->format());
+      return $this->response->success($typeTicketModel->format());
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
@@ -108,23 +126,26 @@ class TypeTicketController extends Controller
   /**
    * Update the specified resource in storage.
    *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @param  int  $typeTicket
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\TypeTicket
+   * @apiResourceModel App\Models\TypeTicket
+   * 
+   * @urlParam type_ticket required The ID of the type ticket resource.
    */
-  public function update($id)
+  public function update($type_ticket)
   {
     try {
-
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      if (!is_numeric($id))
+      if (!is_numeric($type_ticket))
         return $this->response->badRequest();
 
-      $typeTicket = TypeTicket::find($id);
+      $typeTicketModel = TypeTicket::find($type_ticket);
 
-      if (!isset($typeTicket))
+      if (!isset($typeTicketModel))
         return $this->response->noContent();
 
       $validate = $this->validateData(request()->all());
@@ -132,9 +153,9 @@ class TypeTicketController extends Controller
       if ($validate->fails())
         return $this->response->exception($validate->errors());
 
-      $typeTicket->update(request()->all());
+      $typeTicketModel->update(request()->all());
 
-      return $this->response->success(new JsonTypeTicket($typeTicket->fresh()));
+      return $this->response->success(new JsonTypeTicket($typeTicketModel->fresh()));
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
@@ -144,25 +165,28 @@ class TypeTicketController extends Controller
   /**
    * Remove the specified resource from storage.
    *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @param  int  $typeTicket
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * 
+   * @urlParam type_ticket required The ID of the type ticket resource.
    */
-  public function destroy($id)
+  public function destroy($type_ticket)
   {
     try {
 
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      if (!is_numeric($id))
+      if (!is_numeric($type_ticket))
         return $this->response->badRequest();
 
-      $typeTicket = TypeTicket::find($id);
+      $typeTicketModel = TypeTicket::find($type_ticket);
 
-      if (!isset($typeTicket))
+      if (!isset($typeTicketModel))
         return $this->response->noContent();
 
-      $typeTicket->delete();
+      $typeTicketModel->delete();
 
       return $this->response->success(null);
     } catch (\Exception $exception) {
@@ -171,32 +195,59 @@ class TypeTicketController extends Controller
     }
   }
 
-  public function tickets($idTypeTicket)
+  /**
+   * Display a list of tickets resources related to type ticket resource.
+   *
+   * @param  int  $typeTicket
+   * @return App\Helpers\MakeResponse
+   * 
+   * @authenticated 
+   * @response {
+   *  "typeTicket": "typeTicket",
+   *  "relationships":{
+   *    "links": {"href": "url", "rel": "/rels/tickets"},
+   *    "collections": {"numberOfElements": "number", "data": "array"}
+   *   }
+   * }
+   * 
+   * @urlParam type_ticket required The ID of the type ticket resource.
+   */
+  public function tickets($type_ticket)
   {
-
     try {
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $typeTicket = new JsonTypeTicket(TypeTicket::find($idTypeTicket));
 
-      $typeTicket->tickets = [
-        'typeTicket' => $typeTicket,
-        'relationship' => [
+      $typeTicketModel = TypeTicket::find($type_ticket);
+
+      if (!isset($typeTicketModel))
+        return $this->response->noContent();
+
+      $typeTicketFormated = new JsonTypeTicket($typeTicketModel);
+
+      $typeTicketFormated->tickets = [
+        'typeTicket' => $typeTicketFormated,
+        'relationships' => [
           'links' => [
-            'href' => route('api.typeTickets.tickets', ['type_ticket' => $typeTicket->id], false),
+            'href' => route(
+              'api.typeTickets.tickets',
+              ['type_ticket' => $typeTicketFormated->id],
+              false
+            ),
             'rel' => '/rels/tickets'
           ],
-          'quantity' => $typeTicket->tickets->count(),
-          'collection' => $typeTicket->tickets->map(function ($ticket) {
-            return new JsonTicket($ticket);
-          })
+          'collection' => [
+            'numberOfElements' => $typeTicketFormated->tickets->count(),
+            'data' => $typeTicketFormated->tickets->map(function ($ticket) {
+              return new JsonTicket($ticket);
+            })
+          ]
         ]
       ];
 
-      return $this->response->success($typeTicket->tickets);
+      return $this->response->success($typeTicketFormated->tickets);
     } catch (\Exception $exception) {
-
       return $this->response->exception($exception->getMessage());
     }
   }

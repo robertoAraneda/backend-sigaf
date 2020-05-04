@@ -11,32 +11,51 @@ class TypeTicket extends Model
 
   protected $table = 'type_tickets';
 
+  /**
+   * Get the Type Ticket formated
+   *
+   * @return array
+   */
   public function format()
   {
     return [
       'links' => [
-        'href' => route('api.typeTickets.show', ['type_ticket' => $this->id], false),
+        'href' => route(
+          'api.typeTickets.show',
+          ['type_ticket' => $this->id],
+          false
+        ),
         'rel' => 'self'
       ],
       'properties' => [
         'id' => $this->id,
         'description' => $this->description,
-        'createdAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('d-m-Y') : null,
-        'updatedAt' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('d-m-Y') : null
+        'createdAt' => $this->created_at != null
+          ?  Carbon::parse($this->created_at)->format('d-m-Y')
+          : null,
+        'updatedAt' => $this->updated_at != null
+          ?  Carbon::parse($this->updated_at)->format('d-m-Y')
+          : null
       ],
-      'nestedObject' => null,
-      'collections' => [
-        'tickets' => [
-          'links' => [
-            'href' => route('api.typeTickets.tickets', ['type_ticket' => $this->id], false),
-            'quantity' => $this->tickets()->count(),
-            'rel' => '/rels/tickets'
-          ]
+      'nestedObjects' => null,
+      'relationships' => [
+        'numberOfElements' => $this->tickets->count(),
+        'links' => [
+          'href' => route(
+            'api.typeTickets.tickets',
+            ['type_ticket' => $this->id],
+            false
+          ),
+          'rel' => '/rels/tickets'
         ]
       ]
     ];
   }
 
+  /**
+   * Get a list of tickets for the type ticket
+   *
+   */
   public function tickets()
   {
     return $this->hasMany(Ticket::class);
