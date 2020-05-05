@@ -248,6 +248,7 @@ class TypeTicketController extends Controller
 
       return $this->response->success($typeTicketFormated->tickets);
     } catch (\Exception $exception) {
+
       return $this->response->exception($exception->getMessage());
     }
   }

@@ -2,77 +2,91 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\MakeResponse;
+use App\Http\Resources\ClassroomCollection;
+use App\Http\Resources\Json\Classroom as JsonClassroom;
+use App\Http\Resources\Json\CourseRegisteredUser as JsonCourseRegisteredUser;
 use App\Models\Classroom;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ClassroomController extends Controller
 {
+  /**
+   * Property for make a response.
+   *
+   * @var  App\Helpers\MakeResponse  $response
+   */
+  protected $response;
 
-  protected function validateData()
+  public function __construct(MakeResponse $makeResponse = null)
   {
-    return request()->validate([
+    $this->response = $makeResponse;
+  }
+
+  /**
+   * Validate the description field.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   */
+  protected function validateData($request)
+  {
+    return Validator::make($request, [
       'description' => 'required|max:25'
     ]);
   }
+
   /**
-   * Display a listing of the resource.
+   * Display a listing of the classrooms resources.
    *
-   * @return \Illuminate\Http\Response
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\ClassroomCollection
+   * @apiResourceModel App\Models\Classroom
    */
   public function index()
   {
-
     try {
 
-      $classrooms = Classroom::orderBy('id')
-        ->get()
-        ->map
-        ->format();
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-      return response()->json([
-        'success' => true,
-        'classrooms' => $classrooms,
-        'error' => null,
-      ], 200);
+      $classrooms = new ClassroomCollection(Classroom::all());
+
+      return $this->response->success($classrooms);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'classrooms' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
   /**
    * Store a newly created resource in storage.
    *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\Classroom
+   * @apiResourceModel App\Models\Classroom
    */
   public function store()
   {
-
     try {
 
-      $dataStore = $this->validateData();
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $validate = $this->validateData(request()->all());
+
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
 
       $classroom = new Classroom();
 
-      $classroom = $classroom->create($dataStore);
+      $classroom = $classroom->create(request()->all());
 
-      return response()->json([
-        'success' => true,
-        'classroom' => $classroom->fresh()->format(),
-        'error' => null,
-      ], 201);
+      return $this->response->created($classroom->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'classroom' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
     //
   }
@@ -80,149 +94,164 @@ class ClassroomController extends Controller
   /**
    * Display the specified resource.
    *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @param  int  $classroom
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\Classroom
+   * @apiResourceModel App\Models\Classroom
+   * 
+   * @urlParam classroom required The ID of the classroom resource.
    */
-  public function show($id)
+  public function show($classroom)
   {
     try {
 
-      if (is_numeric($id)) {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-        $classroom = Classroom::whereId($id)->first();
+      if (!is_numeric($classroom))
+        return $this->response->badRequest();
 
-        if (isset($classroom)) {
+      $classroomModel = Classroom::find($classroom);
 
-          return response()->json([
-            'success' => true,
-            'classroom' => $classroom->format(),
-            'error' => null,
-          ], 200);
-        } else {
+      if (!isset($classroomModel))
+        return $this->response->noContent();
 
-          return response()->json([
-            'success' => false,
-            'classroom' => null,
-            'error' => 'No Content',
-          ], 204);
-        }
-      } else {
-
-        return response()->json([
-          'success' => false,
-          'classroom' => null,
-          'error' => 'Bad Request',
-        ], 400);
-      }
+      return $this->response->success($classroomModel->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'classroom' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
   /**
    * Update the specified resource in storage.
    *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @param  int  $classroom
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\Classroom
+   * @apiResourceModel App\Models\Classroom
+   * 
+   * @urlParam classroom required The ID of the classroom resource.
    */
-  public function update(Request $request, $id)
+  public function update($classroom)
   {
     try {
 
-      if (is_numeric($id)) {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-        $dataUpdate = $this->validateData();
+      if (!is_numeric($classroom))
+        return $this->response->badRequest();
 
-        $classroom = Classroom::whereId($id)->first();
+      $classroomModel = Classroom::find($classroom);
 
-        if (isset($classroom)) {
+      if (!isset($classroomModel))
+        return $this->response->noContent();
 
-          $classroom->update($dataUpdate);
+      $validate = $this->validateData(request()->all());
 
-          return response()->json([
-            'success' => true,
-            'classroom' => $classroom->fresh()->format(),
-            'error' => null
-          ], 200);
-        } else {
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
 
-          return response()->json([
-            'success' => false,
-            'classroom' => null,
-            'error' => 'No Content'
-          ], 204);
-        }
-      } else {
+      $classroomModel->update(request()->all());
 
-        return response()->json([
-          'success' => false,
-          'classroom' => null,
-          'error' => 'Bad Request'
-        ], 400);
-      }
+      return $this->response->success($classroomModel->fresh()->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'classroom' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
   /**
    * Remove the specified resource from storage.
    *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @param  int  $classroom
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * 
+   * @urlParam classroom required The ID of the classroom resource.
    */
-  public function destroy($id)
+  public function destroy($classroom)
   {
 
     try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-      if (is_numeric($id)) {
+      if (!is_numeric($classroom))
+        return $this->response->badRequest();
 
-        $classroom = Classroom::whereId($id)->first();
+      $classroomModel = Classroom::find($classroom);
 
-        if (isset($classroom)) {
+      if (!isset($classroomModel))
+        return $this->response->noContent();
 
-          $classroom->delete();
+      $classroomModel->delete();
 
-          return response()->json([
-            'success' => true,
-            'classroom' => null,
-            'error' => null
-          ], 200);
-        } else {
-
-          return response()->json([
-            'success' => false,
-            'classroom' => null,
-            'error' => 'No Content'
-          ], 204);
-        }
-      } else {
-
-        return response()->json([
-          'success' => false,
-          'classroom' => null,
-          'error' => 'Bad Request'
-        ], 400);
-      }
+      return $this->response->success(null);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'classroom' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return $this->response->exception($exception->getMessage());
+    }
+  }
+
+  /**
+   * Display a list of course registered users resources related to classroom resource.
+   *
+   * @param  int  $final_status
+   * @return App\Helpers\MakeResponse
+   * 
+   * @authenticated 
+   * @response {
+   *  "classroom": "classroom",
+   *  "relationships":{
+   *    "links": {"href": "url", "rel": "/rels/tickets"},
+   *    "collections": {"numberOfElements": "number", "data": "array"}
+   *   }
+   * }
+   * 
+   * @urlParam classroom required The ID of the classroom resource.
+   */
+  public function courseRegisteredUsers($classroom)
+  {
+    try {
+
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $classroomModel = Classroom::find($classroom);
+
+      if (!isset($classroomModel))
+        return $this->response->noContent();
+
+      $classroomFormated = new JsonClassroom($classroomModel);
+
+      $classroomFormated->courseRegisteredUsers = [
+        'finalStatus' => $classroomFormated,
+        'relationships' => [
+          'links' => [
+            'href' => route(
+              'api.classrooms.courseRegisteredUsers',
+              ['classroom' => $classroomFormated->id],
+              false
+            ),
+            'rel' => '/rels/courseRegisteredUsers'
+          ],
+          'collection' => [
+            'numberOfElements' => $classroomFormated->courseRegisteredUsers->count(),
+            'data' => $classroomFormated->courseRegisteredUsers->map(function ($courseRegisteredUser) {
+              return new JsonCourseRegisteredUser($courseRegisteredUser);
+            })
+          ]
+        ]
+      ];
+
+      return $this->response->success($classroomFormated->courseRegisteredUsers);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
     }
   }
 }

@@ -85,6 +85,7 @@ Route::group([
   Route::apiResource('/priority-tickets', 'PriorityTicketController')->names('api.priorityTickets');
   Route::apiResource('/motive-tickets', 'MotiveTicketController')->names('api.motiveTickets');
   Route::apiResource('/final-statuses', 'FinalStatusController')->names('api.finalStatuses');
+  Route::apiResource('/classrooms', 'ClassroomController')->names('api.classrooms');
 
   Route::get('/activity-course-registered-users/{activity_course_registered_user}', 'ActivityCourseRegisteredUserController@show')->name('api.activityCourseRegisteredUsers.show');
 
@@ -110,6 +111,7 @@ Route::group([
   Route::get('/activities/{activity}/activity-course-users', 'ActivityController@activityCourseUsers')->name('api.activities.activityCourseUsers');
   Route::get('/categories/{category}/courses', 'CategoryController@courses')->name('api.categories.courses');
   Route::get('/final-statuses/{final_status}/course-registered-users', 'FinalStatusController@courseRegisteredUsers')->name('api.finalStatuses.courseRegisteredUsers');
+  Route::get('/classrooms/{classroom}/tickets', 'ClassroomController@tickets')->name('api.classrooms.courseRegisteredUsers');
 
   Route::get('/courses/{course}/activities', 'CourseController@activities')->name('api.courses.activities');
   Route::get('/courses/{course}/registered-users', 'CourseController@registeredUsers')->name('api.courses.registeredUsers');
