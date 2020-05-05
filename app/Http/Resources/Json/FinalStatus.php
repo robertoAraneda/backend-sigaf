@@ -5,7 +5,7 @@ namespace App\Http\Resources\Json;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PriorityTicket extends JsonResource
+class FinalStatus extends JsonResource
 {
   /**
    * Transform the resource into an array.
@@ -18,20 +18,20 @@ class PriorityTicket extends JsonResource
     return [
       'links' => [
         'href' => route(
-          'api.priorityTickets.show',
-          ['priority_ticket' => $this->id],
+          'api.finalStatuses.show',
+          ['final_status' => $this->id],
           false
         ),
         'rel' => 'self'
       ],
       'properties' => [
         'id' => $this->id,
-        'description' => $this->description,
+        'descrption' => $this->description,
         'createdAt' => $this->created_at != null
           ? Carbon::parse($this->created_at)->format('d-m-Y')
           : null,
         'updatedAt' => $this->updated_at != null
-          ? Carbon::parse($this->created_at)->format('d-m-Y')
+          ? Carbon::parse($this->updated_at)->format('d-m-Y')
           : null
       ]
     ];

@@ -82,7 +82,7 @@ class StatusTicketController extends Controller
 
       $statusTicket = $statusTicket->create(request()->all());
 
-      return $this->response->created(new JsonStatusTicket($statusTicket));
+      return $this->response->created($statusTicket->format());
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
@@ -154,7 +154,7 @@ class StatusTicketController extends Controller
 
       $statusTicketModel->update(request()->all());
 
-      return $this->response->success(new JsonStatusTicket($statusTicketModel->fresh()));
+      return $this->response->success($statusTicketModel->fresh()->format());
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());

@@ -82,7 +82,7 @@ class MotiveTicketController extends Controller
 
       $motiveTicket = $motiveTicket->create(request()->all());
 
-      return $this->response->created(new JsonMotiveTicket($motiveTicket));
+      return $this->response->created($motiveTicket->format());
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
@@ -92,7 +92,7 @@ class MotiveTicketController extends Controller
   /**
    * Display the specified resource.
    *
-   * @param  int  $id
+   * @param  int  $motive_ticket
    * @return App\Helpers\MakeResponse
    * @authenticated 
    * @apiResourceCollection App\Http\Resources\Json\MotiveTicket
@@ -124,7 +124,7 @@ class MotiveTicketController extends Controller
   /**
    * Update the specified resource in storage.
    *
-   * @param  int  $motiveTicket
+   * @param  int  $motive_ticket
    * @return App\Helpers\MakeResponse
    * @authenticated 
    * @apiResourceCollection App\Http\Resources\Json\MotiveTicket
@@ -153,7 +153,7 @@ class MotiveTicketController extends Controller
 
       $motiveTicketModel->update(request()->all());
 
-      return $this->response->success(new JsonMotiveTicket($motiveTicketModel->fresh()));
+      return $this->response->success($motiveTicketModel->fresh()->format());
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
@@ -163,7 +163,7 @@ class MotiveTicketController extends Controller
   /**
    * Remove the specified resource from storage.
    *
-   * @param  int  $id
+   * @param  int  $motive_ticket
    * @return App\Helpers\MakeResponse
    * @authenticated 
    * 
@@ -195,7 +195,7 @@ class MotiveTicketController extends Controller
   /**
    * Display a list of tickets resources related to motive ticket resource.
    *
-   * @param  int  $motiveTicket
+   * @param  int  $motive_ticket
    * @return App\Helpers\MakeResponse
    * 
    * @authenticated 
@@ -209,13 +209,13 @@ class MotiveTicketController extends Controller
    * 
    * @urlParam motive_ticket required The ID of the motive ticket resource.
    */
-  public function tickets($motiveTicket)
+  public function tickets($motive_ticket)
   {
     try {
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $motiveTicketModel = MotiveTicket::find($motiveTicket);
+      $motiveTicketModel = MotiveTicket::find($motive_ticket);
 
       if (!isset($motiveTicketModel))
         return $this->response->noContent();

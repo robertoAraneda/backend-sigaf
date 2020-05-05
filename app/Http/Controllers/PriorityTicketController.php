@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Validator;
 
 class PriorityTicketController extends Controller
 {
+  /**
+   * Property for make a response.
+   *
+   * @var  App\Helpers\MakeResponse  $response
+   */
   protected $response;
 
   public function __construct(MakeResponse $makeResponse = null)
@@ -18,16 +23,25 @@ class PriorityTicketController extends Controller
     $this->response = $makeResponse;
   }
 
+  /**
+   * Validate the description field.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   */
   protected function validateData($request)
   {
     return Validator::make($request, [
       'description' => 'required|max:25'
     ]);
   }
+
   /**
-   * Display a listing of the resource.
+   * Display a listing of the priority tickets resources.
    *
-   * @return \Illuminate\Http\Response
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\PriorityTicketCollection
+   * @apiResourceModel App\Models\PriorityTicket
    */
   public function index()
   {
@@ -48,8 +62,10 @@ class PriorityTicketController extends Controller
   /**
    * Store a newly created resource in storage.
    *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
+   *  @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\PriorityTicket
+   * @apiResourceModel App\Models\PriorityTicket
    */
   public function store()
   {
@@ -67,7 +83,7 @@ class PriorityTicketController extends Controller
 
       $priorityTicket = $priorityTicket->create(request()->all());
 
-      return $this->response->created((new JsonPriorityTicket($priorityTicket)));
+      return $this->response->created($priorityTicket->format());
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
@@ -77,25 +93,30 @@ class PriorityTicketController extends Controller
   /**
    * Display the specified resource.
    *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @param  int  $priority_ticket
+   *  @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\PriorityTicket
+   * @apiResourceModel App\Models\PriorityTicket
+   * 
+   * @urlParam priority_ticket required The ID of the priority ticket resource.
    */
-  public function show($id)
+  public function show($priority_ticket)
   {
 
     try {
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      if (!is_numeric($id))
+      if (!is_numeric($priority_ticket))
         return $this->response->badRequest();
 
-      $priorityTicket = PriorityTicket::find($id);
+      $priorityTicketModel = PriorityTicket::find($priority_ticket);
 
-      if (!isset($priorityTicket))
+      if (!isset($priorityTicketModel))
         return $this->response->noContent();
 
-      return $this->response->success($priorityTicket->format());
+      return $this->response->success($priorityTicketModel->format());
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
@@ -105,23 +126,27 @@ class PriorityTicketController extends Controller
   /**
    * Update the specified resource in storage.
    *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @param  int  $priority_ticket
+   *  @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\PriorityTicket
+   * @apiResourceModel App\Models\PriorityTicket
+   * 
+   * @urlParam priority_ticket required The ID of the priority ticket resource.
    */
-  public function update($id)
+  public function update($priority_ticket)
   {
 
     try {
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      if (!is_numeric($id))
+      if (!is_numeric($priority_ticket))
         return $this->response->badRequest();
 
-      $priorityTicket = PriorityTicket::find($id);
+      $priorityTicketModel = PriorityTicket::find($priority_ticket);
 
-      if (!isset($priorityTicket))
+      if (!isset($priorityTicketModel))
         return $this->response->noContent();
 
       $validate = $this->validateData(request()->all());
@@ -129,9 +154,9 @@ class PriorityTicketController extends Controller
       if ($validate->fails())
         return $this->response->exception($validate->errors());
 
-      $priorityTicket->update(request()->all());
+      $priorityTicketModel->update(request()->all());
 
-      return $this->response->success(new JsonPriorityTicket($priorityTicket->fresh()));
+      return $this->response->success($priorityTicketModel->fresh()->format());
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
@@ -141,25 +166,28 @@ class PriorityTicketController extends Controller
   /**
    * Remove the specified resource from storage.
    *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @param  int  $priority_ticket
+   *  @return App\Helpers\MakeResponse
+   * @authenticated 
+   * 
+   * @urlParam priority_ticket required The ID of the priority ticket resource.
    */
-  public function destroy($id)
+  public function destroy($priority_ticket)
   {
 
     try {
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      if (!is_numeric($id))
+      if (!is_numeric($priority_ticket))
         return $this->response->badRequest();
 
-      $priorityTicket = PriorityTicket::find($id);
+      $priorityTicketModel = PriorityTicket::find($priority_ticket);
 
-      if (!isset($priorityTicket))
+      if (!isset($priorityTicketModel))
         return $this->response->noContent();
 
-      $priorityTicket->delete();
+      $priorityTicketModel->delete();
 
       return $this->response->success(null);
     } catch (\Exception $exception) {
@@ -168,29 +196,58 @@ class PriorityTicketController extends Controller
     }
   }
 
-  public function tickets($idPriorityTicket)
+  /**
+   * Display a list of tickets resources related to priority ticket resource.
+   *
+   * @param  int  $type_ticket
+   * @return App\Helpers\MakeResponse
+   * 
+   * @authenticated 
+   * @response {
+   *  "priorityTicket": "priorityTicket",
+   *  "relationships":{
+   *    "links": {"href": "url", "rel": "/rels/tickets"},
+   *    "collections": {"numberOfElements": "number", "data": "array"}
+   *   }
+   * }
+   * 
+   * @urlParam priority_ticket required The ID of the priority ticket resource.
+   */
+  public function tickets($priority_ticket)
   {
     try {
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $priorityTicket = PriorityTicket::find($idPriorityTicket);
+      $priorityTicketModel = PriorityTicket::find($priority_ticket);
 
-      $priorityTicket->tickets = [
-        'priorityTicket' => $priorityTicket,
+      if (!isset($priorityTicketModel))
+        return $this->response->noContent();
+
+      $priorityTicketFormated = new JsonPriorityTicket($priorityTicketModel);
+
+      $priorityTicketFormated->tickets = [
+        'priorityTicket' => $priorityTicketFormated,
         'relationships' => [
           'links' => [
-            'href' => route('api.priorityTickets.tickets', ['priority_ticket' => $priorityTicket->id], false),
+            'href' => route(
+              'api.priorityTickets.tickets',
+              ['priority_ticket' => $priorityTicketFormated->id],
+              false
+            ),
             'rel' => '/rels/tickets',
           ],
-          'quantity' => $priorityTicket->tickets->count(),
-          'collection' => $priorityTicket->tickets->map(function ($ticket) {
-            return new JsonTicket($ticket);
-          })
+          'collection' => [
+            'numberOfElements' => $priorityTicketFormated->tickets->count(),
+            'data' => $priorityTicketFormated->tickets->map(function ($ticket) {
+              return new JsonTicket($ticket);
+            })
+
+          ]
         ]
       ];
 
-      return $this->response->success($priorityTicket->tickets);
+      return $this->response->success($priorityTicketFormated->tickets);
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());

@@ -59,8 +59,6 @@ class TypeTicketController extends Controller
     }
   }
 
-
-
   /**
    * Store a newly created resource in storage.
    *
@@ -72,8 +70,9 @@ class TypeTicketController extends Controller
   public function store()
   {
     try {
+
       if (!request()->isJson())
-        return MakeResponse::unauthorized();
+        return $this->response->unauthorized();
 
       $validate = $this->validateData(request()->all());
 
@@ -84,7 +83,7 @@ class TypeTicketController extends Controller
 
       $typeTicket = $typeTicket->create(request()->all());
 
-      return $this->response->created(new JsonTypeTicket($typeTicket));
+      return $this->response->created($typeTicket->format());
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
@@ -94,7 +93,7 @@ class TypeTicketController extends Controller
   /**
    * Display the specified resource.
    *
-   * @param  int  $typeTicket
+   * @param  int  $type_tiicket
    * @return App\Helpers\MakeResponse
    * @authenticated 
    * @apiResourceCollection App\Http\Resources\Json\TypeTicket
@@ -105,6 +104,7 @@ class TypeTicketController extends Controller
   public function show($type_ticket)
   {
     try {
+
       if (!request()->isJson())
         return $this->response->unauthorized();
 
@@ -126,7 +126,7 @@ class TypeTicketController extends Controller
   /**
    * Update the specified resource in storage.
    *
-   * @param  int  $typeTicket
+   * @param  int  $type_ticket
    * @return App\Helpers\MakeResponse
    * @authenticated 
    * @apiResourceCollection App\Http\Resources\Json\TypeTicket
@@ -137,6 +137,7 @@ class TypeTicketController extends Controller
   public function update($type_ticket)
   {
     try {
+
       if (!request()->isJson())
         return $this->response->unauthorized();
 
@@ -155,7 +156,7 @@ class TypeTicketController extends Controller
 
       $typeTicketModel->update(request()->all());
 
-      return $this->response->success(new JsonTypeTicket($typeTicketModel->fresh()));
+      return $this->response->success($typeTicketModel->fresh()->format());
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
@@ -165,7 +166,7 @@ class TypeTicketController extends Controller
   /**
    * Remove the specified resource from storage.
    *
-   * @param  int  $typeTicket
+   * @param  int  $type_ticket
    * @return App\Helpers\MakeResponse
    * @authenticated 
    * 
@@ -198,7 +199,7 @@ class TypeTicketController extends Controller
   /**
    * Display a list of tickets resources related to type ticket resource.
    *
-   * @param  int  $typeTicket
+   * @param  int  $type_ticket
    * @return App\Helpers\MakeResponse
    * 
    * @authenticated 
