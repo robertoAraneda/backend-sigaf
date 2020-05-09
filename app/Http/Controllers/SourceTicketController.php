@@ -219,6 +219,9 @@ class SourceTicketController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
+      if (!is_numeric($source_ticket))
+        return $this->response->badRequest();
+
       $sourceTicketModel = SourceTicket::find($source_ticket);
 
       if (!isset($sourceTicketModel))

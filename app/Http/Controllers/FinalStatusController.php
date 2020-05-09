@@ -220,6 +220,9 @@ class FinalStatusController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
+      if (!is_numeric($final_status))
+        return $this->response->badRequest();
+
       $finalStatusModel = FinalStatus::find($final_status);
 
       if (!isset($finalStatusModel))

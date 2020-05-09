@@ -219,6 +219,9 @@ class TypeTicketController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
+      if (!is_numeric($type_ticket))
+        return $this->response->badRequest();
+
       $typeTicketModel = TypeTicket::find($type_ticket);
 
       if (!isset($typeTicketModel))

@@ -215,6 +215,9 @@ class MotiveTicketController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
+      if (!is_numeric($motive_ticket))
+        return $this->response->badRequest();
+
       $motiveTicketModel = MotiveTicket::find($motive_ticket);
 
       if (!isset($motiveTicketModel))

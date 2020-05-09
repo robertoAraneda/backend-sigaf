@@ -227,6 +227,9 @@ class ProfileController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
+      if (!is_numeric($profile))
+        return $this->response->badRequest();
+
       $profileModel = Profile::find($profile);
 
       if (!isset($profileModel))

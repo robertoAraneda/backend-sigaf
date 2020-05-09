@@ -226,6 +226,9 @@ class RoleController extends Controller
       if (!request()->isJson())
         return $this->response->unauthotized();
 
+      if (!is_numeric($role))
+        return $this->response->badRequest();
+
       $roleModel = Role::find($role);
 
       if (!isset($roleModel))

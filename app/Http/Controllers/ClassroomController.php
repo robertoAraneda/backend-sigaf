@@ -221,6 +221,9 @@ class ClassroomController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
+      if (!is_numeric($classroom))
+        return $this->response->badRequest();
+
       $classroomModel = Classroom::find($classroom);
 
       if (!isset($classroomModel))

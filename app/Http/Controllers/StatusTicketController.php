@@ -217,6 +217,9 @@ class StatusTicketController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
+      if (!is_numeric($status_ticket))
+        return $this->response->badRequest();
+
       $statusTicketModel = StatusTicket::find($status_ticket);
 
       if (!isset($statusTicketModel))

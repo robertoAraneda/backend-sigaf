@@ -219,6 +219,9 @@ class PriorityTicketController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
+      if (!is_numeric($priority_ticket))
+        return $this->response->badRequest();
+
       $priorityTicketModel = PriorityTicket::find($priority_ticket);
 
       if (!isset($priorityTicketModel))
