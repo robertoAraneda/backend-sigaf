@@ -75,6 +75,11 @@ class Ticket extends Model
     return $this->belongsTo(MotiveTicket::class);
   }
 
+  public function sourceTicket()
+  {
+    return $this->belongsTo(SourceTicket::class);
+  }
+
   public function userCreated()
   {
     return $this->belongsTo(User::class);

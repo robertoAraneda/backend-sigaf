@@ -2,228 +2,249 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\MakeResponse;
+use App\Http\Resources\Json\MotiveTicket as JsonMotiveTicket;
+use App\Http\Resources\Json\Ticket as JsonTicket;
+use App\Http\Resources\MotiveTicketCollection;
 use App\Models\MotiveTicket;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class MotiveTicketController extends Controller
 {
+  /**
+   * Property for make a response.
+   *
+   * @var  App\Helpers\MakeResponse  $response
+   */
+  protected $response;
 
-  protected function validateData()
+  public function __construct(MakeResponse $makeResponse = null)
   {
-    return request()->validate([
+    $this->response = $makeResponse;
+  }
+
+  /**
+   * Validate the description field.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   */
+  protected function validateData($request)
+  {
+    return Validator::make($request, [
       'description' => 'required|max:25'
     ]);
   }
+
   /**
-   * Display a listing of the resource.
+   * Display a listing of the motive tickets resources.
    *
-   * @return \Illuminate\Http\Response
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\MotiveTicketCollection
+   * @apiResourceModel App\Models\MotiveTicket
    */
   public function index()
   {
 
     try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-      $motiveTickets = MotiveTicket::orderBy('id')
-        ->get()
-        ->map
-        ->format();
+      $motiveTickets = new MotiveTicketCollection(MotiveTicket::all());
 
-      return response()->json([
-        'success' => true,
-        'motiveTickets' => $motiveTickets,
-        'error' => null,
-      ], 200);
+      return $this->response->success($motiveTickets);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'motiveTickets' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
   /**
    * Store a newly created resource in storage.
    *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\MotiveTicket
+   * @apiResourceModel App\Models\MotiveTicket
    */
   public function store()
   {
-
     try {
+      if (!request()->isJson())
+        return MakeResponse::unauthorized();
 
-      $dataStore = $this->validateData();
+      $validate = $this->validateData(request()->all());
+
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
 
       $motiveTicket = new MotiveTicket();
 
-      $motiveTicket = $motiveTicket->create($dataStore);
+      $motiveTicket = $motiveTicket->create(request()->all());
 
-      return response()->json([
-        'success' => true,
-        'motiveTicket' => $motiveTicket->fresh()->format(),
-        'error' => null,
-      ], 201);
+      return $this->response->created($motiveTicket->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'motiveTicket' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
   /**
    * Display the specified resource.
    *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @param  int  $motive_ticket
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\MotiveTicket
+   * @apiResourceModel App\Models\MotiveTicket
+   * 
+   * @urlParam motive_ticket required The ID of the motive ticket resource.
    */
-  public function show($id)
+  public function show($motive_ticket)
   {
-
     try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-      if (is_numeric($id)) {
+      if (!is_numeric($motive_ticket))
+        return $this->response->badRequest();
 
-        $motiveTicket = MotiveTicket::whereId($id)->first();
+      $motiveTicketModel = MotiveTicket::find($motive_ticket);
 
-        if (isset($motiveTicket)) {
+      if (!isset($motiveTicketModel))
+        return $this->response->noContent();
 
-          return response()->json([
-            'success' => true,
-            'motiveTicket' => $motiveTicket->format(),
-            'error' => null,
-          ], 200);
-        } else {
-
-          return response()->json([
-            'success' => false,
-            'motiveTicket' => null,
-            'error' => 'No Content'
-          ], 204);
-        }
-      } else {
-
-        return response()->json([
-          'success' => false,
-          'motiveTicket' => null,
-          'error' => 'Bad Request',
-        ], 400);
-      }
+      return $this->response->success($motiveTicketModel->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'motiveTicket' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
   /**
    * Update the specified resource in storage.
    *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @param  int  $motive_ticket
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\MotiveTicket
+   * @apiResourceModel App\Models\MotiveTicket
+   * 
+   * @urlParam motive_ticket required The ID of the motive ticket resource.
    */
-  public function update(Request $request, $id)
+  public function update($motive_ticket)
   {
-
     try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-      if (is_numeric($id)) {
+      if (!is_numeric($motive_ticket))
+        return $this->response->badRequest();
 
-        $dataUpdate = $this->validateData();
+      $motiveTicketModel = MotiveTicket::find($motive_ticket);
 
-        $motiveTicket = MotiveTicket::whereId($id)->first();
+      if (!isset($motiveTicketModel))
+        return $this->response->noContent();
 
-        if (isset($motiveTicket)) {
+      $validate = $this->validateData(request()->all());
 
-          $motiveTicket->update($dataUpdate);
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
 
-          return response()->json([
-            'success' => true,
-            'motiveTicket' => $motiveTicket->fresh()->format(),
-            'error' => null,
-          ], 200);
-        } else {
+      $motiveTicketModel->update(request()->all());
 
-          return response()->json([
-            'success' => false,
-            'motiveTicket' => null,
-            'error' => 'No Content'
-          ], 204);
-        }
-      } else {
-
-        return response()->json([
-          'success' => false,
-          'motiveTicket' => null,
-          'error' => 'Bad Request',
-        ], 400);
-      }
+      return $this->response->success($motiveTicketModel->fresh()->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'motiveTicket' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
   /**
    * Remove the specified resource from storage.
    *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @param  int  $motive_ticket
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * 
+   * @urlParam motive_ticket required The ID of the motive ticket resource.
    */
-  public function destroy($id)
+  public function destroy($motive_ticket)
   {
-
     try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-      if (is_numeric($id)) {
+      if (!is_numeric($motive_ticket))
+        return $this->response->badRequest();
 
-        $motiveTicket = MotiveTicket::whereId($id)->first();
+      $motiveTicketModel = MotiveTicket::find($motive_ticket);
 
-        if (isset($motiveTicket)) {
+      if (!isset($motiveTicketModel))
+        return $this->response->noContent();
 
-          $motiveTicket->delete();
+      $motiveTicketModel->delete();
 
-          return response()->json([
-            'success' => true,
-            'motiveTicket' => null,
-            'error' => null,
-          ], 200);
-        } else {
-
-          return response()->json([
-            'success' => false,
-            'motiveTicket' => null,
-            'error' => 'No Content',
-          ], 204);
-        }
-      } else {
-
-        return response()->json([
-          'success' => false,
-          'motiveTicket' => null,
-          'error' => 'Bad Request',
-        ], 400);
-      }
+      return $this->response->success(null);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'motiveTicket' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
+    }
+  }
+
+  /**
+   * Display a list of tickets resources related to motive ticket resource.
+   *
+   * @param  int  $motive_ticket
+   * @return App\Helpers\MakeResponse
+   * 
+   * @authenticated 
+   * @response {
+   *  "motiveTicket": "motiveTicket",
+   *  "relationships":{
+   *    "links": {"href": "url", "rel": "/rels/tickets"},
+   *    "collections": {"numberOfElements": "number", "data": "array"}
+   *   }
+   * }
+   * 
+   * @urlParam motive_ticket required The ID of the motive ticket resource.
+   */
+  public function tickets($motive_ticket)
+  {
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $motiveTicketModel = MotiveTicket::find($motive_ticket);
+
+      if (!isset($motiveTicketModel))
+        return $this->response->noContent();
+
+      $motiveTicketFormated = new JsonMotiveTicket($motiveTicketModel);
+
+      $motiveTicketFormated->tickets = [
+        'motiveTicket' => $motiveTicketFormated,
+        'relationships' => [
+          'links' => [
+            'href' => route(
+              'api.motiveTickets.tickets',
+              ['motive_ticket' => $motiveTicketFormated->id],
+              false
+            ),
+            'rel' => '/rels/tickets'
+          ],
+          'collection' => [
+            'numberOfElements' => $motiveTicketFormated->tickets->count(),
+            'data' => $motiveTicketFormated->tickets->map(function ($ticket) {
+              return new JsonTicket($ticket);
+            })
+          ]
+        ]
+      ];
+
+      return $this->response->success($motiveTicketFormated->tickets);
+    } catch (\Exception $exception) {
+      return $this->response->exception($exception->getMessage());
     }
   }
 }

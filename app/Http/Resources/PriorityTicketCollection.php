@@ -16,12 +16,16 @@ class PriorityTicketCollection extends ResourceCollection
   {
     return [
       'links' => [
-        'href' => route('api.priorityTickets.index', [], false),
+        'href' => route(
+          'api.priorityTickets.index',
+          [],
+          false
+        ),
         'title' => 'Listado de Prioridades de Ticket',
         'rel' => 'self'
       ],
-      'quantity' => $this->collection->count(),
-      'priorityTickets' => $this->collection->map->format()
+      'numberOfElements' => $this->collection->count(),
+      'collections' => $this->collection->map->format()
     ];
   }
 }

@@ -5,7 +5,7 @@ namespace App\Http\Resources\Json;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class MotiveTicket extends JsonResource
+class SourceTicket extends JsonResource
 {
   /**
    * Transform the resource into an array.
@@ -18,8 +18,8 @@ class MotiveTicket extends JsonResource
     return [
       'links' => [
         'href' => route(
-          'api.motiveTickets.show',
-          ['motive_ticket' => $this->id],
+          'api.sourceTickets.show',
+          ['source_ticket' => $this->id],
           false
         ),
         'rel' => 'self'

@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class StatusTicketCollection extends ResourceCollection
+class RoleCollection extends ResourceCollection
 {
   /**
    * Transform the resource collection into an array.
@@ -17,15 +17,15 @@ class StatusTicketCollection extends ResourceCollection
     return [
       'links' => [
         'href' => route(
-          'api.statusTickets.index',
+          'api.roles.index',
           [],
           false
         ),
-        'title' => 'Listado de Estados de Ticket',
+        'title' => 'Listado de Roles de Usuario',
         'rel' => 'self'
       ],
       'numberOfElements' => $this->collection->count(),
-      'collections' => $this->collection->map->format()
+      'collecions' => $this->collection->map->format()
     ];
   }
 }
