@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use App\Helpers\Paginate;
 
 class CourseCollection extends ResourceCollection
 {
@@ -15,7 +16,7 @@ class CourseCollection extends ResourceCollection
   public function toArray($request)
   {
     return [
-      'links' => [
+      'links_' => [
         'href' => route('api.courses.index', [], false),
         'title' => 'Cursos disponibles desde Moodle',
         'rel' => 'self'

@@ -203,7 +203,7 @@ class CategoryController extends Controller
             'rel' => '/rels/courses',
           ],
 
-          'collection' => [
+          'collections' => [
             'numberOfElements' => $categoryFormated->courses->count(),
             'data' => $categoryFormated->courses->map(function ($course) {
               return new JsonCourse($course);

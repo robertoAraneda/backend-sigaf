@@ -94,28 +94,36 @@ class CourseRegisteredUserController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $checkModel = CourseRegisteredUser::find($id);
+      $courseRegisteredUserModel = CourseRegisteredUser::find($id);
 
-      if (!isset($checkModel))
+      if (!isset($courseRegisteredUserModel))
         return $this->response->noContent();
 
-      $model = new JsonCourseRegisteredUser($checkModel);
+      $courseRegisteredUserFormated = new JsonCourseRegisteredUser($courseRegisteredUserModel);
 
-      $model->activityCourseUsers = [
-        'activity' => $model,
+      $courseRegisteredUserFormated->activityCourseUsers = [
+        'activity' => $courseRegisteredUserFormated,
         'relationships' => [
           'links' => [
-            'href' => route('api.activities.activityCourseUsers', ['id' => $model->id], false),
+            'href' => route(
+              'api.activities.activityCourseUsers',
+              ['id' => $courseRegisteredUserFormated->id],
+              false
+            ),
             'rel' => '/rels/activityCourseUsers',
           ],
-          'quantity' => $model->activityCourseUsers->count(),
-          'collection' => $model->activityCourseUsers->map(function ($activityCourseUser) {
-            return new JsonActivityCourseUser($activityCourseUser);
-          })
+
+
+          'collections' => [
+            'numberOfElements' => $courseRegisteredUserFormated->activityCourseUsers->count(),
+            'data' => $courseRegisteredUserFormated->activityCourseUsers->map(function ($activityCourseUser) {
+              return new JsonActivityCourseUser($activityCourseUser);
+            })
+          ]
         ]
       ];
 
-      return $this->response->success($model->activityCourseUsers);
+      return $this->response->success($courseRegisteredUserFormated->activityCourseUsers);
     } catch (\Exception $exception) {
       return $this->response->exception($exception->getMessage());
     }
