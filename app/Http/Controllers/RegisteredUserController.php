@@ -232,26 +232,26 @@ class RegisteredUserController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $checkModel = RegisteredUser::find($idUser);
+      $registeredUserModel = RegisteredUser::find($idUser);
 
-      if (!isset($checkModel))
+      if (!isset($registeredUserModel))
         return $this->response->noContent();
 
-      $model = new JsonRegisteredUser($checkModel);
+      $registeredUserFormated = new JsonRegisteredUser($registeredUserModel);
 
-      $courseRegisteredUsers = $model->courseRegisteredUsers->load('course');
+      $courseRegisteredUsers = $registeredUserFormated->courseRegisteredUsers->load('course');
 
-      $model->courses = [];
+      $registeredUserFormated->courses = [];
       foreach ($courseRegisteredUsers as $courseRegisteredUser) {
-        $model->courses[] = [
-
+        $registeredUserFormated->courses[] = [
           'relationships' =>
           [
+            'course' => $courseRegisteredUser,
             'links' => [
               'href' => route(
                 'api.registeredUsers.courses.show',
                 [
-                  'registered_user' => $model->id,
+                  'registered_user' => $registeredUserFormated->id,
                   'course' => $courseRegisteredUser->course->id
                 ],
                 false
@@ -259,16 +259,12 @@ class RegisteredUserController extends Controller
 
               'rel' => '/rels/courses'
             ],
-
-            'quantity' => $courseRegisteredUsers->count(),
-
             'collection' => [
-              'course' => $courseRegisteredUser,
               'links' => [
                 'href' => route(
                   'api.registeredUsers.activities',
                   [
-                    'registered_user' => $model->id,
+                    'registered_user' => $registeredUserFormated->id,
                     'course' => $courseRegisteredUser->course->id
                   ],
                   false
@@ -281,9 +277,10 @@ class RegisteredUserController extends Controller
         ];
       }
 
-      $model->courses['registeredUser'] = $model;
+      $registeredUserFormated->courses['registeredUser'] = $registeredUserFormated;
+      $registeredUserFormated->courses['numberOfElements'] = $courseRegisteredUsers->count();
 
-      return $this->response->success($model->courses);
+      return $this->response->success($registeredUserFormated->courses);
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
@@ -296,32 +293,32 @@ class RegisteredUserController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $checkModel = CourseRegisteredUser::where('registered_user_id', $idUser)
+      $courseRegisteredUserModel = CourseRegisteredUser::where('registered_user_id', $idUser)
         ->where('course_id', $idCourse)
         ->with('registeredUser')
         ->first();
 
 
 
-      if (!isset($checkModel))
+      if (!isset($courseRegisteredUserModel))
         return $this->response->noContent();
 
-      $collections = ActivityCourseRegisteredUser::where('course_registered_user_id', $checkModel->id)
+      $activitiesByUser = ActivityCourseRegisteredUser::where('course_registered_user_id', $courseRegisteredUserModel->id)
         ->get();
 
 
 
-      $collections->activities = [
+      $activitiesByUser->activities = [
 
-        'registeredUser' => $checkModel,
+        'registeredUser' => $courseRegisteredUserModel,
         'relationships' =>
         [
           'links' => [
             'href' => route(
               'api.registeredUsers.activities',
               [
-                'registered_user' => $checkModel->registered_user_id,
-                'course' => $checkModel->course_id
+                'registered_user' => $courseRegisteredUserModel->registered_user_id,
+                'course' => $courseRegisteredUserModel->course_id
               ],
               false
             ),
@@ -329,15 +326,17 @@ class RegisteredUserController extends Controller
             'rel' => '/rels/activities'
           ],
 
-          'quantity' => $collections->count(),
 
-          'collection' => $collections->map(function ($activity) {
-            return new JsonActivityCourseRegisteredUser($activity);
-          })
+          'collections' => [
+            'numberOfElements' => $activitiesByUser->count(),
+            'data' => $activitiesByUser->map(function ($activity) {
+              return new JsonActivityCourseRegisteredUser($activity);
+            })
+          ]
         ]
 
       ];
-      return $this->response->success($collections->activities);
+      return $this->response->success($activitiesByUser->activities);
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());

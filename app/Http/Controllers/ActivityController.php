@@ -165,28 +165,32 @@ class ActivityController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $checkModel = Activity::find($id);
+      $activityModel = Activity::find($id);
 
-      if (!isset($checkModel))
+      if (!isset($activityModel))
         return $this->response->noContent();
 
-      $model = new JsonActivity($checkModel);
+      $activityFormated = new JsonActivity($activityModel);
 
-      $model->activityCourseUsers = [
-        'activity' => $model,
+      $activityFormated->activityCourseUsers = [
+        'activity' => $activityFormated,
         'relationships' => [
           'links' => [
-            'href' => route('api.activities.activityCourseUsers', ['id' => $model->id], false),
+            'href' => route(
+              'api.activities.activityCourseUsers',
+              ['id' => $activityFormated->id],
+              false
+            ),
             'rel' => '/rels/activityCourseUsers',
           ],
-          'quantity' => $model->activityCourseUsers->count(),
-          'collection' => $model->activityCourseUsers->map(function ($activityCourseUser) {
+
+          'collections' => ['numberOfElements' => $activityFormated->activityCourseUsers->count(), 'data' => $activityFormated->activityCourseUsers->map(function ($activityCourseUser) {
             return new JsonActivityCourseUser($activityCourseUser);
-          })
+          })]
         ]
       ];
 
-      return $this->response->success($model->activityCourseUsers);
+      return $this->response->success($activityFormated->activityCourseUsers);
     } catch (\Exception $exception) {
       return $this->response->exception($exception->getMessage());
     }
