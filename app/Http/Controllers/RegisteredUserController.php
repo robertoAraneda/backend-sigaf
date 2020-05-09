@@ -298,18 +298,13 @@ class RegisteredUserController extends Controller
         ->with('registeredUser')
         ->first();
 
-
-
       if (!isset($courseRegisteredUserModel))
         return $this->response->noContent();
 
       $activitiesByUser = ActivityCourseRegisteredUser::where('course_registered_user_id', $courseRegisteredUserModel->id)
         ->get();
 
-
-
       $activitiesByUser->activities = [
-
         'registeredUser' => $courseRegisteredUserModel,
         'relationships' =>
         [
@@ -322,11 +317,8 @@ class RegisteredUserController extends Controller
               ],
               false
             ),
-
             'rel' => '/rels/activities'
           ],
-
-
           'collections' => [
             'numberOfElements' => $activitiesByUser->count(),
             'data' => $activitiesByUser->map(function ($activity) {
