@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class TypeTicket extends Model
 {
-  protected $guarded = [];
+  protected $fillable = [
+    'description',
+  ];
 
   protected $table = 'type_tickets';
 
@@ -37,7 +39,6 @@ class TypeTicket extends Model
           ?  Carbon::parse($this->updated_at)->format('d-m-Y')
           : null
       ],
-      'nestedObjects' => [],
       'relationships' => [
         'numberOfElements' => $this->tickets->count(),
         'links' => [

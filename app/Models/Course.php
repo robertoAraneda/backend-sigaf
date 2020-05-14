@@ -34,9 +34,7 @@ class Course extends Model
           : null,
         'updatedAt' => $this->updated_at != null
           ?  Carbon::parse($this->updated_at)->format('d-m-Y')
-          : null
-      ],
-      'nestedObjects' => [
+          : null,
         'category' => new JsonCategory($this->category)
       ],
       'relationships' => [

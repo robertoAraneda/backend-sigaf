@@ -12,35 +12,35 @@ class MakeResponse
       'error' => null,
       'statusCode' => 200,
       'message' => 'Consulta exitosa.',
-      'data' => $data
-    ], 200);
+      '_data' => $data
+    ]);
   }
 
   public function created($data)
   {
     return response()->json([
       'success' => true,
-      'data' => $data,
+      '_data' => $data,
       'error' => null,
       'statusCode' => 201,
       'message' => 'Registro creado exitosamente.'
-    ], 201);
+    ]);
   }
   public function exception($exception)
   {
     return response()->json([
       'success' => false,
-      'data' => null,
+      '_data' => null,
       'error' => $exception,
       'statusCode' => 500,
-      'message' => 'Error grave. Contacte al administrador.'
+      'message' => 'Error grave. Contacte al administrador'
     ], 500);
   }
   public function unauthorized()
   {
     return response()->json([
       'success' => false,
-      'data' => null,
+      '_data' => null,
       'error' => 'Unauthorized.',
       'statusCode' => 401,
       'message' => 'Sin autorización.'
@@ -50,7 +50,7 @@ class MakeResponse
   {
     return response()->json([
       'success' => false,
-      'data' => null,
+      '_data' => null,
       'error' => 'Malformed URL.',
       'statusCode' => 400,
       'message' => 'Url no corresponde.'
@@ -60,10 +60,10 @@ class MakeResponse
   {
     return response()->json([
       'success' => false,
-      'data' => null,
+      '_data' => null,
       'error' => 'No content',
       'statusCode' => 204,
       'message' => 'Registro no encontrado'
-    ], 200);
+    ]);
   }
 }
