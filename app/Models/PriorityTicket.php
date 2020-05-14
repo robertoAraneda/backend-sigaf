@@ -37,7 +37,6 @@ class PriorityTicket extends Model
           ? Carbon::parse($this->created_at)->format('d-m-Y')
           : null
       ],
-      'nestedObjects' => [],
       'relationships' => [
         'numberOfElements' => $this->tickets()->count(),
         'links' => [

@@ -37,7 +37,6 @@ class MotiveTicket extends Model
           ?  Carbon::parse($this->updated_at)->format('d-m-Y')
           : null
       ],
-      'nestedObjects' => [],
       'relationships' => [
         'numberOfElements' => $this->tickets->count(),
         'links' => [
