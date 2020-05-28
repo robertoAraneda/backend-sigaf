@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class TypeTicket extends Model
 {
   protected $fillable = [
-    'description',
+    'description'
   ];
 
   protected $table = 'type_tickets';

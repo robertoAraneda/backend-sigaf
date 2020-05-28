@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class MotiveTicket extends Model
 {
-  protected $guarded = [];
+  protected $fillable = [
+    'description'
+  ];
 
   protected $table = 'motive_tickets';
 

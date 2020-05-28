@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class PriorityTicket extends Model
 {
-  protected $guarded = [];
+  protected $fillable = [
+    'description'
+  ];
 
   protected $table = 'priority_tickets';
 

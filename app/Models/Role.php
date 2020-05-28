@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
 {
-  protected $guarded = [];
+  protected $fillable = [
+    'description'
+  ];
 
   protected $table = 'roles';
 

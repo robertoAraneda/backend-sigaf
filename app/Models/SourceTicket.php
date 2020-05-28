@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class SourceTicket extends Model
 {
-  protected $guarded = [];
+  protected $fillable = [
+    'description'
+  ];
 
   protected $table = 'source_tickets';
 

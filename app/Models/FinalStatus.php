@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class FinalStatus extends Model
 {
-  protected $guarded = [];
+  protected $fillable = [
+    'description'
+  ];
 
   protected $table = 'final_statuses';
 
