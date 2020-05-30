@@ -2,11 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\MakeResponse;
 use App\Models\Ticket;
+use App\Http\Resources\Json\Ticket as JsonTicket;
+use App\Http\Resources\TicketCollection;
 use Illuminate\Http\Request;
 
 class TicketController extends Controller
 {
+
+  /**
+   * Property for make a response.
+   *
+   * @var  App\Helpers\MakeResponse  $response
+   */
+  protected $response;
+
+  public function __construct(MakeResponse $makeResponse = null)
+  {
+    $this->response = $makeResponse;
+  }
 
   protected function validateData()
   {
@@ -29,25 +44,17 @@ class TicketController extends Controller
    */
   public function index()
   {
-
     try {
-      $tickets = Ticket::orderBy('id')
-        ->get()
-        ->map
-        ->format();
 
-      return response()->json([
-        'success' => true,
-        'tickets' => $tickets,
-        'error' => null
-      ], 200);
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $tickets = new TicketCollection(Ticket::orderBy('created_at', 'asc')->get());
+
+      return $this->response->success($tickets);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'tickets' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 

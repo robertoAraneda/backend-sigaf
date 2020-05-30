@@ -26,9 +26,6 @@ class Ticket extends JsonResource
         'courseRegisteredUser' => $this->courseRegisteredUser->load(
           'course',
           'registeredUser',
-          'profile:id,description',
-          'classroom:id,description',
-          'finalStatus:id,description'
         ),
         'typeTicket' => [
           'id' => $this->typeTicket->id,
