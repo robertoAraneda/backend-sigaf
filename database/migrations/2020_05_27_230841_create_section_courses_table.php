@@ -14,8 +14,10 @@ class CreateSectionCoursesTable extends Migration
     public function up()
     {
         Schema::create('section_courses', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+          $table->bigIncrements('id');
+          $table->unsignedBigInteger('section_id');
+          $table->unsignedBigInteger('course_id');
+          $table->timestamps();
         });
     }
 
