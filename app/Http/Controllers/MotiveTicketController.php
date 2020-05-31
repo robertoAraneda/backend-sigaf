@@ -71,7 +71,7 @@ class MotiveTicketController extends Controller
   {
     try {
       if (!request()->isJson())
-        return MakeResponse::unauthorized();
+        return $this->response->unauthorized();
 
       $validate = $this->validateData(request()->all());
 
