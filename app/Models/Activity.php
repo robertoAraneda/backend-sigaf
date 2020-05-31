@@ -5,12 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use App\Http\Resources\Json\Course as JsonCourse;
+use App\Http\Resources\Json\Section as JsonSection;
 
 class Activity extends Model
 {
   protected $table = 'activities';
 
-  protected $guarded = [];
+  protected $fillable = ['section_id', 'weighing'];
 
   /**
    * Get the activity formated
@@ -30,15 +31,16 @@ class Activity extends Model
         'type'  => $this->type,
         'weighing'  => $this->weighing,
         'idActivityMoodle'  => $this->id_activity_moodle,
+        'course' => new JsonCourse($this->course),
+        'section' => $this->section != null
+          ? new JsonSection($this->section)
+          : ["links" => null, "properties" => ["id" => "", "description" => ""]],
         'createdAt' => $this->created_at != null
           ?  Carbon::parse($this->created_at)->format('d-m-Y')
           : null,
         'updatedAt' => $this->updated_at != null
           ?  Carbon::parse($this->updated_at)->format('d-m-Y')
           : null
-      ],
-      'nestedObjects' => [
-        'course' => new JsonCourse($this->course)
       ],
       'relationships' => [
         'activityCourseUser' => [
@@ -60,6 +62,16 @@ class Activity extends Model
   {
     return $this->belongsTo(Course::class);
   }
+
+  /**
+   * Get the section for the activity
+   *
+   */
+  public function section()
+  {
+    return $this->belongsTo(Section::class);
+  }
+
 
   /**
    * Get a list of activities for the course for a the specific user

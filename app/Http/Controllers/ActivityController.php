@@ -7,6 +7,7 @@ use App\Http\Resources\ActivityCollection;
 use App\Models\Activity;
 use App\Http\Resources\Json\Activity as JsonActivity;
 use App\Http\Resources\Json\ActivityCourseRegisteredUser as JsonActivityCourseUser;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 /**
@@ -119,7 +120,7 @@ class ActivityController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function update($id)
+  public function update(Request $request, $id)
   {
     try {
 
