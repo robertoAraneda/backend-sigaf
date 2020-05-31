@@ -150,16 +150,16 @@ class RegisteredUserController extends Controller
   {
     //$excel =  Excel::import(new RegisteredUserImport, 'D:\Proyectos\inacap-iie\importFile\prueba.xlsx');
     $collection = (new RegisteredUserImport)
-      ->toCollection('D:\Proyectos\inacap-iie\importFile\prueba.xlsx');
+      ->toCollection(storage_path('app/carga_alumnos.xlsx'));
 
     $array = [];
     foreach ($collection as $value) {
       foreach ($value as $key) {
         $array[] = array(
           'rut' => $key[0],
-          'nombre' => $key[1],
-          'last_name' => $key[2],
-          'mother_last_name' => $key[3]
+          'dv' => $key[1],
+          'nombre' => $key[10],
+          'apellidoPaterno' => $key[11]
         );
       }
     }

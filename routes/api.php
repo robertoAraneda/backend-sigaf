@@ -133,4 +133,6 @@ Route::group([
   Route::get('/registered-users/{registered_user}/courses/{course}/activities', 'RegisteredUserController@activities')->name('api.registeredUsers.activities');
 
   Route::get('/registered-users/{registered_user}/tickets', 'RegisteredUserController@tickets')->name('api.registeredUsers.tickets');
+
+  Route::post('/upload-file', 'UploadFileController@fileSubmit')->name('api.upload');
 });
