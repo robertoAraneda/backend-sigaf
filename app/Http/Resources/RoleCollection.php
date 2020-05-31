@@ -25,7 +25,7 @@ class RoleCollection extends ResourceCollection
         'rel' => 'self'
       ],
       'numberOfElements' => $this->collection->count(),
-      'collecions' => $this->collection->map->format()
+      'collections' => $this->collection->map->format()
     ];
   }
 }
