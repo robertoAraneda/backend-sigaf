@@ -44,8 +44,8 @@ class Ticket extends Model
       'userAssigned' => $this->userAssigned,
       'closingDate' => $this->closing_date,
       'observation' => $this->observation,
-      'createdAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null,
-      'updatedAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null
+      'createdAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('d-m-Y') : null,
+      'updatedAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('d-m-Y') : null
     ];
   }
 
