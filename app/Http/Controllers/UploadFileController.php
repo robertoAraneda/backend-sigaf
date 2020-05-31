@@ -15,12 +15,11 @@ class UploadFileController extends Controller
     $generated_new_name = time() . '.' . $request->file->getClientOriginalExtension();
     $request->file->move($upload_path,  $file_name);
 
-
     $registeredUserController = new RegisteredUserController();
 
     $response =  $registeredUserController->import();
 
-    Storage::delete('carga_alumnos.xlsx');
+    // Storage::delete('carga_alumnos.xlsx');
 
     return response()->json(['success' => $response]);
   }

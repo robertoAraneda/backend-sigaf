@@ -154,20 +154,49 @@ class RegisteredUserController extends Controller
 
     $array = [];
     foreach ($collection as $value) {
+
       foreach ($value as $key) {
         $array[] = array(
-          'rut' => $key[0],
-          'dv' => $key[1],
+          'id' => $key[0],
+          'rut' => $this->formatRut(str_split($key[1])) . "-" . $key[2],
           'nombre' => $key[10],
           'apellidoPaterno' => $key[11]
         );
       }
     }
 
-    return $array;
+    return array_slice($array, 1, count($array) - 1);
 
 
     // return redirect('/')->with('success', 'All good!');
+  }
+
+  private function formatRut($array)
+  {
+
+    if (count($array) == 6) {
+      return implode(array_slice($array, count($array) - 6, 3))
+        . "." . implode(array_slice($array, count($array) - 3, 3));
+    }
+
+    if (count($array) == 7) {
+      return implode(array_slice($array, count($array) - 7, 1))
+        . "." . implode(array_slice($array, count($array) - 6, 3))
+        . "." . implode(array_slice($array, count($array) - 3, 3));
+    }
+
+
+    if (count($array) == 8) {
+      return implode(array_slice($array, count($array) - 8, 2))
+        . "." . implode(array_slice($array, count($array) - 6, 3))
+        . "." . implode(array_slice($array, count($array) - 3, 3));
+    }
+
+    if (count($array) == 9) {
+      return implode(array_slice($array, count($array) - 9, 3))
+        . "." . implode(array_slice($array, count($array) - 6, 3))
+        . "." . implode(array_slice($array, count($array) - 3, 3));
+    }
   }
 
   public function course($idUser, $idCourse)

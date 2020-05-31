@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Models\Platform;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 class SynchronizeController extends Controller
 {
@@ -418,6 +419,32 @@ class SynchronizeController extends Controller
     ], 200);
   }
 
+
+  public function syncMoodleStudents()
+  {
+
+    $registeredUserController = new RegisteredUserController();
+    $response4 = Http::get($this->getBASE_URL() . "collection/inscrito/all");
+
+    $studentsMoodle =  $response4->json();
+
+    $array_student = array();
+
+    $response =  $registeredUserController->import();
+
+    Storage::delete('carga_alumnos.xlsx');
+
+    foreach ($studentsMoodle as $student) {
+      foreach ($response as $res) {
+        if (strtoupper($student['rut']) == strtoupper($res['rut'])) {
+          $student['id'] = $res['id'];
+          $array_student[] = $student;
+        }
+      }
+    }
+
+    return $array_student;
+  }
 
 
   public function syncronizeAppRegisteredUsersActiveInit()

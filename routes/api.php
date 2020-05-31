@@ -135,4 +135,10 @@ Route::group([
   Route::get('/registered-users/{registered_user}/tickets', 'RegisteredUserController@tickets')->name('api.registeredUsers.tickets');
 
   Route::post('/upload-file', 'UploadFileController@fileSubmit')->name('api.upload');
+
+
+
+  //test
+
+  Route::get('/sync-moodle-student', 'SynchronizeController@syncMoodleStudents');
 });
