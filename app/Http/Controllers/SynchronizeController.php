@@ -434,15 +434,18 @@ class SynchronizeController extends Controller
 
     Storage::delete('carga_alumnos.xlsx');
 
-    foreach ($studentsMoodle as $student) {
-      foreach ($response as $res) {
-        if (strtoupper($student['rut']) == strtoupper($res['rut'])) {
+
+    foreach ($response as $res) {
+      foreach ($studentsMoodle as $student) {
+        if (
+          strtoupper($student['rut']) == strtoupper($res['rut'])
+          && 773 == $student['idrcurso']
+        ) {
           $student['id'] = $res['id'];
           $array_student[] = $student;
         }
       }
     }
-
     return $array_student;
   }
 

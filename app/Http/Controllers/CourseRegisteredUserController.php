@@ -2,12 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\MakeResponse;
 use App\Models\CourseRegisteredUser;
 use App\Http\Resources\Json\ActivityCourseRegisteredUser as JsonActivityCourseUser;
 use App\Http\Resources\Json\CourseRegisteredUser as JsonCourseRegisteredUser;
 
 class CourseRegisteredUserController extends Controller
 {
+  protected $response;
+
+  public function __construct(MakeResponse $makeResponse = null)
+  {
+    $this->response = $makeResponse;
+  }
   /**
    * Display a listing of the resource.
    *
@@ -15,15 +22,24 @@ class CourseRegisteredUserController extends Controller
    */
   public function index()
   {
-    $courseRegisteredUsers = CourseRegisteredUser::with([
-      'course',
-      'classroom',
-      'registeredUser',
-      'profile',
-      'finalStatus'
-    ])->get();
 
-    return response()->json(['data' => $courseRegisteredUsers, 'success' => true]);
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $courseRegisteredUsers = CourseRegisteredUser::with([
+        'course',
+        'classroom',
+        'registeredUser',
+        'profile',
+        'finalStatus'
+      ])->get();
+
+      return $this->response->success($courseRegisteredUsers);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 
   /**

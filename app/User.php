@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -37,4 +38,29 @@ class User extends Authenticatable
   protected $casts = [
     'email_verified_at' => 'datetime',
   ];
+
+  public function format()
+  {
+    return [
+      'links' => [
+        'href' => route(
+          'api.users.show',
+          ['user' => $this->id],
+          false
+        ),
+        'rel' => 'self'
+      ],
+      'properties' => [
+        'id' => $this->id,
+        'name' => $this->name,
+        'email' => $this->email,
+        'createdAt' => $this->created_at != null
+          ?  Carbon::parse($this->created_at)->format('d-m-Y')
+          : null,
+        'updatedAt' => $this->updated_at != null
+          ?  Carbon::parse($this->updated_at)->format('d-m-Y')
+          : null
+      ]
+    ];
+  }
 }

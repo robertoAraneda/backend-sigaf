@@ -90,6 +90,7 @@ Route::group([
   Route::apiResource('/source-tickets', 'SourceTicketController')->names('api.sourceTickets');
   Route::apiResource('/profiles', 'ProfileController')->names('api.profiles');
   Route::apiResource('/sections', 'SectionController')->names('api.sections');
+  Route::apiResource('/users', 'UserController')->names('api.users');
 
   Route::get('/activity-course-registered-users/{activity_course_registered_user}', 'ActivityCourseRegisteredUserController@show')->name('api.activityCourseRegisteredUsers.show');
 

@@ -154,13 +154,12 @@ class RegisteredUserController extends Controller
 
     $array = [];
     foreach ($collection as $value) {
-
       foreach ($value as $key) {
         $array[] = array(
           'id' => $key[0],
           'rut' => $this->formatRut(str_split($key[1])) . "-" . $key[2],
-          'nombre' => $key[10],
-          'apellidoPaterno' => $key[11]
+          'nombre' => $key[11],
+          'apellidoPaterno' => $key[12]
         );
       }
     }
