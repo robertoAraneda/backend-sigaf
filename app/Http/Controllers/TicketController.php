@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\MakeResponse;
 use App\Models\Ticket;
 use App\Http\Resources\Json\Ticket as JsonTicket;
+use App\Http\Resources\Json\DetailTicket as JsonDetailTicket;
 use App\Http\Resources\TicketCollection;
 use Illuminate\Http\Request;
 
@@ -222,6 +223,68 @@ class TicketController extends Controller
         'ticket' => null,
         'error' => $exception->getMessage()
       ], 500);
+    }
+  }
+
+
+  /**
+   * Display a list of tickets resources related to type ticket resource.
+   *
+   * @param  int  $type_ticket
+   * @return App\Helpers\MakeResponse
+   * 
+   * @authenticated 
+   * @response {
+   *  "typeTicket": "typeTicket",
+   *  "relationships":{
+   *    "links": {"href": "url", "rel": "/rels/tickets"},
+   *    "collections": {"numberOfElements": "number", "data": "array"}
+   *   }
+   * }
+   * 
+   * @urlParam type_ticket required The ID of the type ticket resource.
+   */
+  public function ticketsDetails($ticket)
+  {
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      if (!is_numeric($ticket))
+        return $this->response->badRequest();
+
+      $ticketModel = Ticket::find($ticket);
+
+
+      if (!isset($ticketModel))
+        return $this->response->noContent();
+
+      $ticketFormated = new JsonTicket($ticketModel);
+
+      $ticketFormated->ticketsDetails = [
+        'ticket' => $ticketFormated,
+        'relationships' => [
+          'links' => [
+            'href' => route(
+              'api.tickets.ticketsDetails',
+              ['ticket' => $ticketFormated->id],
+              false
+            ),
+            'rel' => '/rels/ticketsDetails'
+          ],
+          'collection' => [
+            'numberOfElements' => $ticketFormated->ticketsDetails->count(),
+            'data' => $ticketFormated->ticketsDetails->map(function ($ticketDetail) {
+              return new JsonDetailTicket($ticketDetail);
+            })
+          ]
+        ]
+      ];
+
+      return $this->response->success($ticketFormated->ticketsDetails);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
     }
   }
 }

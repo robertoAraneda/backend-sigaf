@@ -6,7 +6,6 @@ use App\Helpers\MakeResponse;
 use App\Models\StatusDetailTicket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\Json\StatusDetailTicket as JsonStatusDetailTicket;
 use App\Http\Resources\StatusDetailTicketCollection;
 
 class StatusDetailTicketController extends Controller

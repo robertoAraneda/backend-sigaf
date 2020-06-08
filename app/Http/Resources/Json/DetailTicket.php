@@ -2,10 +2,10 @@
 
 namespace App\Http\Resources\Json;
 
-use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\Carbon;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class StatusDetailTicket extends JsonResource
+class DetailTicket extends JsonResource
 {
   /**
    * Transform the resource into an array.
@@ -18,15 +18,20 @@ class StatusDetailTicket extends JsonResource
     return [
       'links' => [
         'href' => route(
-          'api.statusDetailTickets.show',
-          ['status_detail_ticket' => $this->id],
+          'api.ticketDetails.show',
+          ['ticket_detail' => $this->id],
           false
         ),
         'rel' => 'self'
       ],
       'properties' => [
         'id' => $this->id,
-        'description' => $this->description,
+        'userCreated' => $this->userCreated,
+        'statusDetailTicket' => $this->statusDetailTicket != null ?  [
+          'id' => $this->statusDetailTicket->id,
+          'description' =>  $this->statusDetailTicket->description
+        ] : null,
+        'comment' => $this->comment,
         'createdAt' => $this->created_at != null
           ?  Carbon::parse($this->created_at)->format('d-m-Y')
           : null,

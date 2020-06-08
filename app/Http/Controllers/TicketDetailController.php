@@ -3,14 +3,35 @@
 namespace App\Http\Controllers;
 
 use App\Models\TicketDetail;
+use App\Helpers\MakeResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\DetailTicketCollection;
+use App\Http\Resources\Json\DetailTicket;
 
 class TicketDetailController extends Controller
 {
 
-  protected function validateData()
+  /**
+   * Property for make a response.
+   *
+   * @var  App\Helpers\MakeResponse  $response
+   */
+  protected $response;
+
+  public function __construct(MakeResponse $makeResponse = null)
   {
-    return request()->validate([
+    $this->response = $makeResponse;
+  }
+
+  /**
+   * Validate the description field.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   */
+  protected function validateData($request)
+  {
+    return Validator::make($request, [
       'ticket_id' => 'required|integer',
       'user_created_id' => 'required|integer',
       'status_detail_ticket_id' => 'required|integer',
@@ -28,24 +49,15 @@ class TicketDetailController extends Controller
 
     try {
 
-      $ticketDetails = TicketDetail::orderBy('id')
-        ->get()
-        ->map
-        ->format();
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-      return response()->json([
+      $ticketDetail = new DetailTicketCollection(TicketDetail::orderBy('created_at', 'asc')->get());
 
-        'success' => true,
-        'ticketDetails' => $ticketDetails,
-        'error' => null
-      ], 200);
+      return $this->response->success($ticketDetail);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'ticketDetails' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -59,30 +71,23 @@ class TicketDetailController extends Controller
   {
 
     try {
-      $dataStore = $this->validateData();
+
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $validate = $this->validateData(request()->all());
+
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
 
       $ticketDetail = new TicketDetail();
 
-      $ticketDetail =  $ticketDetail->create($dataStore);
+      $ticketDetail = $ticketDetail->create(request()->all());
 
-      // $ticketDetail->ticket_id = $dataStore['ticket_id'];
-      // $ticketDetail->user_create_id = $dataStore['user_created_id'];
-      // $ticketDetail->status_detail_ticket_id = $dataStore['status_detail_ticket_id'];
-      // $ticketDetail->comment = $dataStore['comment'];
-
-      // $ticketDetail->save();
-
-      return response()->json([
-        'success' => true,
-        'ticketDetail' => $ticketDetail->fresh()->format(),
-        'error' => null
-      ], 201);
+      return $this->response->created($ticketDetail->format());
     } catch (\Exception $exception) {
-      return response()->json([
-        'success' => false,
-        'ticketDetail' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -92,41 +97,26 @@ class TicketDetailController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function show($id)
+  public function show($ticket_detail)
   {
+
     try {
 
-      if (is_numeric($id)) {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-        $ticketDetail = TicketDetail::whereId($id)->first();
+      if (!is_numeric($ticket_detail))
+        return $this->response->badRequest();
 
-        if (isset($ticketDetail)) {
+      $ticketDetailModel = TicketDetail::find($ticket_detail);
 
-          return response()->json([
-            'success' => true,
-            'ticketDetail' => $ticketDetail->format(),
-            'error' => null
-          ], 200);
-        } else {
-          return response()->json([
-            'success' => false,
-            'ticketDetail' => null,
-            'error' => 'No Content'
-          ], 204);
-        }
-      } else {
-        return response()->json([
-          'success' => false,
-          'ticketDetail' => null,
-          'error' => 'Bad Request'
-        ], 400);
-      }
+      if (!isset($ticketDetailModel))
+        return $this->response->noContent();
+
+      return $this->response->success($ticketDetailModel->format());
     } catch (\Exception $exception) {
-      return response()->json([
-        'success' => false,
-        'ticketDetail' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -148,7 +138,7 @@ class TicketDetailController extends Controller
 
         if (isset($ticketDetail)) {
 
-          $dataUpdate = $this->validateData();
+          $dataUpdate = $this->validateData(request()->all());
           // $ticketDetail->ticket_id = $updateData['ticket_id'];
           // $ticketDetail->user_create_id = $updateData['user_created_id'];
           // $ticketDetail->status_detail_ticket_id = $updateData['status_detail_ticket_id'];

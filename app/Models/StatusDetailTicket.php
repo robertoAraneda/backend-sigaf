@@ -16,7 +16,7 @@ class StatusDetailTicket extends Model
     return [
       'links' => [
         'href' => route(
-          'api.statusDetailTicket.show',
+          'api.statusDetailTickets.show',
           ['status_detail_ticket' => $this->id],
           false
         ),

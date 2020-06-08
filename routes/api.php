@@ -91,10 +91,11 @@ Route::group([
   Route::apiResource('/profiles', 'ProfileController')->names('api.profiles');
   Route::apiResource('/sections', 'SectionController')->names('api.sections');
   Route::apiResource('/users', 'UserController')->names('api.users');
-  Route::apiResource('/status-detail-ticket', 'StatusDetailTicketController')->names('api.statusDetailTicket');
+  Route::apiResource('/status-detail-ticket', 'StatusDetailTicketController')->names('api.statusDetailTickets');
+  Route::apiResource('/ticket-details', 'TicketDetailController')->names('api.ticketDetails');
+
 
   Route::get('/activity-course-registered-users/{activity_course_registered_user}', 'ActivityCourseRegisteredUserController@show')->name('api.activityCourseRegisteredUsers.show');
-
 
   Route::get('/course-registered-user', 'CourseRegisteredUserController@index');
   Route::apiResource('/activity-course-users', 'ActivityCourseRegisteredUserController')->names('api.activityCourseUsers');
@@ -133,8 +134,9 @@ Route::group([
   Route::get('/registered-users/{registered_user}/courses', 'RegisteredUserController@courses')->name('api.registeredUsers.courses');
   Route::get('/registered-users/{registered_user}/courses/{course}', 'RegisteredUserController@course')->name('api.registeredUsers.courses.show');
   Route::get('/registered-users/{registered_user}/courses/{course}/activities', 'RegisteredUserController@activities')->name('api.registeredUsers.activities');
-
   Route::get('/registered-users/{registered_user}/tickets', 'RegisteredUserController@tickets')->name('api.registeredUsers.tickets');
+
+  Route::get('/tickets/{ticket}/ticket-details', 'TicketController@ticketsDetails')->name('api.tickets.ticketsDetails');
 
   Route::post('/upload-file', 'UploadFileController@fileSubmit')->name('api.upload');
 
