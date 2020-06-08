@@ -1,17 +1,19 @@
 <?php
 
-namespace App\Models;
+namespace App\Http\Resources\Json;
 
+use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
-class StatusDetailTicket extends Model
+class StatusDetailTicket extends JsonResource
 {
-  protected $guarded = [];
-
-  protected $table = 'status_detail_tickets';
-
-  public function format()
+  /**
+   * Transform the resource into an array.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @return array
+   */
+  public function toArray($request)
   {
     return [
       'links' => [
@@ -33,10 +35,5 @@ class StatusDetailTicket extends Model
           : null
       ]
     ];
-  }
-
-  public function ticketDetails()
-  {
-    return $this->hasMany(TicketDetail::class);
   }
 }

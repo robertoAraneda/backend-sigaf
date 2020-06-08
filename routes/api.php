@@ -91,6 +91,7 @@ Route::group([
   Route::apiResource('/profiles', 'ProfileController')->names('api.profiles');
   Route::apiResource('/sections', 'SectionController')->names('api.sections');
   Route::apiResource('/users', 'UserController')->names('api.users');
+  Route::apiResource('/status-detail-ticket', 'StatusDetailTicketController')->names('api.statusDetailTicket');
 
   Route::get('/activity-course-registered-users/{activity_course_registered_user}', 'ActivityCourseRegisteredUserController@show')->name('api.activityCourseRegisteredUsers.show');
 

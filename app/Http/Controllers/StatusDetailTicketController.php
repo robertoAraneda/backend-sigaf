@@ -2,15 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\MakeResponse;
 use App\Models\StatusDetailTicket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\Json\StatusDetailTicket as JsonStatusDetailTicket;
+use App\Http\Resources\StatusDetailTicketCollection;
 
 class StatusDetailTicketController extends Controller
 {
 
-  protected function validateData()
+  /**
+   * Property for make a response.
+   *
+   * @var  App\Helpers\MakeResponse  $response
+   */
+  protected $response;
+
+  public function __construct(MakeResponse $makeResponse = null)
   {
-    return request()->validate([
+    $this->response = $makeResponse;
+  }
+
+  /**
+   * Validate the description field.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   */
+  protected function validateData($request)
+  {
+    return Validator::make($request, [
       'description' => 'required|max:25'
     ]);
   }
@@ -24,23 +45,15 @@ class StatusDetailTicketController extends Controller
 
     try {
 
-      $statusDetailTickets = StatusDetailTicket::orderBy('id')
-        ->get()
-        ->map
-        ->format();
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-      return response()->json([
-        'success' => true,
-        'statusDetailTickets' => $statusDetailTickets,
-        'error' => null,
-      ], 200);
+      $statusDetailTicket = new StatusDetailTicketCollection(StatusDetailTicket::all());
+
+      return $this->response->success($statusDetailTicket);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'statusDetailTickets' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -55,7 +68,7 @@ class StatusDetailTicketController extends Controller
 
     try {
 
-      $dataStore = $this->validateData();
+      $dataStore = $this->validateData(request()->all());
 
       $statusDetailTicket = new StatusDetailTicket();
 
@@ -138,7 +151,7 @@ class StatusDetailTicketController extends Controller
 
       if (is_numeric($id)) {
 
-        $dataUpdate = $this->validateData();
+        $dataUpdate = $this->validateData(request()->all());
 
         $statusDetailTicket = StatusDetailTicket::whereId($id)->first();
 

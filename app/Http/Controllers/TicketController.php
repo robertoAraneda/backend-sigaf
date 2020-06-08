@@ -29,12 +29,12 @@ class TicketController extends Controller
       'course_registered_user_id' => 'required|integer',
       'type_ticket_id' => 'required|integer',
       'status_ticket_id' => 'required|integer',
+      'source_ticket_id' => 'required|integer',
       'priority_ticket_id' => 'required|integer',
       'motive_ticket_id' => 'required|integer',
       'user_create_id' => 'required|integer',
       'user_assigned_id' => 'required|integer',
       'closing_date' => 'date',
-      'observation' => 'max:255',
     ]);
   }
   /**
@@ -73,19 +73,9 @@ class TicketController extends Controller
       $ticket = new Ticket();
       $ticket = $ticket->create($dataStore);
 
-      return response()->json([
-
-        'success' => true,
-        'ticket' => $ticket->fresh()->format(),
-        'error' => null
-      ], 201);
+      return $this->response->success($ticket->fresh()->format());
     } catch (\Exception $exception) {
-
-      return response()->json([
-        'success' => false,
-        'ticket' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
