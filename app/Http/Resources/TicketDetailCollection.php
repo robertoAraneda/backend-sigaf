@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class DetailTicketCollection extends ResourceCollection
+class TicketDetailCollection extends ResourceCollection
 {
   /**
    * Transform the resource collection into an array.
@@ -21,7 +21,7 @@ class DetailTicketCollection extends ResourceCollection
           [],
           false
         ),
-        'title' => 'Listado de detalle Ticket',
+        'title' => 'Listado de Detalle de Ticket',
         'rel' => 'self'
       ],
       'numberOfElements' => $this->collection->count(),

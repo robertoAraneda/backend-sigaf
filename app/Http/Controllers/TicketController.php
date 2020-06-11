@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\MakeResponse;
 use App\Models\Ticket;
 use App\Http\Resources\Json\Ticket as JsonTicket;
-use App\Http\Resources\Json\DetailTicket as JsonDetailTicket;
+use App\Http\Resources\Json\TicketDetail as JsonTicketDetail;
 use App\Http\Resources\TicketCollection;
 use Illuminate\Http\Request;
 
@@ -275,7 +275,7 @@ class TicketController extends Controller
           'collection' => [
             'numberOfElements' => $ticketFormated->ticketsDetails->count(),
             'data' => $ticketFormated->ticketsDetails->map(function ($ticketDetail) {
-              return new JsonDetailTicket($ticketDetail);
+              return new JsonTicketDetail($ticketDetail);
             })
           ]
         ]

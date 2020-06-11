@@ -7,10 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class StatusDetailTicket extends Model
 {
-  protected $guarded = [];
+  protected $fillable = [
+    'description'
+  ];
 
   protected $table = 'status_detail_tickets';
 
+  /**
+   * Get the Status Detail Ticket formated
+   *
+   * @return array
+   */
   public function format()
   {
     return [
@@ -31,10 +38,25 @@ class StatusDetailTicket extends Model
         'updatedAt' => $this->updated_at != null
           ?  Carbon::parse($this->updated_at)->format('d-m-Y')
           : null
+      ],
+      'relationships' => [
+        'numberOfElements' => $this->ticketDetails->count(),
+        'links' => [
+          'href' => route(
+            'api.statusDetailTickets.ticketDetails',
+            ['status_detail_ticket' => $this->id],
+            false
+          ),
+          'rel' => '/rels/ticketDetails'
+        ]
       ]
     ];
   }
 
+  /**
+   * Get a list of ticket details for the status detail ticket
+   *
+   */
   public function ticketDetails()
   {
     return $this->hasMany(TicketDetail::class);

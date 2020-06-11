@@ -91,7 +91,7 @@ Route::group([
   Route::apiResource('/profiles', 'ProfileController')->names('api.profiles');
   Route::apiResource('/sections', 'SectionController')->names('api.sections');
   Route::apiResource('/users', 'UserController')->names('api.users');
-  Route::apiResource('/status-detail-ticket', 'StatusDetailTicketController')->names('api.statusDetailTickets');
+  Route::apiResource('/status-detail-tickets', 'StatusDetailTicketController')->names('api.statusDetailTickets');
   Route::apiResource('/ticket-details', 'TicketDetailController')->names('api.ticketDetails');
 
 
@@ -136,6 +136,7 @@ Route::group([
   Route::get('/registered-users/{registered_user}/courses/{course}/activities', 'RegisteredUserController@activities')->name('api.registeredUsers.activities');
   Route::get('/registered-users/{registered_user}/tickets', 'RegisteredUserController@tickets')->name('api.registeredUsers.tickets');
 
+  Route::get('/status-detail-tickets/{status_detail_ticket}/ticket-details', 'StatusDetailTicketController@ticketDetails')->name('api.statusDetailTickets.ticketDetails');
   Route::get('/tickets/{ticket}/ticket-details', 'TicketController@ticketsDetails')->name('api.tickets.ticketsDetails');
 
   Route::post('/upload-file', 'UploadFileController@fileSubmit')->name('api.upload');

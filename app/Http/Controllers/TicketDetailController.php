@@ -4,10 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\TicketDetail;
 use App\Helpers\MakeResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\DetailTicketCollection;
-use App\Http\Resources\Json\DetailTicket;
+use App\Http\Resources\TicketDetailCollection;
 
 class TicketDetailController extends Controller
 {
@@ -52,7 +50,7 @@ class TicketDetailController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $ticketDetail = new DetailTicketCollection(TicketDetail::orderBy('created_at', 'asc')->get());
+      $ticketDetail = new TicketDetailCollection(TicketDetail::orderBy('created_at', 'asc')->get());
 
       return $this->response->success($ticketDetail);
     } catch (\Exception $exception) {
