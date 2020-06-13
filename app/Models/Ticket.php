@@ -40,13 +40,15 @@ class Ticket extends Model
         'id' => $this->motiveTicket->id,
         'description' => $this->motiveTicket->description
       ],
+      'sourceTicket' => [
+        'id' => $this->sourceTicket->id,
+        'description' => $this->sourceTicket->description
+      ],
       'userCreated' => $this->userCreated,
       'userAssigned' => $this->userAssigned,
       'closingDate' => $this->closing_date,
-      'observation' => $this->observation,
       'createdAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('d-m-Y') : null,
       'updatedAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('d-m-Y') : null,
-      'detailTicket' => $this->ticketsDetails
     ];
   }
 
@@ -83,7 +85,7 @@ class Ticket extends Model
 
   public function userCreated()
   {
-    return $this->belongsTo(User::class);
+    return $this->belongsTo(User::class, 'user_create_id');
   }
 
   public function userAssigned()
