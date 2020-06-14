@@ -21,7 +21,7 @@ class Ticket extends JsonResource
         'href' => route('api.tickets.show', ['ticket' => $this->id], false),
         'rel' => 'self'
       ],
-      'ticket' => [
+      'properties' => [
         'id' => $this->id,
         'courseRegisteredUser' => $this->courseRegisteredUser->load(
           'course',

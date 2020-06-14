@@ -8,6 +8,7 @@ use App\Http\Resources\Json\Ticket as JsonTicket;
 use App\Http\Resources\Json\TicketDetail as JsonTicketDetail;
 use App\Http\Resources\TicketCollection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class TicketController extends Controller
 {
@@ -23,10 +24,14 @@ class TicketController extends Controller
   {
     $this->response = $makeResponse;
   }
-
-  protected function validateData()
+  /**
+   * Validate the description field.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   */
+  protected function validateData($request)
   {
-    return request()->validate([
+    return Validator::make($request, [
       'course_registered_user_id' => 'required|integer',
       'type_ticket_id' => 'required|integer',
       'status_ticket_id' => 'required|integer',
@@ -69,10 +74,17 @@ class TicketController extends Controller
   {
     try {
 
-      $dataStore = $this->validateData();
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $validate = $this->validateData(request()->all());
+
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
+
 
       $ticket = new Ticket();
-      $ticket = $ticket->create($dataStore);
+      $ticket = $ticket->create(request()->all());
 
       return $this->response->success($ticket->fresh()->format());
     } catch (\Exception $exception) {
@@ -86,46 +98,26 @@ class TicketController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function show($id)
+  public function show($ticket)
   {
+
     try {
 
-      if (is_numeric($id)) {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-        $ticket = Ticket::whereId($id)->first();
+      if (!is_numeric($ticket))
+        return $this->response->badRequest();
 
-        if (isset($ticket)) {
+      $ticketModel = Ticket::find($ticket);
 
-          return response()->json([
+      if (!isset($ticketModel))
+        return $this->response->noContent();
 
-            'success' => true,
-            'ticket' => $ticket->format(),
-            'error' => null
-          ], 200);
-        } else {
-
-          return response()->json([
-
-            'success' => false,
-            'ticket' => null,
-            'error' => 'No Content'
-          ], 204);
-        }
-      } else {
-        return response()->json([
-
-          'success' => false,
-          'ticket' => null,
-          'error' => 'Bad Request'
-        ], 400);
-      }
+      return $this->response->success($ticketModel->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'ticket' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -136,47 +128,32 @@ class TicketController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function update($id)
+  public function update($ticket)
   {
     try {
-      if (is_numeric($id)) {
 
-        $ticket = Ticket::whereId($id)->first();
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-        if (isset($ticket)) {
+      if (!is_numeric($ticket))
+        return $this->response->badRequest();
 
-          $dataUpdate = $this->validateData();
+      $ticketModel = Ticket::find($ticket);
 
-          $ticket->update($dataUpdate);
+      if (!isset($ticketModel))
+        return $this->response->noContent();
 
-          return response()->json([
-            'success' => true,
-            'ticket' => $ticket->format(),
-            'error' => null
-          ], 200);
-        } else {
+      $validate = $this->validateData(request()->all());
 
-          return response()->json([
-            'success' => false,
-            'ticket' => null,
-            'error' => 'No Content'
-          ], 204);
-        }
-      } else {
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
 
-        return response()->json([
-          'success' => false,
-          'ticket' => null,
-          'error' => 'Bad Request'
-        ], 400);
-      }
+      $ticketModel->update(request()->all());
+
+      return $this->response->success($ticketModel->fresh()->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'ticket' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -186,43 +163,27 @@ class TicketController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function destroy($id)
+  public function destroy($ticket)
   {
     try {
 
-      if (is_numeric($id)) {
-        $ticket = Ticket::whereId($id)->first();
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-        if (isset($ticket)) {
-          return response()->json([
+      if (!is_numeric($ticket))
+        return $this->response->badRequest();
 
-            'success' => true,
-            'ticket' => null,
-            'error' => null
-          ], 200);
-        } else {
-          return response()->json([
+      $ticketModel = Ticket::find($ticket);
 
-            'success' => false,
-            'ticket' => null,
-            'error' => 'No Content'
-          ], 204);
-        }
-      } else {
-        return response()->json([
+      if (!isset($ticketModel))
+        return $this->response->noContent();
 
-          'success' => false,
-          'ticket' => null,
-          'error' => 'Bad Request'
-        ], 400);
-      }
+      $ticketModel->delete();
+
+      return $this->response->success(null);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'ticket' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
