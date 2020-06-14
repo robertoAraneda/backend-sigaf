@@ -38,6 +38,7 @@ class Ticket extends Model
         'id' => $this->id,
         'courseRegisteredUser' => $this->courseRegisteredUser->load(
           'course',
+          'course.category',
           'registeredUser',
           'profile:id,description',
           'classroom:id,description',
