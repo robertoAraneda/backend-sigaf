@@ -36,6 +36,7 @@ class StatusDetailTicketController extends Controller
   {
     return Validator::make($request, [
       'description' => 'required|max:25'
+
     ]);
   }
   /**
@@ -144,6 +145,8 @@ class StatusDetailTicketController extends Controller
   public function update($status_detail_ticket)
   {
 
+
+
     try {
 
       if (!request()->isJson())
@@ -154,6 +157,8 @@ class StatusDetailTicketController extends Controller
 
       $statusDetailTicketModel = StatusDetailTicket::find($status_detail_ticket);
 
+
+
       if (!isset($statusDetailTicketModel))
         return $this->response->noContent();
 
@@ -162,9 +167,11 @@ class StatusDetailTicketController extends Controller
       if ($validate->fails())
         return $this->response->exception($validate->errors());
 
+
+
       $statusDetailTicketModel->update(request()->all());
 
-      return $this->response->success($statusDetailTicketModel->fresh()->format());
+      return $this->response->success($statusDetailTicketModel->format());
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());
