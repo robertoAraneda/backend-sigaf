@@ -50,7 +50,7 @@ class TicketDetailController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $ticketDetail = new TicketDetailCollection(TicketDetail::orderBy('created_at', 'asc')->get());
+      $ticketDetail = new TicketDetailCollection(TicketDetail::orderBy('created_at', 'desc')->get());
 
       return $this->response->success($ticketDetail);
     } catch (\Exception $exception) {
