@@ -27,6 +27,7 @@ class Category extends Model
       'properties' => [
         'id' => $this->id,
         'description' => $this->description,
+        'idPlatformMoodle' => $this->platform_id,
         'idCategoryMoodle' => $this->id_category_moodle,
         'status' => $this->status,
         'createdAt' => $this->created_at != null
