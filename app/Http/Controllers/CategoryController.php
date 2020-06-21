@@ -7,6 +7,8 @@ use App\Http\Resources\CategoryCollection;
 use App\Models\Category;
 use App\Http\Resources\Json\Course as JsonCourse;
 use App\Http\Resources\Json\Category as JsonCategory;
+use App\Models\Course;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * @group Category management
@@ -27,6 +29,18 @@ class CategoryController extends Controller
     $this->response = $makeResponse;
   }
 
+  /**
+   * Validate the description field.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   */
+  protected function validateData($request)
+  {
+    return Validator::make($request, [
+      'description' => 'required|max:150',
+      'platform_id' => 'required|numeric'
+    ]);
+  }
 
   /**
    * Display a listing of categories resources.
@@ -74,6 +88,35 @@ class CategoryController extends Controller
     return $category;
   }
 
+  /**
+   * Store a newly created resource in storage.
+   *
+   *  @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\Course
+   * @apiResourceModel App\Models\Course
+   */
+  public function storeVue()
+  {
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $validate = $this->validateData(request()->all());
+
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
+
+      $category = new Course();
+
+      $category = $category->create(request()->all());
+
+      return $this->response->created($category->format());
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
+  }
 
   /**
    * Display the category resource.
@@ -158,6 +201,79 @@ class CategoryController extends Controller
     $category->save();
 
     return $category;
+  }
+
+  /**
+   * Update the specified resource in storage.
+   *
+   * @param  int  $category
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\Category
+   * @apiResourceModel App\Models\Category
+   * 
+   * @urlParam category required The ID of the category resource.
+   */
+  public function updateVue($category)
+  {
+    try {
+
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      if (!is_numeric($category))
+        return $this->response->badRequest();
+
+      $categoryModel = Course::find($category);
+
+      if (!isset($categoryModel))
+        return $this->response->noContent();
+
+      $validate = $this->validateData(request()->all());
+
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
+
+      $categoryModel->update(request()->all());
+
+      return $this->response->success($categoryModel->fresh()->format());
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
+  }
+
+  /**
+   * Remove the specified resource from storage.
+   *
+   * @param  int  $category
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * 
+   * @urlParam category required The ID of the category resource.
+   */
+  public function destroy($category)
+  {
+    try {
+
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      if (!is_numeric($category))
+        return $this->response->badRequest();
+
+      $categoryModel = Course::find($category);
+
+      if (!isset($categoryModel))
+        return $this->response->noContent();
+
+      $categoryModel->delete();
+
+      return $this->response->success(null);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 
 
