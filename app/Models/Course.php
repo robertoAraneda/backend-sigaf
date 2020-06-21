@@ -8,7 +8,12 @@ use App\Http\Resources\Json\Category as JsonCategory;
 
 class Course extends Model
 {
-  protected $guarded = [];
+  protected $fillable = [
+    'description',
+    'category_id',
+    'id_course_moodle',
+    'status'
+  ];
 
   protected $table = 'courses';
 

@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Platform extends Model
 {
-  protected $guarded = [];
+  protected $fillable = [
+    'description'
+  ];
 
   protected $table = 'platforms';
 
@@ -38,9 +40,8 @@ class Platform extends Model
           ?  Carbon::parse($this->updated_at)->format('d-m-Y')
           : null
       ],
-      'nestedObjects' => null,
       'relationships' => [
-        'numberOfElements' => $this->categories()->count(),
+        'numberOfElements' => $this->categories->count(),
         'links' => [
           'href' => route(
             'api.platforms.categories', //nombre de la ruta (names en cada Route en archivo api.php)

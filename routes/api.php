@@ -147,7 +147,10 @@ Route::group([
   Route::post('/upload-file', 'UploadFileController@fileSubmit')->name('api.upload');
   Route::get('/download-file/excel/{params}', 'CourseRegisteredUserController@downloadExcelCourseRegistered');
 
-
+  //custom methods
+  Route::post('/courses/post', 'CourseController@storeVue');
+  Route::post('/categories/post', 'CategoryController@storeVue');
+  Route::put('/categories/put/{category}', 'CategoryController@updateVue');
 
   //test
 
