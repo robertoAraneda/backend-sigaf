@@ -56,6 +56,7 @@ Route::get('/fetch/daily/user-registered-activities', 'SynchronizeController@syn
 
 Route::get('/upload-file/excel', 'RegisteredUserController@import');
 
+
 Route::group([
   'prefix' => 'auth'
 ], function () {
@@ -106,6 +107,10 @@ Route::group([
   Route::get('/registered-user/{rut}', 'RegisteredUserController@findByRut');
   Route::get('/activity-course-registered-user/{id}', 'ActivityCourseRegisteredUserController@findByIdRegisteredUserCourse');
 
+  //alumnos
+
+  Route::put('/course-registered-user/classroom/{id}', 'CourseRegisteredUserController@updateClassroom');
+
 
   //rels
   Route::get('/type-tickets/{type_ticket}/tickets', 'TypeTicketController@tickets')->name('api.typeTickets.tickets');
@@ -140,10 +145,18 @@ Route::group([
   Route::get('/tickets/{ticket}/ticket-details', 'TicketController@ticketsDetails')->name('api.tickets.ticketsDetails');
 
   Route::post('/upload-file', 'UploadFileController@fileSubmit')->name('api.upload');
+  Route::get('/download-file/excel/{params}', 'CourseRegisteredUserController@downloadExcelCourseRegistered');
 
 
 
   //test
 
   Route::get('/sync-moodle-student', 'SynchronizeController@syncMoodleStudents');
+
+
+
+  //form
+
+  Route::get('/form/ticket/post', 'FormController\TicketFormController@postForm');
+  Route::get('/form/ticket/put/{id}', 'FormController\TicketFormController@putForm');
 });

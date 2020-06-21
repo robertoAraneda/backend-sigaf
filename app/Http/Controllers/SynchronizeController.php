@@ -423,30 +423,30 @@ class SynchronizeController extends Controller
   public function syncMoodleStudents()
   {
 
-    $registeredUserController = new RegisteredUserController();
-    $response4 = Http::get($this->getBASE_URL() . "collection/inscrito/all");
+    // $registeredUserController = new RegisteredUserController();
+    // $response4 = Http::get($this->getBASE_URL() . "collection/inscrito/all");
 
-    $studentsMoodle =  $response4->json();
+    // $studentsMoodle =  $response4->json();
 
-    $array_student = array();
+    // $array_student = array();
 
-    $response =  $registeredUserController->import();
+    // $response =  $registeredUserController->import();
 
-    Storage::delete('carga_alumnos.xlsx');
+    // Storage::delete('carga_alumnos.xlsx');
 
 
-    foreach ($response as $res) {
-      foreach ($studentsMoodle as $student) {
-        if (
-          strtoupper($student['rut']) == strtoupper($res['rut'])
-          && 773 == $student['idrcurso']
-        ) {
-          $student['id'] = $res['id'];
-          $array_student[] = $student;
-        }
-      }
-    }
-    return $array_student;
+    // foreach ($response as $res) {
+    //   foreach ($studentsMoodle as $student) {
+    //     if (
+    //       strtoupper($student['rut']) == strtoupper($res['rut'])
+    //       && 773 == $student['idrcurso']
+    //     ) {
+    //       $student['id'] = $res['id'];
+    //       $array_student[] = $student;
+    //     }
+    //   }
+    // }
+    // return $array_student;
   }
 
 

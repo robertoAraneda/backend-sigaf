@@ -150,26 +150,76 @@ class RegisteredUserController extends Controller
   {
     //$excel =  Excel::import(new RegisteredUserImport, 'D:\Proyectos\inacap-iie\importFile\prueba.xlsx');
     $collection = (new RegisteredUserImport)
-      ->toCollection(storage_path('app/carga_alumnos.xlsx'));
+      ->toCollection(storage_path('app/upload_student.xlsx'));
 
     $array = [];
     foreach ($collection as $value) {
       foreach ($value as $key) {
+
+
         $array[] = array(
-          'id' => $key[0],
-          'rut' => $this->formatRut(str_split($key[1])) . "-" . $key[2],
-          'nombre' => $key[11],
-          'apellidoPaterno' => $key[12]
+          'rut' => $this->formatRut(str_split($key[0])) . "-" . $key[1],
+          'name'    => $key[10],
+          'last_name'     => $key[11],
+          'mother_last_name'    => $key[12],
+          'email'    => $key[8],
+          'phone'      => $key[16],
+          'mobile'      => $key[17],
+          'address'      => $key[14],
+          'region'      => $key[15],
+          'rbd_school'    => $key[18],
+          'name_school'      => $key[19],
+          'city_school'      => $key[23],
+          'region_school'      => $key[21],
+          'phone_school'    => $key[24]
         );
       }
     }
 
-    return array_slice($array, 1, count($array) - 1);
+    $registeredUserCollection = array_slice($array, 1, count($array) - 1);
 
+    $arrayRegisteredUserStore = [];
 
-    // return redirect('/')->with('success', 'All good!');
+    foreach ($registeredUserCollection as $registeredUser) {
+      $user = new RegisteredUser();
+
+      $user->rut = $registeredUser['rut'];
+      $user->name = $registeredUser['name'];
+      $user->last_name = $registeredUser['last_name'];
+      $user->mother_last_name = $registeredUser['mother_last_name'];
+      $user->email = $registeredUser['email'];
+      $user->phone = $registeredUser['phone'];
+      $user->mobile = $registeredUser['mobile'];
+      $user->address = $registeredUser['address'];
+      $user->region = $registeredUser['region'];
+      $user->rbd_school = $registeredUser['rbd_school'];
+      $user->name_school = $registeredUser['name_school'];
+      $user->city_school = $registeredUser['city_school'];
+      $user->region_school = $registeredUser['region_school'];
+      $user->phone_school = $registeredUser['phone_school'];
+
+      if (!$this->isRegisteredUserStore($user)) {
+        $user->save();
+      }
+
+      $findUser = RegisteredUser::where('rut', $user->rut)->first();
+
+      $arrayRegisteredUserStore[] = $findUser;
+    }
+
+    return $arrayRegisteredUserStore;
   }
 
+  private function isRegisteredUserStore($registeredUser)
+  {
+    $user = RegisteredUser::where('rut', $registeredUser['rut'])->first();
+
+    if (isset($user)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   private function formatRut($array)
   {
 

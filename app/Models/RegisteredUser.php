@@ -12,7 +12,22 @@ class RegisteredUser extends Model
 
   protected $table = 'registered_users';
 
-  protected $guarded = [];
+  protected $fillable = [
+    'rut',
+    'name',
+    'last_name',
+    'mother_last_name',
+    'email',
+    'phone',
+    'mobile',
+    'address',
+    'region',
+    'rbd_school',
+    'name_school',
+    'city_school',
+    'region_school',
+    'phone_school'
+  ];
 
 
   public function format()

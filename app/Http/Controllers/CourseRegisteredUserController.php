@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CourseRegisteredUserExport;
 use App\Helpers\MakeResponse;
 use App\Models\CourseRegisteredUser;
 use App\Http\Resources\Json\ActivityCourseRegisteredUser as JsonActivityCourseUser;
 use App\Http\Resources\Json\CourseRegisteredUser as JsonCourseRegisteredUser;
+use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CourseRegisteredUserController extends Controller
 {
@@ -102,6 +105,25 @@ class CourseRegisteredUserController extends Controller
   public function destroy($id)
   {
     //
+  }
+
+  public function updateClassroom($id, Request $request)
+  {
+    $courseRegisteredUser = CourseRegisteredUser::whereId($id)->first();
+
+    $courseRegisteredUser->classroom_id = $request->classroom_id;
+
+    $courseRegisteredUser->save();
+
+    return $this->response->success($courseRegisteredUser);
+  }
+
+  public function downloadExcelCourseRegistered($course)
+  {
+
+    return (new CourseRegisteredUserExport($course))->download('Archivo_CPEIP.csv', \Maatwebsite\Excel\Excel::XLSX, [
+      'Content-Type' => 'application/vnd.ms-excel',
+    ]);
   }
 
   public function activityCourseUsers($id)
