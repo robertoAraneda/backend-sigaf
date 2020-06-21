@@ -143,6 +143,8 @@ Route::group([
 
   //custom post
   Route::post('/courses/post', 'CourseController@storeVue');
+  Route::post('/categories/post', 'CategoryController@storeVue');
+  Route::post('/categories/put', 'CategoryController@updateVue');
 
   //test
 
