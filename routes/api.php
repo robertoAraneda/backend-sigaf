@@ -141,7 +141,8 @@ Route::group([
 
   Route::post('/upload-file', 'UploadFileController@fileSubmit')->name('api.upload');
 
-
+  //custom post
+  Route::post('/courses/post', 'CourseController@storeVue');
 
   //test
 
