@@ -13,6 +13,7 @@ use App\Http\Resources\Json\ActivityCourseRegisteredUser as JsonActivityCourseRe
 use App\Http\Resources\CourseCollection;
 use App\Models\CourseRegisteredUser;
 use App\Models\RegisteredUser;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * @group Course management
@@ -30,6 +31,19 @@ class CourseController extends Controller
   public function __construct(MakeResponse $makeResponse = null)
   {
     $this->response = $makeResponse;
+  }
+
+  /**
+   * Validate the description field.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   */
+  protected function validateData($request)
+  {
+    return Validator::make($request, [
+      'description' => 'required|max:150',
+      'category_id' => 'required|numeric'
+    ]);
   }
 
   /**
@@ -73,6 +87,36 @@ class CourseController extends Controller
     $nuevoCurso->status = $cursoTraidoMoodle['activo'];
 
     $nuevoCurso->save();
+  }
+
+  /**
+   * Store a newly created resource in storage.
+   *
+   *  @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\Course
+   * @apiResourceModel App\Models\Course
+   */
+  public function storeVue()
+  {
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $validate = $this->validateData(request()->all());
+
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
+
+      $course = new Course();
+
+      $course = $course->create(request()->all());
+
+      return $this->response->created($course->format());
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 
   /**
@@ -125,13 +169,74 @@ class CourseController extends Controller
   /**
    * Update the specified resource in storage.
    *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @param  int  $course
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\Course
+   * @apiResourceModel App\Models\Course
+   * 
+   * @urlParam course required The ID of the course resource.
    */
-  public function update(Request $request, $id)
+  public function update($course)
   {
-    //
+    try {
+
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      if (!is_numeric($course))
+        return $this->response->badRequest();
+
+      $courseModel = Course::find($course);
+
+      if (!isset($courseModel))
+        return $this->response->noContent();
+
+      $validate = $this->validateData(request()->all());
+
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
+
+      $courseModel->update(request()->all());
+
+      return $this->response->success($courseModel->fresh()->format());
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
+  }
+
+  /**
+   * Remove the specified resource from storage.
+   *
+   * @param  int  $course
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * 
+   * @urlParam course required The ID of the course resource.
+   */
+  public function destroy($course)
+  {
+    try {
+
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      if (!is_numeric($course))
+        return $this->response->badRequest();
+
+      $courseModel = Course::find($course);
+
+      if (!isset($courseModel))
+        return $this->response->noContent();
+
+      $courseModel->delete();
+
+      return $this->response->success(null);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 
   /**
