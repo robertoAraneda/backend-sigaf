@@ -107,7 +107,7 @@ class CategoryController extends Controller
       if ($validate->fails())
         return $this->response->exception($validate->errors());
 
-      $category = new Course();
+      $category = new Category();
 
       $category = $category->create(request()->all());
 
@@ -224,7 +224,7 @@ class CategoryController extends Controller
       if (!is_numeric($category))
         return $this->response->badRequest();
 
-      $categoryModel = Course::find($category);
+      $categoryModel = Category::find($category);
 
       if (!isset($categoryModel))
         return $this->response->noContent();
@@ -262,7 +262,7 @@ class CategoryController extends Controller
       if (!is_numeric($category))
         return $this->response->badRequest();
 
-      $categoryModel = Course::find($category);
+      $categoryModel = Category::find($category);
 
       if (!isset($categoryModel))
         return $this->response->noContent();
