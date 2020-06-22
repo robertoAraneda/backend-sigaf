@@ -25,7 +25,7 @@ class CourseRegisteredUserExport implements FromCollection, WithMapping, WithHea
 
   private $course;
 
-  public function __construct(string $course)
+  public function __construct($course)
   {
     $this->course = $course;
   }
@@ -42,7 +42,7 @@ class CourseRegisteredUserExport implements FromCollection, WithMapping, WithHea
       'registeredUser',
       'profile',
       'finalStatus'
-    ])->get();
+    ])->where('course_id', $this->course['id'])->get();
   }
 
   /**
@@ -76,7 +76,7 @@ class CourseRegisteredUserExport implements FromCollection, WithMapping, WithHea
 
 
     return [
-      [$this->course],
+      [$this->course['description']],
       [
         'AULA',
         'RUT',

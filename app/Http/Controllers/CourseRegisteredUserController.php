@@ -118,10 +118,11 @@ class CourseRegisteredUserController extends Controller
     return $this->response->success($courseRegisteredUser);
   }
 
-  public function downloadExcelCourseRegistered($course)
+  public function downloadExcelCourseRegistered($id, $description)
   {
+    $data = ['id' => $id, 'description' => $description];
 
-    return (new CourseRegisteredUserExport($course))->download('Archivo_CPEIP.csv', \Maatwebsite\Excel\Excel::XLSX, [
+    return (new CourseRegisteredUserExport($data))->download('Archivo_CPEIP.csv', \Maatwebsite\Excel\Excel::XLSX, [
       'Content-Type' => 'application/vnd.ms-excel',
     ]);
   }

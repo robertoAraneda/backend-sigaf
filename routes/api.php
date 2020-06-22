@@ -145,7 +145,7 @@ Route::group([
   Route::get('/tickets/{ticket}/ticket-details', 'TicketController@ticketsDetails')->name('api.tickets.ticketsDetails');
 
   Route::post('/upload-file', 'UploadFileController@fileSubmit')->name('api.upload');
-  Route::get('/download-file/excel/{params}', 'CourseRegisteredUserController@downloadExcelCourseRegistered');
+  Route::get('/download-file/excel/{id}/{description}', 'CourseRegisteredUserController@downloadExcelCourseRegistered');
 
   //custom methods
   Route::post('/courses/post', 'CourseController@storeVue');
