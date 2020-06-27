@@ -6,7 +6,6 @@ namespace App\Exports;
 use App\Models\CourseRegisteredUser;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -89,12 +88,12 @@ class CourseRegisteredUserExport implements FromCollection, WithMapping, WithHea
         'DIRECCION',
         'CIUDAD',
         'REGION',
-        'RBD COLEGIOl',
+        'RBD COLEGIO',
         'NOMBRE COLEGIO',
         'CIUDAD COLEGIO',
         'REGION COLEGIO',
         'TELEFONO COLEGIO',
-        'FECHA DE CREACIÓN'
+        'FECHA DE CREACION'
       ],
 
     ];

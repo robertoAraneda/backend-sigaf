@@ -113,9 +113,13 @@ class CourseRegisteredUserController extends Controller
 
     $courseRegisteredUser->classroom_id = $request->classroom_id;
 
+    if (isset($request->profile_id)) {
+      $courseRegisteredUser->profile_id = $request->profile_id;
+    }
+
     $courseRegisteredUser->save();
 
-    return $this->response->success($courseRegisteredUser);
+    return $this->response->success(new JsonCourseRegisteredUser($courseRegisteredUser));
   }
 
   public function downloadExcelCourseRegistered($id, $description)
