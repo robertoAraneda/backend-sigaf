@@ -141,7 +141,7 @@ class RegisteredUserController extends Controller
   }
   public function findByRut($rut)
   {
-    $registeredUser = RegisteredUser::where('rut_registered_moodle', $rut)->get()->first();
+    $registeredUser = RegisteredUser::where('rut', $rut)->get()->first();
 
     return response()->json(['registeredUser' => $registeredUser]);
   }
