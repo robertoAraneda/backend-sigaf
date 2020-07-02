@@ -27,10 +27,9 @@ class CreateTicketsTable extends Migration
 
       $table->unsignedBigInteger('motive_ticket_id'); //bienvenida-problema
 
-      $table->unsignedBigInteger('user_create_id')->default(1);
+      $table->unsignedBigInteger('user_create_id');
       $table->unsignedBigInteger('user_assigned_id');
       $table->timestamp('closing_date')->nullable();
-      $table->text('observation')->nullable();
       $table->timestamps();
 
       $table->foreign('course_registered_user_id')->references('id')->on('course_registered_users');

@@ -66,4 +66,15 @@ class MakeResponse
       'message' => 'Registro no encontrado'
     ]);
   }
+
+  public function customMessageResponse($message)
+  {
+    return response()->json([
+      'success' => false,
+      '_data' => null,
+      'error' => 'No content',
+      'statusCode' => 204,
+      'message' => $message
+    ]);
+  }
 }
