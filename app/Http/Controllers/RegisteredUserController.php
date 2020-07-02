@@ -12,8 +12,8 @@ use App\Http\Resources\Json\ActivityCourseRegisteredUser as JsonActivityCourseRe
 use App\Models\ActivityCourseRegisteredUser;
 use App\Models\Course;
 use App\Models\CourseRegisteredUser;
+use App\Models\Rut;
 use App\Models\Ticket;
-use Maatwebsite\Excel\Facades\Excel;
 
 class RegisteredUserController extends Controller
 {
@@ -141,9 +141,23 @@ class RegisteredUserController extends Controller
   }
   public function findByRut($rut)
   {
-    $registeredUser = RegisteredUser::where('rut_registered_moodle', $rut)->get()->first();
 
-    return response()->json(['registeredUser' => $registeredUser]);
+    $rut_ =  Rut::parse($rut);
+
+    if ($rut_->validate()) {
+
+      $registeredUser = RegisteredUser::where('rut', $rut)->first();
+
+      if (isset($registeredUser)) {
+
+        return $this->response->success($registeredUser);
+      } else {
+        return $this->response->noContent($registeredUser);
+      }
+    } else {
+
+      return $this->response->customMessageResponse("RUT inválido");
+    }
   }
 
   public function import()

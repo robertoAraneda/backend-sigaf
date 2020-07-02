@@ -36,6 +36,14 @@ Route::get('/fetch/daily', 'SynchronizeController@syncronizeAppDaily')->name('sy
 Route::get('/fetch/daily/user-registered', 'SynchronizeController@syncronizeAppRegisteredUsersActive')->name('sync.daily.users');
 Route::get('/fetch/daily/user-registered-activities', 'SynchronizeController@syncronizeAppRegisteredUserActivitiesActive')->name('sync.daily.usersActivities');
 
+//optimización de consultas api moodle
+
+Route::get('/fetch/course-users/{idCourseMoodle}/users', 'SynchronizeController@syncUsersByCourse');
+
+Route::get('/fetch/course/{idCourseMoodle}/activities', 'SynchronizeController@syncActivitiesByCourse');
+
+Route::get('/fetch/courses/{idCourseMoodle}/classrooms/{idClassroom}/activities', 'SynchronizeController@syncActivitiesByUser');
+
 
 /**rutas api */
 
@@ -133,7 +141,10 @@ Route::group([
   Route::get('/courses/{course}/registered-users/{registered_user}/activities', 'CourseController@userActivities')->name('api.courses.registeredUsers.activities');
 
 
+
   Route::get('/course-users/{course_user}/activities', 'CourseRegisteredUserController@activities')->name('api.courseRegisteredUsers.activities');
+
+  Route::get('/course-users/{idUser}/courses', 'CourseRegisteredUserController@findUserCourses')->name('api.courseRegisteredUsers.courses');
   Route::get('/platforms/{platform}/categories', 'PlatformController@categories')->name('api.platforms.categories');
 
   Route::get('/registered-users/{registered_user}/courses', 'RegisteredUserController@courses')->name('api.registeredUsers.courses');

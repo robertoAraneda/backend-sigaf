@@ -32,7 +32,7 @@ class Course extends Model
       'properties' => [
         'id' => $this->id,
         'description'  => $this->description,
-        'idCategoryMoodle'  => $this->id_category_moodle,
+        'idCourseMoodle'  => $this->id_course_moodle,
         'status'  => $this->status,
         'createdAt' => $this->created_at != null
           ?  Carbon::parse($this->created_at)->format('d-m-Y')

@@ -17,7 +17,7 @@ class CreateCategoriesTable extends Migration
       $table->bigIncrements('id');
       $table->string('description', 255);
       $table->unsignedBigInteger('platform_id');
-      $table->unsignedBigInteger('id_category_moodle');
+      $table->unsignedBigInteger('id_category_moodle')->nullable();
       $table->unsignedInteger('status')->default(1);
       $table->timestamps();
 

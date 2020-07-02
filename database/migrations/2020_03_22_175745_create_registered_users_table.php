@@ -15,19 +15,19 @@ class CreateRegisteredUsersTable extends Migration
   {
     Schema::create('registered_users', function (Blueprint $table) {
       $table->bigIncrements('id');
-      $table->string('rut', 12)->nullable();
-      $table->string('name', 25)->nullable();
-      $table->string('last_name', 25)->nullable();
-      $table->string('mother_last_name', 25)->nullable();
-      $table->string('email', 25)->nullable();
+      $table->string('rut', 12);
+      $table->string('name', 50);
+      $table->string('last_name', 50);
+      $table->string('mother_last_name', 50)->nullable();
+      $table->string('email', 100);
       $table->string('phone', 12)->nullable();
       $table->string('mobile', 12)->nullable();
-      $table->string('address', 25)->nullable();
-      $table->string('city', 25)->nullable();
-      $table->string('region', 25)->nullable();
-      $table->string('rbd_school', 7)->nullable();
-      $table->string('name_school', 50)->nullable();
-      $table->string('city_school', 25)->nullable();
+      $table->string('address', 255)->nullable();
+      $table->string('city', 50)->nullable();
+      $table->string('region', 50)->nullable();
+      $table->string('rbd_school', 10)->nullable();
+      $table->string('name_school', 255)->nullable();
+      $table->string('city_school', 50)->nullable();
       $table->string('region_school', 25)->nullable();
       $table->string('phone_school', 12)->nullable();
       $table->unsignedBigInteger('id_registered_moodle')->nullable();
@@ -35,8 +35,8 @@ class CreateRegisteredUsersTable extends Migration
       $table->string('name_registered_moodle', 200)->nullable();
       $table->string('email_registered_moodle', 100)->nullable();
       $table->unsignedInteger('status_moodle')->default(1);
-      $table->unsignedBigInteger('user_create_id')->default(1);
-      $table->unsignedBigInteger('user_update_id')->default(1);
+      $table->unsignedBigInteger('user_create_id');
+      $table->unsignedBigInteger('user_update_id');
       $table->timestamps();
 
       $table->foreign('user_create_id')->references('id')->on('users');

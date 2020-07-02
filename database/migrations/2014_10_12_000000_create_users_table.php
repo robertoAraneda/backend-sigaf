@@ -15,7 +15,7 @@ class CreateUsersTable extends Migration
   {
     Schema::create('users', function (Blueprint $table) {
       $table->bigIncrements('id');
-      $table->string('rut', 12)->nullable();
+      $table->string('rut', 15)->nullable();
       $table->string('name', 200);
       $table->string('phone', 12)->nullable();
       $table->string('mobile', 12)->nullable();
@@ -29,8 +29,8 @@ class CreateUsersTable extends Migration
       $table->timestamps();
 
       $table->foreign('role_id')->references('id')->on('roles');
-      // $table->foreign('user_create_id')->references('id')->on('users');
-      // $table->foreign('user_update_id')->references('id')->on('users');
+      $table->foreign('user_create_id')->references('id')->on('users');
+      $table->foreign('user_update_id')->references('id')->on('users');
     });
   }
 

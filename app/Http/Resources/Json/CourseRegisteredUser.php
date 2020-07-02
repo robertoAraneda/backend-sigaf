@@ -22,11 +22,15 @@ class CourseRegisteredUser extends JsonResource
       ],
       'properties' => [
         'id' => $this->id,
-        'last_access_registered_moodle'  => $this->last_access_registered_moodle,
+        'lastAccessRegisteredMoodle'  => $this->last_access_registered_moodle,
+        'finalQualificationMoodle' => $this->final_qualification_moodle,
+        'finalQualification' => $this->final_qualification,
         'registeredUser' => $this->registeredUser,
         'status'  => $this->status,
         'classroom' => $this->classroom,
         'profile' => $this->profile,
+        'course' => $this->course,
+        'finalStatus' => $this->finalStatus,
         'created_at' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('d-m-Y') : null,
         'updated_at' => $this->updated_at != null ?  Carbon::parse($this->updated_at)->format('d-m-Y') : null
       ]

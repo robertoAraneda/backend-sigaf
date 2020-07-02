@@ -122,6 +122,15 @@ class CourseRegisteredUserController extends Controller
     return $this->response->success(new JsonCourseRegisteredUser($courseRegisteredUser));
   }
 
+  public function findUserCourses($idUser)
+  {
+    $courseRegisteredUser = CourseRegisteredUser::where('registered_user_id', $idUser)->get();
+
+    return $this->response->success($courseRegisteredUser->map(function ($user) {
+      return new JsonCourseRegisteredUser($user);
+    }));
+  }
+
   public function downloadExcelCourseRegistered($id, $description)
   {
     $data = ['id' => $id, 'description' => $description];

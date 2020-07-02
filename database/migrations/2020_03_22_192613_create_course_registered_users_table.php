@@ -22,7 +22,7 @@ class CreateCourseRegisteredUsersTable extends Migration
       $table->unsignedBigInteger('final_status_id')->default(1);
       $table->unsignedInteger('final_qualification')->default(1);
       $table->unsignedInteger('final_qualification_moodle')->nullable();
-      $table->string('last_access_registered_moodle', 25)->nullable();
+      $table->string('last_access_registered_moodle', 25);
       $table->timestamps();
 
       $table->foreign('course_id')->references('id')->on('courses');

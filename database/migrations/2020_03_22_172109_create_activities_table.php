@@ -17,7 +17,7 @@ class CreateActivitiesTable extends Migration
       $table->bigIncrements('id');
       $table->string('description', 255);
       $table->string('type', 25);
-      $table->unsignedBigInteger('section_id');
+      $table->unsignedBigInteger('section_id')->nullable();
       $table->unsignedInteger('weighing')->default(10);
       $table->unsignedBigInteger('id_activity_moodle');
       $table->unsignedBigInteger('course_id');
