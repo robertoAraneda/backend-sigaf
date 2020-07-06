@@ -45,6 +45,7 @@ Route::get('/fetch/course/{idCourseMoodle}/activities', 'SynchronizeController@s
 Route::get('/fetch/courses/{idCourseMoodle}/classrooms/{idClassroom}/activities', 'SynchronizeController@syncActivitiesByUser');
 
 
+
 /**rutas api */
 
 // Route::apiResource('/final-status', 'FinalStatusController');
@@ -163,9 +164,18 @@ Route::group([
   Route::post('/categories/post', 'CategoryController@storeVue');
   Route::put('/categories/put/{category}', 'CategoryController@updateVue');
 
+  Route::post('/registered-users/view-store', 'RegisteredUserController@storeFromView')->name('api.registeredUsers.viewStore');
+  Route::post('/course-registered-users/view-store', 'CourseRegisteredUserController@storeFromView')->name('api.courseRegisteredUsers.viewStore');
+
   //test
 
   Route::get('/sync-moodle-student', 'SynchronizeController@syncMoodleStudents');
+
+  //sincronización con mooodle
+
+
+  Route::get('/sync/course-users/{idCourseMoodle}/users/{rut}', 'SynchronizeController@syncUser');
+  Route::get('/sync/course-users/{idCourseMoodle}/users', 'SynchronizeController@syncUsersByCourse');
 
 
 

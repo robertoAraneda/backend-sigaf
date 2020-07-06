@@ -8,6 +8,7 @@ use App\Models\CourseRegisteredUser;
 use App\Http\Resources\Json\ActivityCourseRegisteredUser as JsonActivityCourseUser;
 use App\Http\Resources\Json\CourseRegisteredUser as JsonCourseRegisteredUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 
 class CourseRegisteredUserController extends Controller
@@ -17,6 +18,14 @@ class CourseRegisteredUserController extends Controller
   public function __construct(MakeResponse $makeResponse = null)
   {
     $this->response = $makeResponse;
+  }
+
+  protected function validateData($request)
+  {
+    return Validator::make($request, [
+      'course_id' => 'required',
+      'registered_user_id' => 'required'
+    ]);
   }
   /**
    * Display a listing of the resource.
@@ -120,6 +129,34 @@ class CourseRegisteredUserController extends Controller
     $courseRegisteredUser->save();
 
     return $this->response->success(new JsonCourseRegisteredUser($courseRegisteredUser));
+  }
+
+  public function storeFromView()
+  {
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $validate = $this->validateData(request()->all());
+
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
+
+      $model = new CourseRegisteredUser();
+
+      $model->course_id = request()->course_id;
+      $model->registered_user_id = request()->registered_user_id;
+      $model->classroom_id = request()->classroom_id;
+      $model->profile_id = request()->profile_id;
+
+
+      $model->save();
+
+      return $this->response->created(new JsonCourseRegisteredUser($model->fresh()));
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 
   public function findUserCourses($idUser)

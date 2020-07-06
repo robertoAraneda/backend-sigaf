@@ -414,6 +414,59 @@ class SynchronizeController extends Controller
     ], 200);
   }
 
+  public function syncUser($idCourseMoodle, $rut)
+  {
+    $response = Http::get($this->getBASE_URL() . "course/" . $idCourseMoodle . "/users/" . $rut);
+
+    $user = $response->json();
+
+    if (isset($user)) {
+
+      $rutUpper = strtoupper($user['rut']);
+
+      list($rut, $dv) = explode("-", $rutUpper);
+
+      $rut = new Rut($rut, $dv);
+
+      if ($rut->validate()) {
+
+        $localUser = RegisteredUser::where('rut', $rutUpper)->first();
+
+        if (isset($localUser)) {
+          $localUser->id_registered_moodle = $user['iduser'];
+          $localUser->rut_registered_moodle = $user['rut'];
+          $localUser->name_registered_moodle = $user['nombre'];
+          $localUser->email_registered_moodle = $user['email'];
+
+          $localUser->user_update_id = auth()->id();
+
+          $localUser->save();
+
+          $localCourse = Course::where('id_course_moodle', $idCourseMoodle)->first();
+
+          return $localCourse;
+
+          $localCourseUser = CourseRegisteredUser::where('registered_user_id', $localUser->id)
+            ->where('course_id', $localCourse->id)->first();
+
+          if (isset($localCourseUser)) {
+            $localCourseUser->last_access_registered_moodle = $user['ultimoacceso'];
+
+            $localCourseUser->save();
+          }
+
+          return response()->json(['data' => $localCourseUser->fresh(), 'success' => true], 201);
+        } else {
+          return response()->json(['data' => $localUser, 'success' => false], 200);
+        }
+      } else {
+        return response()->json(['data' => null, 'success' => false], 416);
+      }
+    } else {
+      return response()->json(['data' => null, 'success' => false], 204);
+    }
+  }
+
   public function syncUsersByCourse($idCourseMoodle)
   {
     $response = Http::get($this->getBASE_URL() . "course/" . $idCourseMoodle . "/users");
@@ -423,54 +476,63 @@ class SynchronizeController extends Controller
     $arrayFindedUsers = [];
     $arrayMissedUsers = [];
     $arrayInvalidRut = [];
+    $arrayCourseUserValid = [];
 
-    foreach ($users as $user) {
+    if (isset($users)) {
+      foreach ($users as $user) {
 
-      $rutUpper = strtoupper($user['rut']);
+        $rutUpper = strtoupper($user['rut']);
 
-      list($rut, $dv) = explode("-", $rutUpper);
+        list($rut, $dv) = explode("-", $rutUpper);
 
-      $rut = new Rut($rut, $dv);
+        $rut = new Rut($rut, $dv);
 
-      if (!$rut->validate()) {
-        $arrayInvalidRut[] = $user;
-      } else {
-        $localUser = RegisteredUser::where('rut', $rutUpper)->first();
-
-        if (isset($localUser)) {
-          $localUser->id_registered_moodle = $user['iduser'];
-          $localUser->rut_registered_moodle = $user['rut'];
-          $localUser->name_registered_moodle = $user['nombre'];
-          $localUser->email_registered_moodle = $user['email'];
-
-          $localUser->save();
-
-          $localCourse = Course::where('id_course_moodle', $idCourseMoodle)->first();
-
-          $localCourseUser = CourseRegisteredUser::where('registered_user_id', $localUser->id)
-            ->where('course_id', $localCourse->id)->first();
-
-          if (isset($localCourseUser)) {
-            $localCourseUser->last_access_registered_moodle = $user['ultimoacceso'];
-          }
-
-
-
-          $arrayFindedUsers[] = $localUser->fresh();
+        if (!$rut->validate()) {
+          $arrayInvalidRut[] = $user;
         } else {
-          $arrayMissedUsers[] = $user;
+          $localUser = RegisteredUser::where('rut', $rutUpper)->first();
+
+          if (isset($localUser)) {
+            $localUser->id_registered_moodle = $user['iduser'];
+            $localUser->rut_registered_moodle = $user['rut'];
+            $localUser->name_registered_moodle = $user['nombre'];
+            $localUser->email_registered_moodle = $user['email'];
+
+            $localUser->save();
+
+            $localCourse = Course::where('id_course_moodle', $idCourseMoodle)->first();
+
+            $localCourseUser = CourseRegisteredUser::where('registered_user_id', $localUser->id)
+              ->where('course_id', $localCourse->id)->first();
+
+            if (isset($localCourseUser)) {
+              $localCourseUser->last_access_registered_moodle = $user['ultimoacceso'];
+
+              $localCourseUser->save();
+
+              $arrayCourseUserValid[] = $localCourseUser->fresh();
+            }
+
+            $arrayFindedUsers[] = $localUser->fresh();
+          } else {
+            $arrayMissedUsers[] = $user;
+          }
         }
       }
+
+      return response()->json(
+        [
+          'userInvalid' => $arrayInvalidRut,
+          'userFinded' => $arrayFindedUsers,
+          'userMissed' => $arrayMissedUsers,
+          'userCourseValid' => $arrayCourseUserValid
+
+        ],
+        201
+      );
+    } else {
+      return response()->json(['users' => null], 204);
     }
-
-    return response()->json(
-      [
-        'userInvalid' => $arrayInvalidRut,
-        'userFinded' => $arrayFindedUsers,
-        'userMissed' => $arrayMissedUsers,
-
-      ]
-    );
   }
 
   public function syncActivitiesByCourse($idCourseMoodle)

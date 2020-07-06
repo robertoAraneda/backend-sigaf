@@ -67,13 +67,13 @@ class MakeResponse
     ]);
   }
 
-  public function customMessageResponse($message)
+  public function customMessageResponse($message, $code)
   {
     return response()->json([
       'success' => false,
       '_data' => null,
-      'error' => 'No content',
-      'statusCode' => 204,
+      'error' => 'Custom message',
+      'statusCode' => $code,
       'message' => $message
     ]);
   }

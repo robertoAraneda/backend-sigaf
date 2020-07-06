@@ -14,6 +14,7 @@ use App\Models\Course;
 use App\Models\CourseRegisteredUser;
 use App\Models\Rut;
 use App\Models\Ticket;
+use Illuminate\Support\Facades\Validator;
 
 class RegisteredUserController extends Controller
 {
@@ -24,6 +25,20 @@ class RegisteredUserController extends Controller
   {
     $this->response = $makeResponse;
   }
+
+  protected function validateData($request)
+  {
+    return Validator::make($request, [
+      'rut' => 'required',
+      'name' => 'required',
+      'last_name' => 'required',
+      'email' => 'required',
+      'mobile' => 'required',
+      'address' => 'required',
+      'region' => 'required',
+    ]);
+  }
+
   /**
    * Display a listing of the resource.
    *
@@ -156,7 +171,116 @@ class RegisteredUserController extends Controller
       }
     } else {
 
-      return $this->response->customMessageResponse("RUT inválido");
+      return $this->response->customMessageResponse("RUT no válido", 406);
+    }
+  }
+
+  public function storeFromView()
+  {
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $validate = $this->validateData(request()->all());
+
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
+
+
+      if (isset(request()->id)) {
+        $searchUser = RegisteredUser::find(request()->id);
+
+        if (isset($searchUser)) {
+
+          $searchUser->rut = request()->rut;
+          $searchUser->name = request()->name;
+          $searchUser->last_name = request()->last_name;
+          $searchUser->email = request()->email;
+          $searchUser->mobile = request()->mobile;
+          $searchUser->address = request()->address;
+          $searchUser->region = request()->region;
+
+
+          if (isset(request()->mother_last_name)) {
+            $searchUser->mother_last_name = request()->mother_last_name;
+          }
+          if (isset(request()->phone)) {
+            $searchUser->phone = request()->phone;
+          }
+          if (isset(request()->city)) {
+            $searchUser->city = request()->city;
+          }
+          if (isset(request()->rbd_school)) {
+            $searchUser->rbd_school = request()->rbd_school;
+          }
+          if (isset(request()->name_school)) {
+            $searchUser->name_school = request()->name_school;
+          }
+          if (isset(request()->city_school)) {
+            $searchUser->city_school = request()->city_school;
+          }
+          if (isset(request()->region_school)) {
+            $searchUser->region_school = request()->region_school;
+          }
+          if (isset(request()->phone_school)) {
+            $searchUser->phone_school = request()->phone_school;
+          }
+
+          $searchUser->user_update_id = auth()->id();
+
+          $searchUser->save();
+
+
+          return $this->response->success($searchUser->fresh()->format());
+        }
+      } else {
+        $newUser = new RegisteredUser();
+
+        $newUser->rut = request()->rut;
+        $newUser->name = request()->name;
+        $newUser->last_name = request()->last_name;
+        $newUser->email = request()->email;
+        $newUser->mobile = request()->mobile;
+        $newUser->address = request()->address;
+        $newUser->region = request()->region;
+
+
+        if (isset(request()->mother_last_name)) {
+          $newUser->mother_last_name = request()->mother_last_name;
+        }
+        if (isset(request()->phone)) {
+          $newUser->phone = request()->phone;
+        }
+        if (isset(request()->city)) {
+          $newUser->city = request()->city;
+        }
+        if (isset(request()->rbd_school)) {
+          $newUser->rbd_school = request()->rbd_school;
+        }
+        if (isset(request()->name_school)) {
+          $newUser->name_school = request()->name_school;
+        }
+        if (isset(request()->city_school)) {
+          $newUser->city_school = request()->city_school;
+        }
+        if (isset(request()->region_school)) {
+          $newUser->region_school = request()->region_school;
+        }
+        if (isset(request()->phone_school)) {
+          $newUser->phone_school = request()->phone_school;
+        }
+
+        $newUser->user_create_id = auth()->id();
+
+
+        $newUser->save();
+
+        return $this->response->created($newUser->fresh()->format());
+      }
+      // return $this->response->created($registeredUser->format());
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
     }
   }
 
