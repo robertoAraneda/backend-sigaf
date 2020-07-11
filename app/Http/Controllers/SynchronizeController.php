@@ -444,8 +444,6 @@ class SynchronizeController extends Controller
 
           $localCourse = Course::where('id_course_moodle', $idCourseMoodle)->first();
 
-          return $localCourse;
-
           $localCourseUser = CourseRegisteredUser::where('registered_user_id', $localUser->id)
             ->where('course_id', $localCourse->id)->first();
 

@@ -66,10 +66,12 @@ class Ticket extends Model
         ],
         'userCreated' => $this->userCreated,
         'userAssigned' => $this->userAssigned,
-        'closingDate' => $this->closing_date,
+        'closingDate' => $this->closing_date != null ?  Carbon::parse($this->closing_date)->format('d-m-Y') : null,
+        'timeClosingDate' => $this->closing_date != null ?  Carbon::parse($this->closing_date)->format('H:i') : null,
         'createdAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('d-m-Y') : null,
+        'timeCreatedAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('H:i') : null,
         'updatedAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('d-m-Y') : null,
-        'ageTicket' => $this->created_at->diffInDays(Carbon::now())
+        'ageTicket' => $this->ageTicket($this->created_at, $this->closing_date)
       ],
       'relationships' => [
         'numberOfElements' => $this->ticketsDetails->count(),
@@ -84,6 +86,16 @@ class Ticket extends Model
       ]
 
     ];
+  }
+
+  private function ageTicket($createdDate, $closedDate)
+  {
+
+    if (isset($closedDate)) {
+      return $createdDate->diffInDays($closedDate);
+    } else {
+      return $createdDate->diffInDays(Carbon::now());
+    }
   }
 
   public function courseRegisteredUser()

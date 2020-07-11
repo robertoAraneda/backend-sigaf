@@ -102,8 +102,13 @@ class AuthController extends Controller
    */
   public function user(Request $request)
   {
+
+    $user = $request->user();
+
+    $searchUser = User::find($user->id);
+
     return response()->json([
-      'user' => $request->user()
+      'user' => $searchUser->format()
     ], 200);
   }
 }

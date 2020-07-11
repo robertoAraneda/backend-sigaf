@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\Role;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -54,6 +55,7 @@ class User extends Authenticatable
         'id' => $this->id,
         'name' => $this->name,
         'email' => $this->email,
+        'role' => $this->role,
         'createdAt' => $this->created_at != null
           ?  Carbon::parse($this->created_at)->format('d-m-Y')
           : null,
@@ -62,5 +64,10 @@ class User extends Authenticatable
           : null
       ]
     ];
+  }
+
+  public function role()
+  {
+    return $this->belongsTo(Role::class);
   }
 }

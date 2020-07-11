@@ -7,6 +7,7 @@ use App\Models\Ticket;
 use App\Http\Resources\Json\Ticket as JsonTicket;
 use App\Http\Resources\Json\TicketDetail as JsonTicketDetail;
 use App\Http\Resources\TicketCollection;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -84,7 +85,22 @@ class TicketController extends Controller
 
 
       $ticket = new Ticket();
-      $ticket = $ticket->create(request()->all());
+
+
+      $ticket->course_registered_user_id = request()->course_registered_user_id;
+      $ticket->type_ticket_id = request()->type_ticket_id;
+      $ticket->status_ticket_id = request()->status_ticket_id;
+      $ticket->source_ticket_id = request()->source_ticket_id;
+      $ticket->priority_ticket_id = request()->priority_ticket_id;
+      $ticket->motive_ticket_id = request()->motive_ticket_id;
+      $ticket->user_create_id = auth()->id();
+      $ticket->user_assigned_id = request()->user_assigned_id;
+
+      if (isset(request()->closing_date)) {
+        $ticket->closing_date = Carbon::now()->format('Y-m-d H:i:s');
+      }
+
+      $ticket->save();
 
       return $this->response->success($ticket->fresh()->format());
     } catch (\Exception $exception) {
@@ -148,7 +164,20 @@ class TicketController extends Controller
       if ($validate->fails())
         return $this->response->exception($validate->errors());
 
-      $ticketModel->update(request()->all());
+      $ticketModel->course_registered_user_id = request()->course_registered_user_id;
+      $ticketModel->type_ticket_id = request()->type_ticket_id;
+      $ticketModel->status_ticket_id = request()->status_ticket_id;
+      $ticketModel->source_ticket_id = request()->source_ticket_id;
+      $ticketModel->priority_ticket_id = request()->priority_ticket_id;
+      $ticketModel->motive_ticket_id = request()->motive_ticket_id;
+      $ticketModel->user_create_id = auth()->id();
+      $ticketModel->user_assigned_id = request()->user_assigned_id;
+
+      if (isset(request()->closing_date)) {
+        $ticketModel->closing_date = Carbon::now()->format('Y-m-d H:m:s');
+      }
+
+      $ticketModel->save();
 
       return $this->response->success($ticketModel->fresh()->format());
     } catch (\Exception $exception) {
