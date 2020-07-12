@@ -40,9 +40,9 @@ Route::get('/fetch/daily/user-registered-activities', 'SynchronizeController@syn
 
 Route::get('/fetch/course-users/{idCourseMoodle}/users', 'SynchronizeController@syncUsersByCourse');
 
-Route::get('/fetch/course/{idCourseMoodle}/activities', 'SynchronizeController@syncActivitiesByCourse');
 
-Route::get('/fetch/courses/{idCourseMoodle}/classrooms/{idClassroom}/activities', 'SynchronizeController@syncActivitiesByUser');
+
+
 
 
 
@@ -146,7 +146,14 @@ Route::group([
   Route::get('/course-users/{course_user}/activities', 'CourseRegisteredUserController@activities')->name('api.courseRegisteredUsers.activities');
 
   Route::get('/course-users/{idUser}/courses', 'CourseRegisteredUserController@findUserCourses')->name('api.courseRegisteredUsers.courses');
+
+  Route::get('/course-registered-user/{idRegisteredUser}/courses/{idCourse}', 'CourseRegisteredUserController@findSpecificUserCourse');
+
+
+  Route::get('/course-registered-user/{idCourse}/users', 'CourseRegisteredUserController@findUserCourseByCourse')->name('api.courseRegisteredUsers.users');
   Route::get('/platforms/{platform}/categories', 'PlatformController@categories')->name('api.platforms.categories');
+
+
 
   Route::get('/registered-users/{registered_user}/courses', 'RegisteredUserController@courses')->name('api.registeredUsers.courses');
   Route::get('/registered-users/{registered_user}/courses/{course}', 'RegisteredUserController@course')->name('api.registeredUsers.courses.show');
@@ -167,16 +174,23 @@ Route::group([
   Route::post('/registered-users/view-store', 'RegisteredUserController@storeFromView')->name('api.registeredUsers.viewStore');
   Route::post('/course-registered-users/view-store', 'CourseRegisteredUserController@storeFromView')->name('api.courseRegisteredUsers.viewStore');
 
+  Route::get('/registered-users/{idUserMoodle}/findByMoodle', 'RegisteredUserController@findByIdRegisteredUserMoodle')->name('api.registeredUsers.findByIdMoodle');
+
+
+
   //test
 
   Route::get('/sync-moodle-student', 'SynchronizeController@syncMoodleStudents');
 
   //sincronización con mooodle
 
-
   Route::get('/sync/course-users/{idCourseMoodle}/users/{rut}', 'SynchronizeController@syncUser');
   Route::get('/sync/course-users/{idCourseMoodle}/users', 'SynchronizeController@syncUsersByCourse');
+  Route::get('/sync/course/{idCourseMoodle}/activities', 'SynchronizeController@syncActivitiesByCourse');
 
+  Route::get('/sync/courses/{idCourseMoodle}/classrooms/{idClassroom}/activities', 'SynchronizeController@syncActivitiesByClassroom');
+
+  Route::get('/sync/users/{idRegisteredUser}/courses/{idCourse}/activities', 'SynchronizeController@syncActivitiesByUser');
 
 
   //form
