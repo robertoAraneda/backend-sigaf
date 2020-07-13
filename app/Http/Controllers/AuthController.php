@@ -21,14 +21,23 @@ class AuthController extends Controller
   public function signup(Request $request)
   {
     $request->validate([
+      'rut' => 'required',
       'name' => 'required|string',
+      'mobile' => 'requiered|string',
       'email' => 'required|string|email|unique:users',
-      'password' => 'required|string|confirmed'
+      'password' => 'required|string|confirmed',
+      'isFirstLogin' => 'required',
+      'role_id' => 'required|numeric'
     ]);
     $user = new User([
+      'rut' => $request->rut,
       'name' => $request->name,
+      'phone' => $request->phone,
+      'mobile' => $request->mobile,
       'email' => $request->email,
-      'password' => bcrypt($request->password)
+      'password' => bcrypt($request->password),
+      'isFirstLogin' => $request->isFirstLogin,
+      'role_id' => $request->role_id
     ]);
     $user->save();
     return response()->json([
