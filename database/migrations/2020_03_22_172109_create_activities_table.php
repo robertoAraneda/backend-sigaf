@@ -16,11 +16,15 @@ class CreateActivitiesTable extends Migration
     Schema::create('activities', function (Blueprint $table) {
       $table->bigIncrements('id');
       $table->string('description', 255);
-      $table->string('type', 100);
+      $table->string('type', 25);
+      $table->unsignedBigInteger('section_id')->nullable();
       $table->unsignedInteger('weighing')->default(10);
       $table->unsignedBigInteger('id_activity_moodle');
       $table->unsignedBigInteger('course_id');
       $table->timestamps();
+
+      $table->foreign('course_id')->references('id')->on('courses');
+      $table->foreign('section_id')->references('id')->on('sections');
     });
   }
 

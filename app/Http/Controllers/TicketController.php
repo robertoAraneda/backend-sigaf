@@ -2,24 +2,46 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\MakeResponse;
 use App\Models\Ticket;
+use App\Http\Resources\Json\Ticket as JsonTicket;
+use App\Http\Resources\Json\TicketDetail as JsonTicketDetail;
+use App\Http\Resources\TicketCollection;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class TicketController extends Controller
 {
 
-  protected function validateData()
+  /**
+   * Property for make a response.
+   *
+   * @var  App\Helpers\MakeResponse  $response
+   */
+  protected $response;
+
+  public function __construct(MakeResponse $makeResponse = null)
   {
-    return request()->validate([
+    $this->response = $makeResponse;
+  }
+  /**
+   * Validate the description field.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   */
+  protected function validateData($request)
+  {
+    return Validator::make($request, [
       'course_registered_user_id' => 'required|integer',
-      'in_out_ticket_id' => 'required|integer',
+      'type_ticket_id' => 'required|integer',
       'status_ticket_id' => 'required|integer',
+      'source_ticket_id' => 'required|integer',
       'priority_ticket_id' => 'required|integer',
       'motive_ticket_id' => 'required|integer',
       'user_create_id' => 'required|integer',
       'user_assigned_id' => 'required|integer',
       'closing_date' => 'date',
-      'observation' => 'max:255',
     ]);
   }
   /**
@@ -29,25 +51,17 @@ class TicketController extends Controller
    */
   public function index()
   {
-
     try {
-      $tickets = Ticket::orderBy('id')
-        ->get()
-        ->map
-        ->format();
 
-      return response()->json([
-        'success' => true,
-        'tickets' => $tickets,
-        'error' => null
-      ], 200);
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $tickets = new TicketCollection(Ticket::orderBy('created_at', 'asc')->get());
+
+      return $this->response->success($tickets);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'tickets' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -61,24 +75,36 @@ class TicketController extends Controller
   {
     try {
 
-      $dataStore = $this->validateData();
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $validate = $this->validateData(request()->all());
+
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
+
 
       $ticket = new Ticket();
-      $ticket = $ticket->create($dataStore);
 
-      return response()->json([
 
-        'success' => true,
-        'ticket' => $ticket->fresh()->format(),
-        'error' => null
-      ], 201);
+      $ticket->course_registered_user_id = request()->course_registered_user_id;
+      $ticket->type_ticket_id = request()->type_ticket_id;
+      $ticket->status_ticket_id = request()->status_ticket_id;
+      $ticket->source_ticket_id = request()->source_ticket_id;
+      $ticket->priority_ticket_id = request()->priority_ticket_id;
+      $ticket->motive_ticket_id = request()->motive_ticket_id;
+      $ticket->user_create_id = auth()->id();
+      $ticket->user_assigned_id = request()->user_assigned_id;
+
+      if (isset(request()->closing_date)) {
+        $ticket->closing_date = Carbon::now()->format('Y-m-d H:i:s');
+      }
+
+      $ticket->save();
+
+      return $this->response->success($ticket->fresh()->format());
     } catch (\Exception $exception) {
-
-      return response()->json([
-        'success' => false,
-        'ticket' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -88,46 +114,26 @@ class TicketController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function show($id)
+  public function show($ticket)
   {
+
     try {
 
-      if (is_numeric($id)) {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-        $ticket = Ticket::whereId($id)->first();
+      if (!is_numeric($ticket))
+        return $this->response->badRequest();
 
-        if (isset($ticket)) {
+      $ticketModel = Ticket::find($ticket);
 
-          return response()->json([
+      if (!isset($ticketModel))
+        return $this->response->noContent();
 
-            'success' => true,
-            'ticket' => $ticket->format(),
-            'error' => null
-          ], 200);
-        } else {
-
-          return response()->json([
-
-            'success' => false,
-            'ticket' => null,
-            'error' => 'No Content'
-          ], 204);
-        }
-      } else {
-        return response()->json([
-
-          'success' => false,
-          'ticket' => null,
-          'error' => 'Bad Request'
-        ], 400);
-      }
+      return $this->response->success($ticketModel->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'ticket' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -138,47 +144,45 @@ class TicketController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function update($id)
+  public function update($ticket)
   {
     try {
-      if (is_numeric($id)) {
 
-        $ticket = Ticket::whereId($id)->first();
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-        if (isset($ticket)) {
+      if (!is_numeric($ticket))
+        return $this->response->badRequest();
 
-          $dataUpdate = $this->validateData();
+      $ticketModel = Ticket::find($ticket);
 
-          $ticket->update($dataUpdate);
+      if (!isset($ticketModel))
+        return $this->response->noContent();
 
-          return response()->json([
-            'success' => true,
-            'ticket' => $ticket->format(),
-            'error' => null
-          ], 200);
-        } else {
+      $validate = $this->validateData(request()->all());
 
-          return response()->json([
-            'success' => false,
-            'ticket' => null,
-            'error' => 'No Content'
-          ], 204);
-        }
-      } else {
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
 
-        return response()->json([
-          'success' => false,
-          'ticket' => null,
-          'error' => 'Bad Request'
-        ], 400);
+      $ticketModel->course_registered_user_id = request()->course_registered_user_id;
+      $ticketModel->type_ticket_id = request()->type_ticket_id;
+      $ticketModel->status_ticket_id = request()->status_ticket_id;
+      $ticketModel->source_ticket_id = request()->source_ticket_id;
+      $ticketModel->priority_ticket_id = request()->priority_ticket_id;
+      $ticketModel->motive_ticket_id = request()->motive_ticket_id;
+      $ticketModel->user_create_id = auth()->id();
+      $ticketModel->user_assigned_id = request()->user_assigned_id;
+
+      if (isset(request()->closing_date)) {
+        $ticketModel->closing_date = Carbon::now()->format('Y-m-d H:m:s');
       }
+
+      $ticketModel->save();
+
+      return $this->response->success($ticketModel->fresh()->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'ticket' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -188,43 +192,89 @@ class TicketController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function destroy($id)
+  public function destroy($ticket)
   {
     try {
 
-      if (is_numeric($id)) {
-        $ticket = Ticket::whereId($id)->first();
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-        if (isset($ticket)) {
-          return response()->json([
+      if (!is_numeric($ticket))
+        return $this->response->badRequest();
 
-            'success' => true,
-            'ticket' => null,
-            'error' => null
-          ], 200);
-        } else {
-          return response()->json([
+      $ticketModel = Ticket::find($ticket);
 
-            'success' => false,
-            'ticket' => null,
-            'error' => 'No Content'
-          ], 204);
-        }
-      } else {
-        return response()->json([
+      if (!isset($ticketModel))
+        return $this->response->noContent();
 
-          'success' => false,
-          'ticket' => null,
-          'error' => 'Bad Request'
-        ], 400);
-      }
+      $ticketModel->delete();
+
+      return $this->response->success(null);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'ticket' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return $this->response->exception($exception->getMessage());
+    }
+  }
+
+
+  /**
+   * Display a list of tickets resources related to type ticket resource.
+   *
+   * @param  int  $type_ticket
+   * @return App\Helpers\MakeResponse
+   * 
+   * @authenticated 
+   * @response {
+   *  "typeTicket": "typeTicket",
+   *  "relationships":{
+   *    "links": {"href": "url", "rel": "/rels/tickets"},
+   *    "collections": {"numberOfElements": "number", "data": "array"}
+   *   }
+   * }
+   * 
+   * @urlParam type_ticket required The ID of the type ticket resource.
+   */
+  public function ticketsDetails($ticket)
+  {
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      if (!is_numeric($ticket))
+        return $this->response->badRequest();
+
+      $ticketModel = Ticket::find($ticket);
+
+
+      if (!isset($ticketModel))
+        return $this->response->noContent();
+
+      $ticketFormated = new JsonTicket($ticketModel);
+
+      $ticketFormated->ticketsDetails = [
+        'ticket' => $ticketFormated,
+        'relationships' => [
+          'links' => [
+            'href' => route(
+              'api.tickets.ticketsDetails',
+              ['ticket' => $ticketFormated->id],
+              false
+            ),
+            'rel' => '/rels/ticketsDetails'
+          ],
+          'collection' => [
+            'numberOfElements' => $ticketFormated->ticketsDetails->count(),
+            'data' => $ticketFormated->ticketsDetails->map(function ($ticketDetail) {
+              return new JsonTicketDetail($ticketDetail);
+            })
+          ]
+        ]
+      ];
+
+      return $this->response->success($ticketFormated->ticketsDetails);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
     }
   }
 }

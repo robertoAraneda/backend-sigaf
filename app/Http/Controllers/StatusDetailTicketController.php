@@ -2,228 +2,273 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\MakeResponse;
+use App\Http\Resources\Json\StatusDetailTicket as JsonStatusDetailTicket;
+use App\Http\Resources\Json\TicketDetail as JsonTicketDetail;
+use App\Http\Resources\StatusDetailTicketCollection;
 use App\Models\StatusDetailTicket;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
+
+
 
 class StatusDetailTicketController extends Controller
 {
 
-  protected function validateData()
+  /**
+   * Property for make a response.
+   *
+   * @var  App\Helpers\MakeResponse  $response
+   */
+  protected $response;
+
+  public function __construct(MakeResponse $makeResponse = null)
   {
-    return request()->validate([
-      'description' => 'required|max:255'
+    $this->response = $makeResponse;
+  }
+
+  /**
+   * Validate the description field.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   */
+  protected function validateData($request)
+  {
+    return Validator::make($request, [
+      'description' => 'required|max:25'
+
     ]);
   }
   /**
-   * Display a listing of the resource.
+   * Display a listing of the resource the status details ticket.
    *
-   * @return \Illuminate\Http\Response
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\StatusDetailTicketCollection
+   * @apiResourceModel App\Models\StatusDetailTicket
    */
   public function index()
   {
 
     try {
 
-      $statusDetailTickets = StatusDetailTicket::orderBy('id')
-        ->get()
-        ->map
-        ->format();
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-      return response()->json([
-        'success' => true,
-        'statusDetailTickets' => $statusDetailTickets,
-        'error' => null,
-      ], 200);
+      $statusDetailTickets = new StatusDetailTicketCollection(StatusDetailTicket::all());
+
+      return $this->response->success($statusDetailTickets);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'statusDetailTickets' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
   /**
    * Store a newly created resource in storage.
    *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
+   * @param App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\StatusDetailTicketCollection
+   * @apiResourceModel App\Models\StatusDetailTicket
    */
   public function store()
   {
 
     try {
 
-      $dataStore = $this->validateData();
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $validate = $this->validateData(request()->all());
+
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
 
       $statusDetailTicket = new StatusDetailTicket();
 
-      $statusDetailTicket = $statusDetailTicket->create($dataStore);
+      $statusDetailTicket = $statusDetailTicket->create(request()->all());
 
-      return response()->json([
-        'success' => true,
-        'statusDetailTicket' => $statusDetailTicket->fresh()->format(),
-        'error' => null,
-      ], 201);
+      return $this->response->created($statusDetailTicket->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'statusDetailTicket' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
   /**
    * Display the specified resource.
    *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @param  int  $status_detail_ticket
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\StatusDetailTicket
+   * @apiResourceModel App\Models\StatusDetailTicket
+   * 
+   * @urlParam 
+   * @param  int  status_detail_ticket required The ID of the status detail ticket resource.
    */
-  public function show($id)
+  public function show($status_detail_ticket)
   {
 
     try {
 
-      if (is_numeric($id)) {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-        $statusDetailTicket = StatusDetailTicket::whereId($id)->first();
+      if (!is_numeric($status_detail_ticket))
+        return $this->response->badRequest();
 
-        if (isset($statusDetailTicket)) {
+      $statusDetailTicketModel = StatusDetailTicket::find($status_detail_ticket);
 
-          return response()->json([
-            'success' => true,
-            'statusDetailTicket' => $statusDetailTicket->format(),
-            'error' => null,
-          ], 200);
-        } else {
+      if (!isset($statusDetailTicketModel))
+        return $this->response->noContent();
 
-          return response()->json([
-            'success' => false,
-            'statusDetailTicket' => null,
-            'error' => 'No Content',
-          ], 204);
-        }
-      } else {
-
-        return response()->json([
-          'success' => false,
-          'statusDetailTicket' => null,
-          'error' => 'Bad Request',
-        ], 400);
-      }
+      return $this->response->success($statusDetailTicketModel->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'statusDetailTicket' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
   /**
    * Update the specified resource in storage.
    *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @param  int  $status_detail_ticket
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\StatusDetailTicket
+   * @apiResourceModel App\Models\StatusDetailTicket
+   * 
+   * @urlParam status_detail_ticket required The ID of the status detail ticket resource.
    */
-  public function update(Request $request, $id)
+  public function update($status_detail_ticket)
   {
+
+
 
     try {
 
-      if (is_numeric($id)) {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-        $dataUpdate = $this->validateData();
+      if (!is_numeric($status_detail_ticket))
+        return $this->response->badRequest();
 
-        $statusDetailTicket = StatusDetailTicket::whereId($id)->first();
+      $statusDetailTicketModel = StatusDetailTicket::find($status_detail_ticket);
 
-        if (isset($statusDetailTicket)) {
 
-          $statusDetailTicket->update($dataUpdate);
 
-          return response()->json([
-            'success' => true,
-            'statusDetailTicket' => $statusDetailTicket->fresh()->format(),
-            'error' => null,
-          ], 200);
-        } else {
+      if (!isset($statusDetailTicketModel))
+        return $this->response->noContent();
 
-          return response()->json([
-            'success' => false,
-            'statusDetailTicket' => null,
-            'error' => 'No Content',
-          ], 204);
-        }
-      } else {
+      $validate = $this->validateData(request()->all());
 
-        return response()->json([
-          'success' => false,
-          'statusDetailTicket' => null,
-          'error' => 'Bad Request',
-        ], 400);
-      }
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
+
+
+
+      $statusDetailTicketModel->update(request()->all());
+
+      return $this->response->success($statusDetailTicketModel->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'statusDetailTicket' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
   /**
    * Remove the specified resource from storage.
    *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @param  int  $status_detail_ticket
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * 
+   * @urlParam status_detail_ticket required The ID of the status detail ticket resource.
    */
-  public function destroy($id)
+  public function destroy($status_detail_ticket)
   {
 
     try {
 
-      if (is_numeric($id)) {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-        $statusDetailTicket = StatusDetailTicket::whereId($id)->first();
+      if (!is_numeric($status_detail_ticket))
+        return $this->response->badRequest();
 
-        if (isset($statusDetailTicket)) {
+      $statusDetailTicketModel = StatusDetailTicket::find($status_detail_ticket);
 
-          $statusDetailTicket->delete();
+      if (!isset($statusDetailTicketModel))
+        return $this->response->noContent();
 
-          return response()->json([
-            'success' => true,
-            'statusDetailTicket' => null,
-            'error' => null,
-          ], 200);
-        } else {
+      $statusDetailTicketModel->delete();
 
-          return response()->json([
-            'success' => false,
-            'statusDetailTicket' => null,
-            'error' => 'No Content',
-          ], 204);
-        }
-      } else {
-
-        return response()->json([
-          'success' => false,
-          'statusDetailTicket' => null,
-          'error' => 'Bad Request',
-        ], 400);
-      }
+      return $this->response->success(null);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'statusDetailTicket' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
+    }
+  }
+
+  /**
+   * Display a list of tickets resources related to type ticket resource.
+   *
+   * @param  int  $status_detail_ticket
+   * @return App\Helpers\MakeResponse
+   * 
+   * @authenticated 
+   * @response {
+   *  "statusDetailTicket": "statusDetailTicket",
+   *  "relationships":{
+   *    "links": {"href": "url", "rel": "/rels/ticketDetails"},
+   *    "collections": {"numberOfElements": "number", "data": "array"}
+   *   }
+   * }
+   * 
+   * @urlParam status_detail_ticket required The ID of the status detail ticket resource.
+   */
+  public function ticketDetails($status_detail_ticket)
+  {
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      if (!is_numeric($status_detail_ticket))
+        return $this->response->badRequest();
+
+      $statusDetailTicketModel = StatusDetailTicket::find($status_detail_ticket);
+
+      if (!isset($statusDetailTicketModel))
+        return $this->response->noContent();
+
+      $statusDetailTicketFormated = new JsonStatusDetailTicket($statusDetailTicketModel);
+
+      $statusDetailTicketFormated->ticketDetails = [
+        'statusDetailTicket' => $statusDetailTicketFormated,
+        'relationships' => [
+          'links' => [
+            'href' => route(
+              'api.statusDetailTickets.ticketDetails',
+              ['status_detail_ticket' => $statusDetailTicketFormated->id],
+              false
+            ),
+            'rel' => '/rels/ticketDetails'
+          ],
+          'collection' => [
+            'numberOfElements' => $statusDetailTicketFormated->ticketDetails->count(),
+            'data' => $statusDetailTicketFormated->ticketDetails->map(function ($ticketDetail) {
+              return new JsonTicketDetail($ticketDetail);
+            })
+          ]
+        ]
+      ];
+
+      return $this->response->success($statusDetailTicketFormated->ticketDetails);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
     }
   }
 }

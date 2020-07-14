@@ -2,228 +2,258 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\MakeResponse;
+use App\Http\Resources\FinalStatusCollection;
+use App\Http\Resources\Json\CourseRegisteredUser as JsonCourseRegisteredUser;
+use App\Http\Resources\Json\FinalStatus as JsonFinalStatus;
 use App\Models\FinalStatus;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class FinalStatusController extends Controller
 {
+  /**
+   * Property for make a response.
+   *
+   * @var  App\Helpers\MakeResponse  $response
+   */
+  protected $response;
 
-  protected function validateData()
+  public function __construct(MakeResponse $makeResponse = null)
   {
-    return request()->validate([
-      'description' => 'required|max:255'
+    $this->response = $makeResponse;
+  }
+
+  /**
+   * Validate the description field.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   */
+  protected function validateData($request)
+  {
+    return Validator::make($request, [
+      'description' => 'required|max:25'
     ]);
   }
+
   /**
-   * Display a listing of the resource.
+   * Display a listing of the final statuses resources.
    *
-   * @return \Illuminate\Http\Response
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\FinalStatusCollection
+   * @apiResourceModel App\Models\FinalStatus
    */
   public function index()
   {
-
     try {
 
-      $finalStatuses = FinalStatus::orderBy('id')
-        ->get()
-        ->map
-        ->format();
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-      return response()->json([
-        'success' => true,
-        'finalStatuses' =>  $finalStatuses,
-        'error' => null
-      ], 200);
+      $finalStatuses = new FinalStatusCollection(FinalStatus::all());
+
+      return $this->response->success($finalStatuses);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'finalStatuses' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
   /**
    * Store a newly created resource in storage.
    *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\FinalStatus
+   * @apiResourceModel App\Models\FinalStatus
    */
   public function store()
   {
-
     try {
 
-      $dataStore = $this->validateData();
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $validate = $this->validateData(request()->all());
+
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
 
       $finalStatus = new FinalStatus();
 
-      $finalStatus = $finalStatus->create($dataStore);
+      $finalStatus = $finalStatus->create(request()->all());
 
-      return response()->json([
-        'success' => true,
-        'finalStatus' =>  $finalStatus->fresh()->format(),
-        'error' => null
-      ], 201);
+      return $this->response->created($finalStatus->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'finalStatus' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
   /**
    * Display the specified resource.
    *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @param  int  $final_status
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\FinalStatus
+   * @apiResourceModel App\Models\FinalStatus
+   * 
+   * @urlParam final_status required The ID of the final status resource.
    */
-  public function show($id)
+  public function show($final_status)
   {
-
     try {
 
-      if (is_numeric($id)) {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-        $finalStatus = FinalStatus::whereId($id)->first();
+      if (!is_numeric($final_status))
+        return $this->response->badRequest();
 
-        if (isset($finalStatus)) {
+      $finalStatusModel = FinalStatus::find($final_status);
 
-          return response()->json([
-            'success' => true,
-            'finalStatus' =>  $finalStatus->format(),
-            'error' => null
-          ], 200);
-        } else {
+      if (!isset($finalStatusModel))
+        return $this->response->noContent();
 
-          return response()->json([
-            'success' => false,
-            'finalStatus' =>  null,
-            'error' => 'No Content'
-          ], 204);
-        }
-      } else {
-
-        return response()->json([
-          'success' => false,
-          'finalStatus' =>  null,
-          'error' => 'Bad Request'
-        ], 400);
-      }
+      return $this->response->success($finalStatusModel->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'finalStatus' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
   /**
    * Update the specified resource in storage.
    *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @param  int  $final_status
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\FinalStatus
+   * @apiResourceModel App\Models\FinalStatus
+   * 
+   * @urlParam final_status required The ID of the final status resource.
    */
-  public function update(Request $request, $id)
+  public function update($final_status)
   {
-
     try {
 
-      if (is_numeric($id)) {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-        $dataUpdate = $this->validateData();
+      if (!is_numeric($final_status))
+        return $this->response->badRequest();
 
-        $finalStatus = FinalStatus::whereId($id)->first();
+      $finalStatusModel = FinalStatus::find($final_status);
 
-        if (isset($finalStatus)) {
+      if (!isset($finalStatusModel))
+        return $this->response->noContent();
 
-          $finalStatus->update($dataUpdate);
+      $validate = $this->validateData(request()->all());
 
-          return response()->json([
-            'success' => true,
-            'finalStatus' =>  $finalStatus->fresh()->format(),
-            'error' => null
-          ], 200);
-        } else {
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
 
-          return response()->json([
-            'success' => false,
-            'finalStatus' =>  null,
-            'error' => 'No Content'
-          ], 204);
-        }
-      } else {
+      $finalStatusModel->update(request()->all());
 
-        return response()->json([
-          'success' => false,
-          'finalStatus' =>  null,
-          'error' => 'Bad Request'
-        ], 400);
-      }
+      return $this->response->success($finalStatusModel->fresh()->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'finalStatus' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
   /**
    * Remove the specified resource from storage.
    *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @param  int  $final_status
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * 
+   * @urlParam final_status required The ID of the final status resource.
    */
-  public function destroy($id)
+  public function destroy($final_status)
   {
-
     try {
 
-      if (is_numeric($id)) {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
 
-        $finalStatus = FinalStatus::whereId($id)->first();
+      if (!is_numeric($final_status))
+        return $this->response->badRequest();
 
-        if (isset($finalStatus)) {
+      $finalStatusModel = FinalStatus::find($final_status);
 
-          $finalStatus->delete();
+      if (!isset($finalStatusModel))
+        return $this->response->noContent();
 
-          return response()->json([
-            'success' => true,
-            'finalStatus' =>  null,
-            'error' => null
-          ], 200);
-        } else {
+      $finalStatusModel->delete();
 
-          return response()->json([
-            'success' => false,
-            'finalStatus' =>  null,
-            'error' => 'No Content'
-          ], 204);
-        }
-      } else {
-
-        return response()->json([
-          'success' => false,
-          'finalStatus' =>  null,
-          'error' => 'Bad Request'
-        ], 400);
-      }
+      return $this->response->success(null);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'finalStatus' => null,
-        'error' => $exception->getMessage()
-      ], 500);
+      return $this->response->exception($exception->getMessage());
+    }
+  }
+
+  /**
+   * Display a list of course registered users resources related to final status resource.
+   *
+   * @param  int  $final_status
+   * @return App\Helpers\MakeResponse
+   * 
+   * @authenticated 
+   * @response {
+   *  "finalStatus": "finalStatus",
+   *  "relationships":{
+   *    "links": {"href": "url", "rel": "/rels/tickets"},
+   *    "collections": {"numberOfElements": "number", "data": "array"}
+   *   }
+   * }
+   * 
+   * @urlParam final_status required The ID of the final status resource.
+   */
+  public function courseRegisteredUsers($final_status)
+  {
+    try {
+
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      if (!is_numeric($final_status))
+        return $this->response->badRequest();
+
+      $finalStatusModel = FinalStatus::find($final_status);
+
+      if (!isset($finalStatusModel))
+        return $this->response->noContent();
+
+      $finalStatusFormated = new JsonFinalStatus($finalStatusModel);
+
+      $finalStatusFormated->courseRegisteredUsers = [
+        'finalStatus' => $finalStatusFormated,
+        'relationships' => [
+          'links' => [
+            'href' => route(
+              'api.finalStatuses.courseRegisteredUsers',
+              ['final_status' => $finalStatusFormated->id],
+              false
+            ),
+            'rel' => '/rels/courseRegisteredUsers'
+          ],
+          'collection' => [
+            'numberOfElements' => $finalStatusFormated->courseRegisteredUsers->count(),
+            'data' => $finalStatusFormated->courseRegisteredUsers->map(function ($courseRegisteredUser) {
+              return new JsonCourseRegisteredUser($courseRegisteredUser);
+            })
+          ]
+        ]
+      ];
+
+      return $this->response->success($finalStatusFormated->courseRegisteredUsers);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
     }
   }
 }

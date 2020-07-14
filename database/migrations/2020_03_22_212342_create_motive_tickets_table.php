@@ -15,7 +15,7 @@ class CreateMotiveTicketsTable extends Migration
   {
     Schema::create('motive_tickets', function (Blueprint $table) {
       $table->bigIncrements('id');
-      $table->string('description');
+      $table->string('description', 50);
       $table->timestamps();
     });
   }

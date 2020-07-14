@@ -15,7 +15,7 @@ class CreatePlatformsTable extends Migration
   {
     Schema::create('platforms', function (Blueprint $table) {
       $table->bigIncrements('id');
-      $table->string('description', 50);
+      $table->string('description', 25);
       $table->unsignedInteger('status')->default(1);
       $table->timestamps();
     });

@@ -25,6 +25,9 @@ class CreateAlertsTable extends Migration
       /**crea notificación en campanita*/
       $table->string('comment');
       $table->timestamps();
+
+      $table->foreign('ticket_id')->references('id')->on('tickets');
+      $table->foreign('user_id')->references('id')->on('users');
     });
   }
 

@@ -2,12 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Activity;
+use App\Helpers\MakeResponse;
+use App\Http\Resources\ActivityCourseRegisteredUserCollection;
 use App\Models\ActivityCourseRegisteredUser;
-use Illuminate\Http\Request;
 
 class ActivityCourseRegisteredUserController extends Controller
 {
+
+  protected $response;
+
+  public function __construct(MakeResponse $makeResponse = null)
+  {
+    $this->response = $makeResponse;
+  }
+
+
   /**
    * Display a listing of the resource.
    *
@@ -15,7 +24,20 @@ class ActivityCourseRegisteredUserController extends Controller
    */
   public function index()
   {
-    //
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $activityCourseRegisteredUsers = new ActivityCourseRegisteredUserCollection(ActivityCourseRegisteredUser::all());
+
+      if (!isset($activityCourseRegisteredUser))
+        return $this->response->noContent();
+
+      return $this->response->success($activityCourseRegisteredUsers);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 
 
@@ -41,7 +63,23 @@ class ActivityCourseRegisteredUserController extends Controller
    */
   public function show($id)
   {
-    //
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      if (!is_numeric($id))
+        return $this->response->badRequest();
+
+      $activityCourseRegisteredUser = ActivityCourseRegisteredUser::find($id);
+
+      if (!isset($activityCourseRegisteredUser))
+        return $this->response->noContent();
+
+      return $this->response->success($activityCourseRegisteredUser->format());
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 
   public function findByIdActivityCourseRegisteredUser($idActivity, $idcourseRegisteredUser)
@@ -76,5 +114,12 @@ class ActivityCourseRegisteredUserController extends Controller
   public function destroy($id)
   {
     //
+  }
+
+  public function findByIdRegisteredUserCourse($id)
+  {
+    $activityCourseRegisteredUser = ActivityCourseRegisteredUser::where('course_registered_user_id', $id)->get()->map->format();
+
+    return response()->json(['activityCourseRegisteredUser' => $activityCourseRegisteredUser]);
   }
 }

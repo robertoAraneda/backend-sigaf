@@ -10,6 +10,9 @@ class CourseRegisteredUser extends Model
 
   protected $guarded = [];
 
+
+
+
   public function course()
   {
     return $this->belongsTo(Course::class);
@@ -33,5 +36,10 @@ class CourseRegisteredUser extends Model
   public function finalStatus()
   {
     return $this->belongsTo(FinalStatus::class);
+  }
+
+  public function activityCourseUsers()
+  {
+    return $this->hasMany(ActivityCourseRegisteredUser::class);
   }
 }

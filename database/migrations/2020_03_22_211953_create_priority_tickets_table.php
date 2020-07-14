@@ -15,7 +15,7 @@ class CreatePriorityTicketsTable extends Migration
   {
     Schema::create('priority_tickets', function (Blueprint $table) {
       $table->bigIncrements('id');
-      $table->string('description');
+      $table->string('description', 50);
       $table->timestamps();
     });
   }

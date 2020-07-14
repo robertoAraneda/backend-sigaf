@@ -2,178 +2,169 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\MakeResponse;
+use App\Http\Resources\Json\Role as JsonRole;
+use App\Http\Resources\Json\User as JsonUser;
+use App\Http\Resources\RoleCollection;
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class RoleController extends Controller
 {
+  /**
+   * Property for make a response.
+   *
+   * @var  App\Helpers\MakeResponse  $response
+   */
+  protected $response;
 
-  protected function validateData()
+  public function __construct(MakeResponse $makeResponse = null)
   {
-    return request()->validate([
-      'description' => 'required|max:255'
+    $this->response = $makeResponse;
+  }
+
+  /**
+   * Validate the description field.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   */
+  protected function validateData($request)
+  {
+    return Validator::make($request, [
+      'description' => 'required|max:25'
     ]);
   }
+
   /**
-   * Display a listing of the resource.
+   * Display a listing of the roles resources.
    *
-   * @return \Illuminate\Http\Response
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\RoleCollection
+   * @apiResourceModel App\Models\Role
    */
   public function index()
   {
 
     try {
 
-      $roles = Role::orderBy('id')
-        ->get()
-        ->map
-        ->format();
+      if (!request()->isJson())
+        return $this->response->unauthotized();
 
-      return response()->json([
-        'success' => true,
-        'roles' => $roles,
-        'error' => null,
-      ], 200);
+      $roles = new RoleCollection(Role::all());
+
+      return $this->response->success($roles);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'roles' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
   /**
    * Store a newly created resource in storage.
    *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\Role
+   * @apiResourceModel App\Models\Role
    */
   public function store()
   {
 
     try {
 
-      $dataStore = $this->validateData();
+      if (!request()->isJson())
+        return $this->response->unauthotized();
+
+      $validate = $this->validateData(request()->all());
+
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
 
       $role = new Role();
 
-      $role = $role->create($dataStore);
+      $role = $role->create(request()->all());
 
-      return response()->json([
-        'success' => true,
-        'role' => $role->fresh()->format(),
-        'error' => null,
-      ], 201);
+      return $this->response->created($role->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'role' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
   /**
    * Display the specified resource.
    *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @param  int  $role
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\Role
+   * @apiResourceModel App\Models\Role
+   * 
+   * @urlParam role required The ID of the role resource.
    */
-  public function show($id)
+  public function show($role)
   {
 
     try {
 
-      if (is_numeric($id)) {
+      if (!request()->isJson())
+        return $this->response->unauthotized();
 
-        $role = Role::whereId($id)->first();
+      if (!is_numeric($role))
+        return $this->response->badRequest();
 
-        if (isset($role)) {
+      $roleModel = Role::find($role);
 
-          return response()->json([
-            'success' => true,
-            'role' => $role->format(),
-            'error' => null,
-          ], 200);
-        } else {
+      if (!isset($roleModel))
+        return $this->response->noContent();
 
-          return response()->json([
-            'success' => false,
-            'role' => null,
-            'error' => 'No Content',
-          ], 204);
-        }
-      } else {
-
-        return response()->json([
-          'success' => false,
-          'role' => null,
-          'error' => 'Bad Request',
-        ], 400);
-      }
+      return $this->response->success($roleModel->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'role' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
   /**
    * Update the specified resource in storage.
    *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @param  int  $role
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * @apiResourceCollection App\Http\Resources\Json\Role
+   * @apiResourceModel App\Models\Role
+   * 
+   * @urlParam role required The ID of the role resource.
    */
-  public function update(Request $request, $id)
+  public function update($role)
   {
 
     try {
 
-      if (is_numeric($id)) {
+      if (!request()->isJson())
+        return $this->response->unauthotized();
 
-        $dataUpdate = $this->validateData();
+      if (!is_numeric($role))
+        return $this->response->badRequest();
 
-        $role = Role::whereId($id)->first();
+      $roleModel = Role::find($role);
 
-        if (isset($role)) {
+      if (!isset($roleModel))
+        return $this->response->noContent();
 
-          $role->update($dataUpdate);
+      $validate = $this->validateData(request()->all());
 
-          return response()->json([
-            'success' => true,
-            'role' => $role->fresh()->format(),
-            'error' => null,
-          ], 200);
-        } else {
+      if ($validate->fails())
+        return $this->response->exception($validate->errors());
 
-          return response()->json([
-            'success' => false,
-            'role' => null,
-            'error' => 'No Content',
-          ], 204);
-        }
-      } else {
+      $roleModel->update(request()->all());
 
-        return response()->json([
-          'success' => false,
-          'role' => null,
-          'error' => 'Bad Request',
-        ], 400);
-      }
+      return $this->response->success($roleModel->fresh()->format());
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'role' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
     }
   }
 
@@ -181,49 +172,94 @@ class RoleController extends Controller
    * Remove the specified resource from storage.
    *
    * @param  int  $id
-   * @return \Illuminate\Http\Response
+   * @return App\Helpers\MakeResponse
+   * @authenticated 
+   * 
+   * @urlParam role required The ID of the role resource   
    */
-  public function destroy($id)
+  public function destroy($role)
   {
 
     try {
 
-      if (is_numeric($id)) {
+      if (!request()->isJson())
+        return $this->response->unauthotized();
 
-        $role = Role::whereId($id)->first();
+      if (!is_numeric($role))
+        return $this->response->badRequest();
 
-        if (isset($role)) {
+      $roleModel = Role::find($role);
 
-          $role->delete();
+      if (!isset($roleModel))
+        return $this->response->noContent();
 
-          return response()->json([
-            'success' => true,
-            'role' => null,
-            'error' => null,
-          ], 200);
-        } else {
+      $roleModel->delete();
 
-          return response()->json([
-            'success' => false,
-            'role' => null,
-            'error' => 'No Content',
-          ], 204);
-        }
-      } else {
-
-        return response()->json([
-          'success' => false,
-          'role' => null,
-          'error' => 'Bad Request',
-        ], 400);
-      }
+      return $this->response->success(null);
     } catch (\Exception $exception) {
 
-      return response()->json([
-        'success' => false,
-        'role' => null,
-        'error' => $exception->getMessage(),
-      ], 500);
+      return $this->response->exception($exception->getMessage());
+    }
+  }
+
+  /**
+   * Display a list of users resources related to role resource.
+   *
+   * @param  int  $role
+   * @return App\Helpers\MakeResponse
+   * 
+   * @authenticated 
+   * @response {
+   *  "role": "role",
+   *  "relationships":{
+   *    "links": {"href": "url", "rel": "/rels/tickets"},
+   *    "collections": {"numberOfElements": "number", "data": "array"}
+   *   }
+   * }
+   * 
+   * @urlParam type_ticket required The ID of the type ticket resource.
+   */
+  public function users($role)
+  {
+    try {
+
+      if (!request()->isJson())
+        return $this->response->unauthotized();
+
+      if (!is_numeric($role))
+        return $this->response->badRequest();
+
+      $roleModel = Role::find($role);
+
+      if (!isset($roleModel))
+        return $this->response->noContent();
+
+      $roleFormated = new JsonRole($roleModel);
+
+      $roleFormated->users = [
+        'role' => $roleFormated,
+        'relationships' => [
+          'links' => [
+            'href' => route(
+              'api.roles.users',
+              ['role' => $roleFormated->id],
+              false
+            ),
+            'rel' => '/rels/users'
+          ],
+          'collection' => [
+            'numberOfElements' => $roleFormated->users->count(),
+            'data' => $roleFormated->users->map(function ($user) {
+              return new JsonUser($user);
+            })
+          ]
+        ]
+      ];
+
+      return $this->response->success($roleFormated->users);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
     }
   }
 }

@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activity;
+use App\Models\ActivityCourseRegisteredUser;
 use App\Models\Course;
+use App\Models\CourseRegisteredUser;
 use App\Models\Platform;
+use App\Models\RegisteredUser;
+use App\Models\Rut;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 class SynchronizeController extends Controller
 {
@@ -216,6 +222,8 @@ class SynchronizeController extends Controller
 
     $response = Http::get($this->getBASE_URL() . "collection/categorias/all");
 
+
+
     $categoriesActive = $response->json();
 
 
@@ -405,6 +413,287 @@ class SynchronizeController extends Controller
       'error' => null
     ], 200);
   }
+
+  public function syncUser($idCourseMoodle, $rut)
+  {
+    $response = Http::get($this->getBASE_URL() . "course/" . $idCourseMoodle . "/users/" . $rut);
+
+    $user = $response->json();
+
+    if (isset($user)) {
+
+      $rutUpper = strtoupper($user['rut']);
+
+      list($rut, $dv) = explode("-", $rutUpper);
+
+      $rut = new Rut($rut, $dv);
+
+      if ($rut->validate()) {
+
+        $localUser = RegisteredUser::where('rut', $rutUpper)->first();
+
+        if (isset($localUser)) {
+          $localUser->id_registered_moodle = $user['iduser'];
+          $localUser->rut_registered_moodle = $user['rut'];
+          $localUser->name_registered_moodle = $user['nombre'];
+          $localUser->email_registered_moodle = $user['email'];
+
+          $localUser->user_update_id = auth()->id();
+
+          $localUser->save();
+
+          $localCourse = Course::where('id_course_moodle', $idCourseMoodle)->first();
+
+          $localCourseUser = CourseRegisteredUser::where('registered_user_id', $localUser->id)
+            ->where('course_id', $localCourse->id)->first();
+
+          if (isset($localCourseUser)) {
+            $localCourseUser->last_access_registered_moodle = $user['ultimoacceso'];
+
+            $localCourseUser->save();
+          }
+
+          return response()->json(['data' => $localCourseUser->fresh(), 'success' => true], 201);
+        } else {
+          return response()->json(['data' => $localUser, 'success' => false], 200);
+        }
+      } else {
+        return response()->json(['data' => null, 'success' => false], 416);
+      }
+    } else {
+      return response()->json(['data' => null, 'success' => false], 204);
+    }
+  }
+
+  public function syncUsersByCourse($idCourseMoodle)
+  {
+    $response = Http::get($this->getBASE_URL() . "course/" . $idCourseMoodle . "/users");
+
+    $users = $response->json();
+
+    $arrayFindedUsers = [];
+    $arrayMissedUsers = [];
+    $arrayInvalidRut = [];
+    $arrayCourseUserValid = [];
+
+    if (isset($users)) {
+      foreach ($users as $user) {
+
+        $rutUpper = strtoupper($user['rut']);
+
+        list($rut, $dv) = explode("-", $rutUpper);
+
+        $rut = new Rut($rut, $dv);
+
+        if (!$rut->validate()) {
+          $arrayInvalidRut[] = $user;
+        } else {
+          $localUser = RegisteredUser::where('rut', $rutUpper)->first();
+
+          if (isset($localUser)) {
+            $localUser->id_registered_moodle = $user['iduser'];
+            $localUser->rut_registered_moodle = $user['rut'];
+            $localUser->name_registered_moodle = $user['nombre'];
+            $localUser->email_registered_moodle = $user['email'];
+
+            $localUser->save();
+
+            $localCourse = Course::where('id_course_moodle', $idCourseMoodle)->first();
+
+            $localCourseUser = CourseRegisteredUser::where('registered_user_id', $localUser->id)
+              ->where('course_id', $localCourse->id)->first();
+
+            if (isset($localCourseUser)) {
+              $localCourseUser->last_access_registered_moodle = $user['ultimoacceso'];
+
+              $localCourseUser->save();
+
+              $arrayCourseUserValid[] = $localCourseUser->fresh();
+            }
+
+            $arrayFindedUsers[] = $localUser->fresh();
+          } else {
+            $arrayMissedUsers[] = $user;
+          }
+        }
+      }
+
+      return response()->json(
+        [
+          'userInvalid' => $arrayInvalidRut,
+          'userFinded' => $arrayFindedUsers,
+          'userMissed' => $arrayMissedUsers,
+          'userCourseValid' => $arrayCourseUserValid
+
+        ],
+        201
+      );
+    } else {
+      return response()->json(['users' => null], 204);
+    }
+  }
+
+  public function syncActivitiesByCourse($idCourseMoodle)
+  {
+
+    try {
+      $response = Http::get($this->getBASE_URL() . "course/" . $idCourseMoodle);
+
+      $course = $response->json();
+
+      $responseActivities = Http::get($this->getBASE_URL() . "course/" . $course['idrcurso'] . "/activities");
+
+      $activities = $responseActivities->json();
+
+      foreach ($activities as $activity) {
+        $localActivity = Activity::where('id_activity_moodle', $activity['idmod'])->first();
+        $course = Course::where('id_course_moodle', $idCourseMoodle)->first();
+
+        if (!isset($localActivity)) {
+          $storeActivity = new Activity();
+          $course = Course::where('id_course_moodle', $idCourseMoodle)->first();
+
+          $storeActivity->description = $activity['nombre'];
+          $storeActivity->type = $activity['tipo'];
+          $storeActivity->weighing = 10;
+          $storeActivity->id_activity_moodle = $activity['idmod'];
+          $storeActivity->course_id = $course->id;
+
+          $storeActivity->save();
+        } else {
+          $localActivity->description = $activity['nombre'];
+          $localActivity->type = $activity['tipo'];
+          $localActivity->id_activity_moodle = $activity['idmod'];
+          $localActivity->course_id = $course->id;
+
+          $localActivity->save();
+        }
+      }
+
+      return response()->json(['success' => true, 'error' => null], 200);
+    } catch (\Exception $ex) {
+      return response()->json(['success' => false, 'error' => $ex->getMessage()], 500);
+    }
+  }
+
+  public function syncActivitiesByClassroom($courseMoodle, $classroom)
+  {
+    try {
+      $course = Course::where('id_course_moodle', $courseMoodle)->first();
+
+      if ($classroom == 'all') {
+        $users = CourseRegisteredUser::where('course_id', $course->id)->with('registeredUser')->get();
+      } else {
+        $users = CourseRegisteredUser::where('course_id', $course->id)->where('classroom_id', $classroom)->with('registeredUser')->get();
+      }
+
+      $arrayActivities = [];
+
+      foreach ($users as $user) {
+
+        $response = Http::get($this->getBASE_URL() . "users/" . $user->registeredUser->id_registered_moodle . "/courses/" . $courseMoodle . "/activities");
+
+        $activities = $response->json();
+
+        foreach ($activities as $activity) {
+
+          $localActivity = Activity::where('id_activity_moodle', $activity['activity']['idmod'])->first();
+
+          if (isset($localActivity)) {
+
+            $actualActivity = ActivityCourseRegisteredUser::where('activity_id', $localActivity->id)->where('course_registered_user_id', $user->id)
+              ->with(['courseRegisteredUser', 'courseRegisteredUser.course'])
+              ->first();
+
+
+            if (isset($actualActivity)) {
+              $actualActivity->status_moodle = $activity['estado'];
+              $actualActivity->qualification_moodle = $activity['calificacion'];
+
+              $actualActivity->save();
+              $arrayActivities[] = $actualActivity;
+            } else {
+              $storeActivityDetail = new ActivityCourseRegisteredUser();
+
+              $storeActivityDetail->activity_id = $localActivity->id;
+              $storeActivityDetail->course_registered_user_id = $user->id;
+
+              $storeActivityDetail->status_moodle = $activity['estado'];
+              $storeActivityDetail->qualification_moodle = $activity['calificacion'];
+
+              $storeActivityDetail->save();
+
+              $arrayActivities[] = $storeActivityDetail;
+            }
+          }
+        }
+      }
+
+      return response()->json(['success' => true, 'error' => null, 'data' => $arrayActivities], 200);
+    } catch (\Exception $ex) {
+      return response()->json(['success' => false, 'error' => $ex->getMessage(), 'data' => null], 500);
+    }
+  }
+
+
+  public function syncActivitiesByUser($idUserRegistered, $idCourse)
+
+  {
+
+    try {
+
+      $registeredUser = RegisteredUser::find($idUserRegistered);
+
+      $course = Course::find($idCourse);
+      $arrayActivities = [];
+      if (isset($registeredUser) && isset($course)) {
+
+        $response = Http::get($this->getBASE_URL() . "users/" . $registeredUser->id_registered_moodle . "/courses/" . $course->id_course_moodle . "/activities");
+
+        $activities = $response->json();
+
+        $courseUser = CourseRegisteredUser::where('registered_user_id', $registeredUser->id)->where('course_id', $course->id)->first();
+
+
+
+        foreach ($activities as $activity) {
+
+          $localActivity = Activity::where('id_activity_moodle', $activity['activity']['idmod'])->first();
+
+          if (isset($localActivity)) {
+
+            $actualActivity = ActivityCourseRegisteredUser::where('activity_id', $localActivity->id)->where('course_registered_user_id', $courseUser->id)
+              ->with(['courseRegisteredUser', 'courseRegisteredUser.course'])
+              ->first();
+
+            if (isset($actualActivity)) {
+              $actualActivity->status_moodle = $activity['estado'];
+              $actualActivity->qualification_moodle = $activity['calificacion'];
+
+              $actualActivity->save();
+              $arrayActivities[] = $actualActivity->fresh();
+            } else {
+              $storeActivityDetail = new ActivityCourseRegisteredUser();
+
+              $storeActivityDetail->activity_id = $localActivity->id;
+              $storeActivityDetail->course_registered_user_id = $courseUser->id;
+
+              $storeActivityDetail->status_moodle = $activity['estado'];
+              $storeActivityDetail->qualification_moodle = $activity['calificacion'];
+
+              $storeActivityDetail->save();
+
+              $arrayActivities[] = $storeActivityDetail;
+            }
+          }
+        }
+      }
+      return response()->json(['success' => true, 'error' => null, 'data' => $arrayActivities], 200);
+    } catch (\Exception $ex) {
+      return response()->json(['success' => false, 'error' => $ex->getMessage(), 'data' => null], 500);
+    }
+  }
+
   public function syncronizeAppDaily()
   {
 
@@ -416,6 +705,35 @@ class SynchronizeController extends Controller
     ], 200);
   }
 
+
+  public function syncMoodleStudents()
+  {
+
+    // $registeredUserController = new RegisteredUserController();
+    // $response4 = Http::get($this->getBASE_URL() . "collection/inscrito/all");
+
+    // $studentsMoodle =  $response4->json();
+
+    // $array_student = array();
+
+    // $response =  $registeredUserController->import();
+
+    // Storage::delete('carga_alumnos.xlsx');
+
+
+    // foreach ($response as $res) {
+    //   foreach ($studentsMoodle as $student) {
+    //     if (
+    //       strtoupper($student['rut']) == strtoupper($res['rut'])
+    //       && 773 == $student['idrcurso']
+    //     ) {
+    //       $student['id'] = $res['id'];
+    //       $array_student[] = $student;
+    //     }
+    //   }
+    // }
+    // return $array_student;
+  }
 
 
   public function syncronizeAppRegisteredUsersActiveInit()
