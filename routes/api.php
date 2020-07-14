@@ -103,6 +103,7 @@ Route::group([
   Route::apiResource('/users', 'UserController')->names('api.users');
   Route::apiResource('/status-detail-tickets', 'StatusDetailTicketController')->names('api.statusDetailTickets');
   Route::apiResource('/ticket-details', 'TicketDetailController')->names('api.ticketDetails');
+  Route::apiResource('auths', 'AuthController')->names('api.auths');
 
 
   Route::get('/activity-course-registered-users/{activity_course_registered_user}', 'ActivityCourseRegisteredUserController@show')->name('api.activityCourseRegisteredUsers.show');
