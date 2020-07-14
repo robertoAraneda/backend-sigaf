@@ -57,6 +57,7 @@ class User extends Authenticatable
         'phone' => $this->phone,
         'email' => $this->email,
         'role' => $this->role,
+        'isFirstLogin' => $this->is_first_login,
         'createdAt' => $this->created_at != null
           ?  Carbon::parse($this->created_at)->format('d-m-Y')
           : null,
