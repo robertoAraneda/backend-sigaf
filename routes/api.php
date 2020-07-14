@@ -70,11 +70,11 @@ Route::group([
   'prefix' => 'auth'
 ], function () {
   Route::post('login', 'AuthController@login');
-  Route::post('signup', 'AuthController@signup');
 
   Route::group([
     'middleware' => 'auth:api'
   ], function () {
+
     Route::get('user', 'AuthController@user');
     Route::get('logout', 'AuthController@logout');
   });
@@ -103,7 +103,6 @@ Route::group([
   Route::apiResource('/users', 'UserController')->names('api.users');
   Route::apiResource('/status-detail-tickets', 'StatusDetailTicketController')->names('api.statusDetailTickets');
   Route::apiResource('/ticket-details', 'TicketDetailController')->names('api.ticketDetails');
-  Route::apiResource('auths', 'AuthController')->names('api.auths');
 
 
   Route::get('/activity-course-registered-users/{activity_course_registered_user}', 'ActivityCourseRegisteredUserController@show')->name('api.activityCourseRegisteredUsers.show');
@@ -113,6 +112,7 @@ Route::group([
   Route::apiResource('/course-registered-users', 'CourseRegisteredUserController')->names('api.courseRegisteredUsers');
   Route::apiResource('/registered-users', 'RegisteredUserController')->names('api.registeredUsers');
 
+  Route::post('/users/signup', 'AuthController@signup');
 
   Route::get('/registered-user/{rut}', 'RegisteredUserController@findByRut');
   Route::get('/activity-course-registered-user/{id}', 'ActivityCourseRegisteredUserController@findByIdRegisteredUserCourse');

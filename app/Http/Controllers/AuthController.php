@@ -11,6 +11,38 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+
+  /**
+   * Property for make a response.
+   *
+   * @var  App\Helpers\MakeResponse  $response
+   */
+  protected $response;
+
+  public function __construct(MakeResponse $makeResponse = null)
+  {
+    $this->response = $makeResponse;
+  }
+
+  /**
+   * Validate the description field.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   */
+  protected function validateData($request)
+  {
+    return Validator::make($request, [
+      'rut' => 'required|max:12|string',
+      'name' => 'required|max:200|string',
+      'phone' => 'max:12|string',
+      'mobile' => 'required|max:12|string',
+      'email' => 'required|max:255|email|unique:users',
+      'role_id' => 'required|numeric',
+      'password' => 'required|string',
+      'isFirstLogin' => 'required|numeric'
+    ]);
+  }
+
   /**
    * Create user
    *
@@ -22,29 +54,34 @@ class AuthController extends Controller
    */
   public function signup(Request $request)
   {
-    $request->validate([
-      'rut' => 'required',
-      'name' => 'required|string',
-      'mobile' => 'requiered|string',
-      'email' => 'required|string|email|unique:users',
-      'password' => 'required|string|confirmed',
-      'isFirstLogin' => 'required',
-      'role_id' => 'required|numeric'
-    ]);
-    $user = new User([
-      'rut' => $request->rut,
-      'name' => $request->name,
-      'phone' => $request->phone,
-      'mobile' => $request->mobile,
-      'email' => $request->email,
-      'password' => bcrypt($request->password),
-      'isFirstLogin' => $request->isFirstLogin,
-      'role_id' => $request->role_id
-    ]);
-    $user->save();
-    return response()->json([
-      'message' => 'Successfully created user!'
-    ], 201);
+    try {
+
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $validate = $this->validateData(request()->all());
+
+      if ($validate->fails())
+        return $this->response->customMessageResponse(($validate->errors()), 406);
+
+      $user = new User([
+        'rut' => $request->rut,
+        'name' => $request->name,
+        'phone' => $request->phone,
+        'mobile' => $request->mobile,
+        'email' => $request->email,
+        'password' => bcrypt($request->password),
+        'is_first_login' => $request->isFirstLogin,
+        'role_id' => $request->role_id,
+        'user_create_id' => auth()->id()
+      ]);
+
+      $user->save();
+
+      return $this->response->created($user->fresh()->format());
+    } catch (\Exception $ex) {
+      return $this->response->exception($ex->getMessage());
+    }
   }
 
   /**
@@ -121,73 +158,5 @@ class AuthController extends Controller
     return response()->json([
       'user' => $searchUser->format()
     ], 200);
-  }
-
-  /**
-   * Property for make a response.
-   *
-   * @var  App\Helpers\MakeResponse  $response
-   */
-  protected $response;
-
-  public function __construct(MakeResponse $makeResponse = null)
-  {
-    $this->response = $makeResponse;
-  }
-
-  /**
-   * Validate the description field.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   */
-  protected function validateData($request)
-  {
-    return Validator::make($request, [
-      'rut' => 'required|max:12',
-      'name' => 'required|max:200',
-      'phone' => 'max:12',
-      'mobile' => 'required|max:12',
-      'email' => 'required|max:255',
-      'role_id' => 'required|numeric',
-      'password' => 'requiered',
-      'isFirstLogin' => 'required|numeric'
-    ]);
-  }
-
-  /**
-   * Store a newly created resource in storage.
-   *
-   * @param  Object $cursoTraidoMoodle
-   */
-  public function store()
-  {
-  }
-
-  /**
-   * Update the specified resource in storage.
-   *
-   * @param  int  $auth
-   * @return App\Helpers\MakeResponse
-   * @authenticated 
-   * @apiResourceCollection App\Http\Resources\Json\Course
-   * @apiResourceModel App\Models\Course
-   * 
-   * @urlParam course required The ID of the course resource.
-   */
-  public function update()
-  {
-  }
-
-  /**
-   * Remove the specified resource from storage.
-   *
-   * @param  int  $auth
-   * @return App\Helpers\MakeResponse
-   * @authenticated 
-   * 
-   * @urlParam course required The ID of the course resource.
-   */
-  public function destroy()
-  {
   }
 }

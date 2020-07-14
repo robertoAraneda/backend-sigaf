@@ -18,9 +18,7 @@ class User extends Authenticatable
    *
    * @var array
    */
-  protected $fillable = [
-    'name', 'email', 'password',
-  ];
+  protected $guarded = [];
 
   /**
    * The attributes that should be hidden for arrays.
@@ -54,6 +52,9 @@ class User extends Authenticatable
       'properties' => [
         'id' => $this->id,
         'name' => $this->name,
+        'rut' => $this->rut,
+        'mobile' => $this->mobile,
+        'phone' => $this->phone,
         'email' => $this->email,
         'role' => $this->role,
         'createdAt' => $this->created_at != null
