@@ -27,6 +27,7 @@ class Section extends Model
       'properties' => [
         'id' => $this->id,
         'description' => $this->description,
+        'activities' => $this->activities,
         'createdAt' => $this->created_at != null
           ?  Carbon::parse($this->created_at)->format('d-m-Y')
           : null,
@@ -35,5 +36,9 @@ class Section extends Model
           : null
       ],
     ];
+  }
+  public function activities()
+  {
+    return $this->hasMany(Activity::class);
   }
 }

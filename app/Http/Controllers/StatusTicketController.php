@@ -50,7 +50,7 @@ class StatusTicketController extends Controller
       if (!request()->isJson())
         return $this->response->unauthorized();
 
-      $statusTickets = new StatusTicketCollection(StatusTicket::all());
+      $statusTickets = new StatusTicketCollection(StatusTicket::orderBy('description', 'desc')->get());
 
       return $this->response->success($statusTickets);
     } catch (\Exception $exception) {

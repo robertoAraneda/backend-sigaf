@@ -44,7 +44,8 @@ class CourseRegisteredUserController extends Controller
         'classroom',
         'registeredUser',
         'profile',
-        'finalStatus'
+        'finalStatus',
+        'activityCourseUsers.activity.section'
       ])->get();
 
       return $this->response->success($courseRegisteredUsers);
@@ -175,6 +176,35 @@ class CourseRegisteredUserController extends Controller
     return (new CourseRegisteredUserExport($data))->download('Archivo_CPEIP.csv', \Maatwebsite\Excel\Excel::XLSX, [
       'Content-Type' => 'application/vnd.ms-excel',
     ]);
+  }
+
+  public function findSpecificUserCourse($idRegisteredUser, $idCourse)
+  {
+    $courseRegisteredUser = CourseRegisteredUser::where('registered_user_id', $idRegisteredUser)->where('course_id', $idCourse)->first();
+
+    return $this->response->success(new JsonCourseRegisteredUser($courseRegisteredUser));
+  }
+
+  public function findUserCourseByCourse($idCourse)
+  {
+    try {
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $courseRegisteredUsers = CourseRegisteredUser::where('course_id', $idCourse)->with([
+        'course',
+        'classroom',
+        'registeredUser',
+        'profile',
+        'finalStatus',
+        'activityCourseUsers.activity.section'
+      ])->get();
+
+      return $this->response->success($courseRegisteredUsers);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 
   public function activityCourseUsers($id)
