@@ -45,7 +45,7 @@ class CourseRegisteredUserController extends Controller
         'registeredUser',
         'profile',
         'finalStatus',
-        'activityCourseUsers.activity'
+        'activityCourseUsers.activity.section'
       ])->get();
 
       return $this->response->success($courseRegisteredUsers);

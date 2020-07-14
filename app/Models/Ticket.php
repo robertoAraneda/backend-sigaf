@@ -42,7 +42,8 @@ class Ticket extends Model
           'registeredUser',
           'profile:id,description',
           'classroom:id,description',
-          'finalStatus:id,description'
+          'finalStatus:id,description',
+          'activityCourseUsers.activity.section'
         ),
         'typeTicket' => [
           'id' => $this->typeTicket->id,

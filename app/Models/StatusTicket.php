@@ -48,7 +48,10 @@ class StatusTicket extends Model
             false
           ),
           'rel' => '/rels/tickets'
-        ]
+        ],
+        'data' => $this->tickets->map(function ($ticket) {
+          return $ticket->userAssigned;
+        })
       ]
     ];
   }
