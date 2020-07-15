@@ -336,6 +336,8 @@ class RegisteredUserController extends Controller
       $user->region_school = $registeredUser['region_school'];
       $user->phone_school = $registeredUser['phone_school'];
 
+      $user->user_create_id = auth()->id();
+
       if (!$this->isRegisteredUserStore($user)) {
         $user->save();
       }
