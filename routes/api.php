@@ -63,7 +63,7 @@ Route::get('/fetch/course-users/{idCourseMoodle}/users', 'SynchronizeController@
 
 /**rutas files */
 
-Route::get('/upload-file/excel', 'RegisteredUserController@import');
+
 
 
 Route::group([
@@ -177,7 +177,8 @@ Route::group([
 
   Route::get('/registered-users/{idUserMoodle}/findByMoodle', 'RegisteredUserController@findByIdRegisteredUserMoodle')->name('api.registeredUsers.findByIdMoodle');
 
-
+  //subir archivos de matricula alumnos
+  Route::get('/upload-file/excel', 'RegisteredUserController@import');
 
   //test
 
