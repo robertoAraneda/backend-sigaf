@@ -629,6 +629,7 @@ class SynchronizeController extends Controller
             }
           }
         }
+        return $users;
       }
 
       return response()->json(['success' => true, 'error' => null, 'data' => $arrayActivities], 200);
