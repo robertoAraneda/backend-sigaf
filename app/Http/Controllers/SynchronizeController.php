@@ -579,13 +579,19 @@ class SynchronizeController extends Controller
   public function syncActivitiesByClassroom($courseMoodle, $classroom)
   {
     try {
+
+
       $course = Course::where('id_course_moodle', $courseMoodle)->first();
+
+      $users = [];
 
       if ($classroom == 'all') {
         $users = CourseRegisteredUser::where('course_id', $course->id)->with('registeredUser')->get();
       } else {
         $users = CourseRegisteredUser::where('course_id', $course->id)->where('classroom_id', $classroom)->with('registeredUser')->get();
       }
+
+      return $users;
 
       $arrayActivities = [];
 
