@@ -591,7 +591,7 @@ class SynchronizeController extends Controller
         $users = CourseRegisteredUser::where('course_id', $course->id)->where('classroom_id', $classroom)->with('registeredUser')->get();
       }
 
-      return $users;
+
 
       $arrayActivities = [];
 
@@ -600,6 +600,8 @@ class SynchronizeController extends Controller
         $response = Http::get($this->getBASE_URL() . "users/" . $user->registeredUser->id_registered_moodle . "/courses/" . $courseMoodle . "/activities");
 
         $activities = $response->json();
+
+        return $activities;
 
         foreach ($activities as $activity) {
 
@@ -615,6 +617,7 @@ class SynchronizeController extends Controller
             if (isset($actualActivity)) {
               $actualActivity->status_moodle = $activity['estado'];
               $actualActivity->qualification_moodle = $activity['calificacion'];
+
 
               $actualActivity->save();
               $arrayActivities[] = $actualActivity;
