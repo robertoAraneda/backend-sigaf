@@ -611,7 +611,6 @@ class SynchronizeController extends Controller
               $actualActivity->status_moodle = $activity['estado'];
               $actualActivity->qualification_moodle = $activity['calificacion'];
 
-
               $actualActivity->save();
               $arrayActivities[] = $actualActivity;
             } else {
@@ -629,7 +628,7 @@ class SynchronizeController extends Controller
             }
           }
         }
-        return $arrayActivities;
+        return $activities;
       }
 
       return response()->json(['success' => true, 'error' => null, 'data' => $arrayActivities], 200);
