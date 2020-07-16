@@ -579,8 +579,6 @@ class SynchronizeController extends Controller
   public function syncActivitiesByClassroom($courseMoodle, $classroom)
   {
     try {
-
-
       $course = Course::where('id_course_moodle', $courseMoodle)->first();
 
       $users = [];
@@ -591,8 +589,6 @@ class SynchronizeController extends Controller
         $users = CourseRegisteredUser::where('course_id', $course->id)->where('classroom_id', $classroom)->with('registeredUser')->get();
       }
 
-
-
       $arrayActivities = [];
 
       foreach ($users as $user) {
@@ -600,8 +596,6 @@ class SynchronizeController extends Controller
         $response = Http::get($this->getBASE_URL() . "users/" . $user->registeredUser->id_registered_moodle . "/courses/" . $courseMoodle . "/activities");
 
         $activities = $response->json();
-
-        return $activities;
 
         foreach ($activities as $activity) {
 
@@ -612,7 +606,6 @@ class SynchronizeController extends Controller
             $actualActivity = ActivityCourseRegisteredUser::where('activity_id', $localActivity->id)->where('course_registered_user_id', $user->id)
               ->with(['courseRegisteredUser', 'courseRegisteredUser.course'])
               ->first();
-
 
             if (isset($actualActivity)) {
               $actualActivity->status_moodle = $activity['estado'];
