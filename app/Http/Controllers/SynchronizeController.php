@@ -581,8 +581,6 @@ class SynchronizeController extends Controller
     try {
       $course = Course::where('id_course_moodle', $courseMoodle)->first();
 
-      $users = [];
-
       if ($classroom == 'all') {
         $users = CourseRegisteredUser::where('course_id', $course->id)->with('registeredUser')->get();
       } else {
@@ -591,19 +589,89 @@ class SynchronizeController extends Controller
 
       $arrayActivities = [];
 
-      foreach ($users as $user) {
 
-        $response = Http::get($this->getBASE_URL() . "users/" . $user->registeredUser->id_registered_moodle . "/courses/" . $courseMoodle . "/activities");
 
-        $activities = $response->json();
+      if (count($users) != 0) {
+        foreach ($users as $user) {
 
-        foreach ($activities as $activity) {
+          if (isset($user)) {
+            $response = Http::get($this->getBASE_URL() . "users/" . $user->registeredUser->id_registered_moodle . "/courses/" . $courseMoodle . "/activities");
 
-          $localActivity = Activity::where('id_activity_moodle', $activity['activity']['idmod'])->first();
+            $activities = $response->json();
+
+            if (count($activities) != 0) {
+              foreach ($activities as $activity) {
+
+                $localActivity = Activity::where('id_activity_moodle', $activity['activity']['idmod'])->first();
+
+                if (isset($localActivity)) {
+
+                  $actualActivity = ActivityCourseRegisteredUser::where('activity_id', $localActivity->id)->where('course_registered_user_id', $user->id)
+                    ->with(['courseRegisteredUser', 'courseRegisteredUser.course'])
+                    ->first();
+
+                  if (isset($actualActivity)) {
+                    $actualActivity->status_moodle = $activity['estado'];
+                    $actualActivity->qualification_moodle = $activity['calificacion'];
+
+                    $actualActivity->save();
+                    $arrayActivities[] = $actualActivity;
+                  } else {
+                    $storeActivityDetail = new ActivityCourseRegisteredUser();
+
+                    $storeActivityDetail->activity_id = $localActivity->id;
+                    $storeActivityDetail->course_registered_user_id = $user->id;
+
+                    $storeActivityDetail->status_moodle = $activity['estado'];
+                    $storeActivityDetail->qualification_moodle = $activity['calificacion'];
+
+                    $storeActivityDetail->save();
+
+                    $arrayActivities[] = $storeActivityDetail;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+
+
+
+      return response()->json(['success' => true, 'error' => null, 'data' => $arrayActivities], 200);
+    } catch (\Exception $ex) {
+      return response()->json(['success' => false, 'error' => $ex->getMessage(), 'data' => null], 500);
+    }
+  }
+
+  public function syncContributeActivities($courseMoodle, $userMoodle, $arrayActivities)
+  {
+
+    try {
+
+      $response = Http::get($this->getBASE_URL() . "users/" . $userMoodle . "/courses/" . $courseMoodle . "/activities/" . $arrayActivities);
+
+      $activities = $response->json();
+
+      $course = Course::where('id_course_moodle', $courseMoodle)->first();
+
+      $registeredUser = RegisteredUser::where('id_registered_moodle', $userMoodle)->first();
+
+      $courseUser = CourseRegisteredUser::where('registered_user_id', $registeredUser->id)->where('course_id', $course->id)->first();
+
+      $arrayActivities = [];
+
+
+      if (count($activities['data']['relActivityuser']) != 0) {
+        foreach ($activities['data']['relActivityuser'] as $activity) {
+
+          if ($activity != null)
+            $localActivity = Activity::where('id_activity_moodle', $activity['activity']['idmod'])->first();
 
           if (isset($localActivity)) {
 
-            $actualActivity = ActivityCourseRegisteredUser::where('activity_id', $localActivity->id)->where('course_registered_user_id', $user->id)
+            $actualActivity = ActivityCourseRegisteredUser::where('activity_id', $localActivity->id)->where('course_registered_user_id', $courseUser->id)
               ->with(['courseRegisteredUser', 'courseRegisteredUser.course'])
               ->first();
 
@@ -617,7 +685,7 @@ class SynchronizeController extends Controller
               $storeActivityDetail = new ActivityCourseRegisteredUser();
 
               $storeActivityDetail->activity_id = $localActivity->id;
-              $storeActivityDetail->course_registered_user_id = $user->id;
+              $storeActivityDetail->course_registered_user_id = $courseUser->id;
 
               $storeActivityDetail->status_moodle = $activity['estado'];
               $storeActivityDetail->qualification_moodle = $activity['calificacion'];
@@ -628,15 +696,12 @@ class SynchronizeController extends Controller
             }
           }
         }
-        return $activities;
       }
-
       return response()->json(['success' => true, 'error' => null, 'data' => $arrayActivities], 200);
     } catch (\Exception $ex) {
       return response()->json(['success' => false, 'error' => $ex->getMessage(), 'data' => null], 500);
     }
   }
-
 
   public function syncActivitiesByUser($idUserRegistered, $idCourse)
 
@@ -655,8 +720,6 @@ class SynchronizeController extends Controller
         $activities = $response->json();
 
         $courseUser = CourseRegisteredUser::where('registered_user_id', $registeredUser->id)->where('course_id', $course->id)->first();
-
-
 
         foreach ($activities as $activity) {
 

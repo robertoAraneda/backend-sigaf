@@ -195,6 +195,9 @@ Route::group([
   Route::get('/sync/users/{idRegisteredUser}/courses/{idCourse}/activities', 'SynchronizeController@syncActivitiesByUser');
 
 
+  Route::get('/sync/course-users/{idCourseMoodle}/users/{idUserMoodle}/activities/{arrayContributeActivities}', 'SynchronizeController@syncContributeActivities');
+
+
   //form
 
   Route::get('/form/ticket/post', 'FormController\TicketFormController@postForm');
