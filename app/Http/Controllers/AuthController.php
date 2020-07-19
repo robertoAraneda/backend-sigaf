@@ -34,7 +34,6 @@ class AuthController extends Controller
     return Validator::make($request, [
       'rut' => 'required|max:12|string',
       'name' => 'required|max:200|string',
-      'phone' => 'max:12|string',
       'mobile' => 'required|max:12|string',
       'email' => 'required|max:255|email|unique:users',
       'role_id' => 'required|numeric',
