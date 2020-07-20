@@ -506,7 +506,7 @@ class SynchronizeController extends Controller
 
             if (isset($localCourseUser)) {
               $localCourseUser->last_access_registered_moodle = $user['ultimoacceso'];
-
+              $localCourseUser->is_sincronized = 1;
               $localCourseUser->save();
 
               $arrayCourseUserValid[] = $localCourseUser->fresh();

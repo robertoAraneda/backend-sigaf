@@ -114,7 +114,26 @@ class CourseRegisteredUserController extends Controller
    */
   public function destroy($id)
   {
-    //
+    try {
+
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      if (!is_numeric($id))
+        return $this->response->badRequest();
+
+      $courseUserModel = CourseRegisteredUser::find($id);
+
+      if (!isset($courseUserModel))
+        return $this->response->noContent();
+
+      $courseUserModel->delete();
+
+      return $this->response->success(null);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
   }
 
   public function updateClassroom($id, Request $request)

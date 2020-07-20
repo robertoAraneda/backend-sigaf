@@ -35,6 +35,7 @@ class UploadFileController extends Controller
       $courseRegisteredUser->registered_user_id = $userCourse->id;
       $courseRegisteredUser->course_id = $request->courseId;
       $courseRegisteredUser->profile_id = 1;
+      $courseRegisteredUser->is_sincronized = 0;
 
       if (!$this->isCourseRegisteredUserStore($userCourse->id, $request->courseId))
         $courseRegisteredUser->save();
