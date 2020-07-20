@@ -9,6 +9,7 @@ use App\Models\CourseRegisteredUser;
 use App\Models\Platform;
 use App\Models\RegisteredUser;
 use App\Models\Rut;
+use App\Models\Section;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -549,13 +550,16 @@ class SynchronizeController extends Controller
         $localActivity = Activity::where('id_activity_moodle', $activity['idmod'])->first();
         $course = Course::where('id_course_moodle', $idCourseMoodle)->first();
 
+        $section = Section::where('description', 'Formativa');
+
         if (!isset($localActivity)) {
           $storeActivity = new Activity();
           $course = Course::where('id_course_moodle', $idCourseMoodle)->first();
 
           $storeActivity->description = $activity['nombre'];
           $storeActivity->type = $activity['tipo'];
-          $storeActivity->weighing = 10;
+          $storeActivity->type = $section->id;
+          $storeActivity->weighing = 0;
           $storeActivity->id_activity_moodle = $activity['idmod'];
           $storeActivity->course_id = $course->id;
 
