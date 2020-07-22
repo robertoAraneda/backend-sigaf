@@ -542,6 +542,7 @@ class SynchronizeController extends Controller
 
       $course = $response->json();
 
+
       $responseActivities = Http::get($this->getBASE_URL() . "course/" . $course['idrcurso'] . "/activities");
 
       $activities = $responseActivities->json();
@@ -550,7 +551,9 @@ class SynchronizeController extends Controller
         $localActivity = Activity::where('id_activity_moodle', $activity['idmod'])->first();
         $course = Course::where('id_course_moodle', $idCourseMoodle)->first();
 
-        $section = Section::where('description', 'Formativa');
+        $section = Section::where('description', 'Formativa')->first();
+
+
 
         if (!isset($localActivity)) {
           $storeActivity = new Activity();
@@ -558,12 +561,14 @@ class SynchronizeController extends Controller
 
           $storeActivity->description = $activity['nombre'];
           $storeActivity->type = $activity['tipo'];
-          $storeActivity->type = $section->id;
+          $storeActivity->section_id = $section->id;
           $storeActivity->weighing = 0;
           $storeActivity->id_activity_moodle = $activity['idmod'];
           $storeActivity->course_id = $course->id;
 
           $storeActivity->save();
+
+          return $storeActivity;
         } else {
           $localActivity->description = $activity['nombre'];
           $localActivity->type = $activity['tipo'];

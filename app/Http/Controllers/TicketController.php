@@ -96,6 +96,7 @@ class TicketController extends Controller
       $ticket->user_create_id = auth()->id();
       $ticket->user_assigned_id = request()->user_assigned_id;
 
+
       if (isset(request()->closing_date)) {
         $ticket->closing_date = Carbon::now()->format('Y-m-d H:i:s');
       }
