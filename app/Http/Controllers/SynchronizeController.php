@@ -553,8 +553,6 @@ class SynchronizeController extends Controller
 
         $section = Section::where('description', 'Formativa')->first();
 
-
-
         if (!isset($localActivity)) {
           $storeActivity = new Activity();
           $course = Course::where('id_course_moodle', $idCourseMoodle)->first();
@@ -567,8 +565,6 @@ class SynchronizeController extends Controller
           $storeActivity->course_id = $course->id;
 
           $storeActivity->save();
-
-          return $storeActivity;
         } else {
           $localActivity->description = $activity['nombre'];
           $localActivity->type = $activity['tipo'];
