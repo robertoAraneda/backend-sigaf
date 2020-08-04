@@ -121,7 +121,7 @@ class CourseRegisteredUserExport implements FromCollection, WithMapping, WithHea
 
 
 
-        $cellRange = 'A2:H2'; // All headers
+        $cellRange = 'A1:H1'; // All headers
         // $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setSize(14);
         // $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setBold(true);
         $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setSize(12);
