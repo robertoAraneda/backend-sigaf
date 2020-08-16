@@ -18,7 +18,7 @@ class CreateTicketDetailsTable extends Migration
       $table->unsignedBigInteger('ticket_id');
       $table->unsignedBigInteger('user_created_id');
       $table->unsignedBigInteger('status_detail_ticket_id');
-      $table->string('comment');
+      $table->string('comment', 255);
       $table->timestamps();
 
       $table->foreign('ticket_id')->references('id')->on('tickets');

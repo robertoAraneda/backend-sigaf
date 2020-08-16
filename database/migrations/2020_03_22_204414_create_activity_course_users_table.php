@@ -17,8 +17,8 @@ class CreateActivityCourseUsersTable extends Migration
       $table->bigIncrements('id');
       $table->unsignedBigInteger('activity_id');
       $table->unsignedBigInteger('course_registered_user_id');
-      $table->string('status_moodle');
-      $table->string('qualification_moodle');
+      $table->string('status_moodle', 255);
+      $table->string('qualification_moodle', 255);
       $table->timestamps();
 
       $table->foreign('activity_id')->references('id')->on('activities');

@@ -16,17 +16,11 @@ class CreateTicketsTable extends Migration
     Schema::create('tickets', function (Blueprint $table) {
       $table->bigIncrements('id');
       $table->unsignedBigInteger('course_registered_user_id');
-
       $table->unsignedBigInteger('type_ticket_id'); //entrante-saliente
-
       $table->unsignedBigInteger('status_ticket_id'); //Abierto-Cerrado
-
       $table->unsignedBigInteger('priority_ticket_id'); //alta-media-baja
-
       $table->unsignedBigInteger('source_ticket_id'); //teléfono-email
-
       $table->unsignedBigInteger('motive_ticket_id'); //bienvenida-problema
-
       $table->unsignedBigInteger('user_create_id');
       $table->unsignedBigInteger('user_assigned_id');
       $table->timestamp('closing_date')->nullable();
