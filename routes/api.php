@@ -120,6 +120,7 @@ Route::group([
   //alumnos
 
   Route::put('/course-registered-user/classroom/{id}', 'CourseRegisteredUserController@updateClassroom');
+  Route::put('/course-registered-user/classroom/{id}/users', 'CourseRegisteredUserController@updateMassiveClassroom');
 
 
   //rels

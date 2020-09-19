@@ -466,6 +466,11 @@ class SynchronizeController extends Controller
     }
   }
 
+
+  public function updateClassroomMassive($idCourseMoodle)
+  {
+  }
+
   public function syncUsersByCourse($idCourseMoodle)
   {
     $response = Http::get($this->getBASE_URL() . "course/" . $idCourseMoodle . "/users");

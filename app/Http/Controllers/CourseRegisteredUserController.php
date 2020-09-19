@@ -151,6 +151,35 @@ class CourseRegisteredUserController extends Controller
     return $this->response->success(new JsonCourseRegisteredUser($courseRegisteredUser));
   }
 
+
+  private function updateClassroom_($courseRegisteredUser)
+  {
+
+    $courseRegisteredUser->save();
+
+    return $this->response->success(new JsonCourseRegisteredUser($courseRegisteredUser));
+  }
+
+
+  public function updateMassiveClassroom($id, Request $request)
+  {
+
+    foreach ($request->courseRegisteredUsers as $courseRegisteredUser) {
+      $courseRegisteredUser = CourseRegisteredUser::whereId($courseRegisteredUser['id'])->first();
+
+      $courseRegisteredUser->classroom_id = $request->classroom_id;
+
+      if (isset($request->profile_id)) {
+        $courseRegisteredUser->profile_id = $request->profile_id;
+      }
+
+      $this->updateClassroom_($courseRegisteredUser);
+    }
+
+
+    return $this->response->success($request->courseRegisteredUsers);
+  }
+
   public function storeFromView()
   {
     try {
