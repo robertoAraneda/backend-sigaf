@@ -482,60 +482,80 @@ class SynchronizeController extends Controller
     $arrayInvalidRut = [];
     $arrayCourseUserValid = [];
 
-    if (isset($users)) {
-      foreach ($users as $user) {
+    try {
+      if (isset($users)) {
+        foreach ($users as $user) {
 
-        $rutUpper = strtoupper($user['rut']);
+          try {
+            $rutUpper = strtoupper($user['rut']);
 
-        list($rut, $dv) = explode("-", $rutUpper);
+            list($rut, $dv) = explode("-", $rutUpper);
 
-        $rut = new Rut($rut, $dv);
+            $rut = new Rut($rut, $dv);
 
-        if (!$rut->validate()) {
-          $arrayInvalidRut[] = $user;
-        } else {
-          $localUser = RegisteredUser::where('rut', $rutUpper)->first();
+            if (!$rut->validate()) {
+              $arrayInvalidRut[] = $user;
+            } else {
+              $localUser = RegisteredUser::where('rut', $rutUpper)->first();
 
-          if (isset($localUser)) {
-            $localUser->id_registered_moodle = $user['iduser'];
-            $localUser->rut_registered_moodle = $user['rut'];
-            $localUser->name_registered_moodle = $user['nombre'];
-            $localUser->email_registered_moodle = $user['email'];
+              if (isset($localUser)) {
 
-            $localUser->save();
+                $localUser->id_registered_moodle = isset($user['iduser']) ? $user['iduser'] : null;
+                $localUser->rut_registered_moodle = isset($user['rut']) ? $rutUpper : null;
+                $localUser->name_registered_moodle = isset($user['nombre']) ? $user['nombre'] : null;
+                $localUser->email_registered_moodle = isset($user['email']) ? $user['email'] : null;
 
-            $localCourse = Course::where('id_course_moodle', $idCourseMoodle)->first();
+                $localUser->save();
 
-            $localCourseUser = CourseRegisteredUser::where('registered_user_id', $localUser->id)
-              ->where('course_id', $localCourse->id)->first();
+                $localCourse = Course::where('id_course_moodle', $idCourseMoodle)->first();
 
-            if (isset($localCourseUser)) {
-              $localCourseUser->last_access_registered_moodle = $user['ultimoacceso'];
-              $localCourseUser->is_sincronized = 1;
-              $localCourseUser->save();
+                $localCourseUser = CourseRegisteredUser::where('registered_user_id', $localUser->id)
+                  ->where('course_id', $localCourse->id)->first();
 
-              $arrayCourseUserValid[] = $localCourseUser->fresh();
+                if (isset($localCourseUser)) {
+                  $localCourseUser->last_access_registered_moodle = isset($user['ultimoacceso']) ? $user['ultimoacceso'] : null;
+                  $localCourseUser->is_sincronized = 1;
+                  $localCourseUser->save();
+
+                  $arrayCourseUserValid[] = $localCourseUser->fresh();
+                }
+
+                $arrayFindedUsers[] = $localUser->fresh();
+              } else {
+                $arrayMissedUsers[] = $user;
+              }
             }
-
-            $arrayFindedUsers[] = $localUser->fresh();
-          } else {
-            $arrayMissedUsers[] = $user;
+          } catch (\Exception $ex) {
+            $arrayInvalidRut[] = $user;
           }
         }
+
+        return response()->json(
+          [
+            'userInvalid' => $arrayInvalidRut,
+            'userFinded' => $arrayFindedUsers,
+            'userMissed' => $arrayMissedUsers,
+            'userCourseValid' => $arrayCourseUserValid
+
+          ],
+          201
+        );
+      } else {
+        return response()->json(['users' => null], 204);
       }
+    } catch (\Exception $ex) {
 
       return response()->json(
         [
           'userInvalid' => $arrayInvalidRut,
           'userFinded' => $arrayFindedUsers,
           'userMissed' => $arrayMissedUsers,
-          'userCourseValid' => $arrayCourseUserValid
+          'userCourseValid' => $arrayCourseUserValid,
+          'users' => $users
 
         ],
-        201
+        200
       );
-    } else {
-      return response()->json(['users' => null], 204);
     }
   }
 
