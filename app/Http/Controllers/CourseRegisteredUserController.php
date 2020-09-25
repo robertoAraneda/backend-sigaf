@@ -228,9 +228,18 @@ class CourseRegisteredUserController extends Controller
 
   public function findSpecificUserCourse($idRegisteredUser, $idCourse)
   {
-    $courseRegisteredUser = CourseRegisteredUser::where('registered_user_id', $idRegisteredUser)->where('course_id', $idCourse)->first();
+    $courseRegisteredUser = CourseRegisteredUser::where('registered_user_id', $idRegisteredUser)->where('course_id', $idCourse)
+      ->with([
+        'course',
+        'classroom',
+        'registeredUser',
+        'profile',
+        'finalStatus',
+        'activityCourseUsers.activity.section'
+      ])
+      ->first();
 
-    return $this->response->success(new JsonCourseRegisteredUser($courseRegisteredUser));
+    return $this->response->success($courseRegisteredUser);
   }
 
   public function findUserCourseByCourse($idCourse)

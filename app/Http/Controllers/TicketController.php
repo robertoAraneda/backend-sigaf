@@ -9,6 +9,7 @@ use App\Http\Resources\Json\TicketDetail as JsonTicketDetail;
 use App\Http\Resources\TicketCollection;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class TicketController extends Controller
@@ -273,6 +274,35 @@ class TicketController extends Controller
       ];
 
       return $this->response->success($ticketFormated->ticketsDetails);
+    } catch (\Exception $exception) {
+
+      return $this->response->exception($exception->getMessage());
+    }
+  }
+
+  public function ticketsByCourse($id)
+  {
+    try {
+
+      if (!request()->isJson())
+        return $this->response->unauthorized();
+
+      $tickets = [];
+
+      $collection = DB::table('tickets')
+        ->leftJoin('course_registered_users', 'course_registered_users.id', '=', 'tickets.course_registered_user_id')
+        ->select('tickets.id')
+        ->where('course_registered_users.course_id', $id)
+        ->orderByDesc('tickets.created_at')
+        ->get();
+
+      foreach ($collection as $key) {
+        $tickets[] = Ticket::find($key->id);
+      }
+
+      $response =  new TicketCollection($tickets);
+
+      return $this->response->success($response);
     } catch (\Exception $exception) {
 
       return $this->response->exception($exception->getMessage());

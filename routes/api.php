@@ -117,6 +117,8 @@ Route::group([
   Route::get('/registered-user/{rut}', 'RegisteredUserController@findByRut');
   Route::get('/activity-course-registered-user/{id}', 'ActivityCourseRegisteredUserController@findByIdRegisteredUserCourse');
 
+  // Route::get('/course-registered-users/users/{id}/course/{id}', 'CourseRegisteredUserController@findCourseRegisteredUserByUserCourse');
+
   //alumnos
 
   Route::put('/course-registered-user/classroom/{id}', 'CourseRegisteredUserController@updateClassroom');
@@ -164,6 +166,8 @@ Route::group([
 
   Route::get('/status-detail-tickets/{status_detail_ticket}/ticket-details', 'StatusDetailTicketController@ticketDetails')->name('api.statusDetailTickets.ticketDetails');
   Route::get('/tickets/{ticket}/ticket-details', 'TicketController@ticketsDetails')->name('api.tickets.ticketsDetails');
+
+  Route::get('/tickets/course-registered-users/course/{id}', 'TicketController@ticketsByCourse')->name('api.tickets.courseRegisteredUsers.course');
 
   Route::post('/upload-file', 'UploadFileController@fileSubmit')->name('api.upload');
   Route::get('/download-file/excel/{id}/{description}', 'CourseRegisteredUserController@downloadExcelCourseRegistered');
