@@ -182,6 +182,8 @@ Route::group([
 
   Route::get('/registered-users/{idUserMoodle}/findByMoodle', 'RegisteredUserController@findByIdRegisteredUserMoodle')->name('api.registeredUsers.findByIdMoodle');
 
+  Route::get('/activities/{ids}/course-registered-users/{idCourse}', 'SynchronizeController@findUsersByPendingActivity');
+
   //subir archivos de matricula alumnos
   Route::get('/upload-file/excel', 'RegisteredUserController@import');
 

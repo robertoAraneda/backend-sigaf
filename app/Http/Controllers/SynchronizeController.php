@@ -466,11 +466,6 @@ class SynchronizeController extends Controller
     }
   }
 
-
-  public function updateClassroomMassive($idCourseMoodle)
-  {
-  }
-
   public function syncUsersByCourse($idCourseMoodle)
   {
     $response = Http::get($this->getBASE_URL() . "course/" . $idCourseMoodle . "/users");
@@ -930,5 +925,62 @@ class SynchronizeController extends Controller
       'success' => true,
       'error' => null
     ], 200);
+  }
+
+  public function findUsersByPendingActivity($id, $idCourse)
+  {
+
+    $ids = json_decode($id);
+
+    if (count($ids) > 0) {
+      $url = $this->getBASE_URL() . "activities/" . $id . "/course-users";
+
+      $response5 = Http::get($url);
+
+      $registeredUserActivities = $response5->json();
+
+      $users['usersWithPendingActivities'] = [];
+
+      foreach ($registeredUserActivities as $value) {
+
+        $findUser = RegisteredUser::where('id_registered_moodle', $value['iduser'])->first();
+
+        $users['all'][] =   $findUser;
+        $users['value'][] = $value['iduser'];
+
+        if (isset($findUser)) {
+          $courseRegisteredUser = CourseRegisteredUser::where('registered_user_id', $findUser->id)
+            ->where('course_id', $idCourse)
+            ->with([
+              'course',
+              'classroom',
+              'registeredUser',
+              'profile',
+              'finalStatus',
+              'activityCourseUsers.activity.section'
+            ])
+            ->first();
+
+          if (isset($courseRegisteredUser)) {
+            $users['usersWithPendingActivities'][] =  $courseRegisteredUser;
+          }
+        }
+      }
+      $users['count'] = count($users['usersWithPendingActivities']);
+
+      return response()->json($users);
+    } else {
+      $courseRegisteredUser['usersWithPendingActivities'] = CourseRegisteredUser::where('course_id', $idCourse)
+        ->with([
+          'course',
+          'classroom',
+          'registeredUser',
+          'profile',
+          'finalStatus',
+          'activityCourseUsers.activity.section'
+        ])
+        ->get();
+    }
+    return response()->json($courseRegisteredUser);
   }
 }

@@ -289,7 +289,6 @@ class CourseRegisteredUserController extends Controller
             'rel' => '/rels/activityCourseUsers',
           ],
 
-
           'collections' => [
             'numberOfElements' => $courseRegisteredUserFormated->activityCourseUsers->count(),
             'data' => $courseRegisteredUserFormated->activityCourseUsers->map(function ($activityCourseUser) {
