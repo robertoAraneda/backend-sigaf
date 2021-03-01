@@ -42,7 +42,9 @@ class CourseController extends Controller
   {
     return Validator::make($request, [
       'description' => 'required|max:150',
-      'category_id' => 'required|numeric'
+      'category_id' => 'required|numeric',
+      'email' => 'required|email|max:100',
+      'password' => 'required'
     ]);
   }
 
@@ -75,18 +77,18 @@ class CourseController extends Controller
   /**
    * Store a newly created resource in storage.
    *
-   * @param  Object $cursoTraidoMoodle
+   * @param  Object $courseFromMoodle
    */
-  public function store($cursoTraidoMoodle)
+  public function store($courseFromMoodle)
   {
-    $nuevoCurso = new Course();
+    $course = new Course();
 
-    $nuevoCurso->description = $cursoTraidoMoodle['nombre'];
-    $nuevoCurso->id_course_moodle  = $cursoTraidoMoodle['idcurso'];
-    $nuevoCurso->category_id = $cursoTraidoMoodle['idcategory'];
-    $nuevoCurso->status = $cursoTraidoMoodle['activo'];
+    $course->description = $courseFromMoodle['nombre'];
+    $course->id_course_moodle  = $courseFromMoodle['idcurso'];
+    $course->category_id = $courseFromMoodle['idcategory'];
+    $course->status = $courseFromMoodle['activo'];
 
-    $nuevoCurso->save();
+    $course->save();
   }
 
   /**

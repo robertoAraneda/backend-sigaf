@@ -11,6 +11,8 @@ class Course extends Model
   protected $fillable = [
     'description',
     'category_id',
+    'email',
+    'password',
     'id_course_moodle',
     'status'
   ];
@@ -32,6 +34,8 @@ class Course extends Model
       'properties' => [
         'id' => $this->id,
         'description'  => $this->description,
+        'email' => $this->email,
+        'password' => $this->password,
         'idCourseMoodle'  => $this->id_course_moodle,
         'status'  => $this->status,
         'createdAt' => $this->created_at != null
