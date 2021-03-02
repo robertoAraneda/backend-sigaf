@@ -38,7 +38,8 @@ class CategoryController extends Controller
   {
     return Validator::make($request, [
       'description' => 'required|max:150',
-      'platform_id' => 'required|numeric'
+      'platform_id' => 'required|numeric',
+      'category_code' => 'required'
     ]);
   }
 
