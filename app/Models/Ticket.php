@@ -8,9 +8,9 @@ use Carbon\Carbon;
 
 class Ticket extends Model
 {
-  protected $table = 'tickets';
+    protected $table = 'tickets';
 
-  protected $fillable = [
+    protected $fillable = [
     'course_registered_user_id',
     'type_ticket_id',
     'status_ticket_id',
@@ -23,27 +23,27 @@ class Ticket extends Model
   ];
 
 
-  public function format()
-  {
-    return [
+    public function format()
+    {
+        return [
       'links' => [
         'href' => route(
-          'api.tickets.show',
-          ['ticket' => $this->id],
-          false
+            'api.tickets.show',
+            ['ticket' => $this->id],
+            false
         ),
         'rel' => 'self'
       ],
       'properties' => [
         'id' => $this->id,
         'courseRegisteredUser' => $this->courseRegisteredUser->load(
-          'course',
-          'course.category',
-          'registeredUser',
-          'profile:id,description',
-          'classroom:id,description',
-          'finalStatus:id,description',
-          'activityCourseUsers.activity.section'
+            'course',
+            'course.category',
+            'registeredUser',
+            'profile:id,description',
+            'classroom:id,description',
+            'finalStatus:id,description',
+            'activityCourseUsers.activity.section'
         ),
         'typeTicket' => [
           'id' => $this->typeTicket->id,
@@ -67,6 +67,7 @@ class Ticket extends Model
         ],
         'userCreated' => $this->userCreated,
         'userAssigned' => $this->userAssigned,
+        'version' => $this->version,
         'closingDate' => $this->closing_date != null ?  Carbon::parse($this->closing_date)->format('d-m-Y') : null,
         'timeClosingDate' => $this->closing_date != null ?  Carbon::parse($this->closing_date)->format('H:i') : null,
         'createdAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('d-m-Y') : null,
@@ -78,75 +79,74 @@ class Ticket extends Model
         'numberOfElements' => $this->ticketsDetails->count(),
         'links' => [
           'href' => route(
-            'api.tickets.ticketsDetails',
-            ['ticket' => $this->id],
-            false
+              'api.tickets.ticketsDetails',
+              ['ticket' => $this->id],
+              false
           ),
           'rel' => '/rels/ticketsDetails'
         ]
       ]
 
     ];
-  }
-
-  private function ageTicket($createdDate, $closedDate)
-  {
-
-    if (isset($closedDate)) {
-      return $createdDate->diffInDays($closedDate);
-    } else {
-      return $createdDate->diffInDays(Carbon::now());
     }
-  }
 
-  public function courseRegisteredUser()
-  {
-    return $this->belongsTo(CourseRegisteredUser::class);
-  }
+    private function ageTicket($createdDate, $closedDate)
+    {
+        if (isset($closedDate)) {
+            return $createdDate->diffInDays($closedDate);
+        } else {
+            return $createdDate->diffInDays(Carbon::now());
+        }
+    }
 
-  public function typeTicket()
-  {
-    return $this->belongsTo(TypeTicket::class);
-  }
+    public function courseRegisteredUser()
+    {
+        return $this->belongsTo(CourseRegisteredUser::class);
+    }
 
-  public function statusTicket()
-  {
-    return $this->belongsTo(StatusTicket::class);
-  }
+    public function typeTicket()
+    {
+        return $this->belongsTo(TypeTicket::class);
+    }
+
+    public function statusTicket()
+    {
+        return $this->belongsTo(StatusTicket::class);
+    }
 
 
-  public function priorityTicket()
-  {
-    return $this->belongsTo(PriorityTicket::class);
-  }
+    public function priorityTicket()
+    {
+        return $this->belongsTo(PriorityTicket::class);
+    }
 
-  public function motiveTicket()
-  {
-    return $this->belongsTo(MotiveTicket::class);
-  }
+    public function motiveTicket()
+    {
+        return $this->belongsTo(MotiveTicket::class);
+    }
 
-  public function sourceTicket()
-  {
-    return $this->belongsTo(SourceTicket::class);
-  }
+    public function sourceTicket()
+    {
+        return $this->belongsTo(SourceTicket::class);
+    }
 
-  public function userCreated()
-  {
-    return $this->belongsTo(User::class, 'user_create_id');
-  }
+    public function userCreated()
+    {
+        return $this->belongsTo(User::class, 'user_create_id');
+    }
 
-  public function userAssigned()
-  {
-    return $this->belongsTo(User::class);
-  }
+    public function userAssigned()
+    {
+        return $this->belongsTo(User::class);
+    }
 
-  public function ticketsDetails()
-  {
-    return $this->hasMany(TicketDetail::class);
-  }
+    public function ticketsDetails()
+    {
+        return $this->hasMany(TicketDetail::class);
+    }
 
-  public function alerts()
-  {
-    return $this->hasMany(Alert::class);
-  }
+    public function alerts()
+    {
+        return $this->hasMany(Alert::class);
+    }
 }

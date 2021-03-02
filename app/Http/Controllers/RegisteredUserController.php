@@ -297,19 +297,19 @@ class RegisteredUserController extends Controller
 
         $array[] = array(
           'rut' => $this->formatRut(str_split($key[0])) . "-" . $key[1],
-          'name'    => $key[10],
-          'last_name'     => $key[11],
-          'mother_last_name'    => $key[12],
-          'email'    => $key[8],
-          'phone'      => $key[16],
-          'mobile'      => $key[17],
-          'address'      => $key[14],
-          'region'      => $key[15],
-          'rbd_school'    => $key[18],
-          'name_school'      => $key[19],
-          'city_school'      => $key[23],
-          'region_school'      => $key[21],
-          'phone_school'    => $key[24]
+          'name'    => $key[2],
+          'last_name'     => $key[3],
+          'mother_last_name'    => $key[4],
+          'email'    => $key[5],
+          'phone'      => $key[8],
+          'mobile'      => $key[9],
+          'address'      => $key[6],
+          'region'      => $key[7],
+          'rbd_school'    => $key[10],
+          'name_school'      => $key[11],
+          'city_school'      => $key[13],
+          'region_school'      => $key[12],
+          'phone_school'    => $key[14]
         );
       }
     }

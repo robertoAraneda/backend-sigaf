@@ -24,6 +24,8 @@ class Course extends JsonResource
       'properties' => [
         'id' => $this->id,
         'description'  => $this->description,
+        'email' => $this->email,
+        'password' => $this->password,
         'idCourseMoodle'  => $this->id_course_moodle,
         'status'  => $this->status,
         'createdAt' => $this->created_at != null

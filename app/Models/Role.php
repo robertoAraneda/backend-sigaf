@@ -8,25 +8,25 @@ use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
 {
-  protected $fillable = [
+    protected $fillable = [
     'description'
   ];
 
-  protected $table = 'roles';
+    protected $table = 'roles';
 
-  /**
-   * Get the Role formated
-   *
-   * @return array
-   */
-  public function format()
-  {
-    return [
+    /**
+     * Get the Role formated
+     *
+     * @return array
+     */
+    public function format()
+    {
+        return [
       'links' => [
         'href' => route(
-          'api.roles.show',
-          ['role' => $this->id],
-          false,
+            'api.roles.show',
+            ['role' => $this->id],
+            false
         ),
         'rel' => 'self'
       ],
@@ -44,22 +44,22 @@ class Role extends Model
         'numberOfElements' => $this->users->count(),
         'links' => [
           'href' => route(
-            'api.roles.users',
-            ['role' => $this->id],
-            false
+              'api.roles.users',
+              ['role' => $this->id],
+              false
           ),
           'rel' => '/rels/users'
         ]
       ]
     ];
-  }
+    }
 
-  /**
-   * Get a list of users for the role
-   *
-   */
-  public function users()
-  {
-    return $this->hasMany(User::class);
-  }
+    /**
+     * Get a list of users for the role
+     *
+     */
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
 }

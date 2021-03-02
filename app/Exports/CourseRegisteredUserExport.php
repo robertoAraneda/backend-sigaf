@@ -17,7 +17,7 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
-class CourseRegisteredUserExport implements FromCollection, WithMapping, WithHeadings, WithColumnFormatting, ShouldAutoSize, WithEvents
+class CourseRegisteredUserExport implements FromCollection, WithMapping, WithHeadings, ShouldAutoSize, WithEvents
 {
 
   use Exportable;
@@ -28,7 +28,6 @@ class CourseRegisteredUserExport implements FromCollection, WithMapping, WithHea
   {
     $this->course = $course;
   }
-
 
   /**
    * @return \Illuminate\Support\Collection
@@ -50,61 +49,40 @@ class CourseRegisteredUserExport implements FromCollection, WithMapping, WithHea
   public function map($courseRegisteredUser): array
   {
     return [
-      $courseRegisteredUser->classroom->description,
+
       $courseRegisteredUser->registeredUser->rut,
       $courseRegisteredUser->registeredUser->name,
       $courseRegisteredUser->registeredUser->last_name,
       $courseRegisteredUser->registeredUser->mother_last_name,
       $courseRegisteredUser->registeredUser->email,
-      $courseRegisteredUser->registeredUser->phone,
-      $courseRegisteredUser->registeredUser->mobile,
-      $courseRegisteredUser->registeredUser->address,
-      $courseRegisteredUser->registeredUser->city,
-      $courseRegisteredUser->registeredUser->region,
-      $courseRegisteredUser->registeredUser->rbd_school,
-      $courseRegisteredUser->registeredUser->name_school,
-      $courseRegisteredUser->registeredUser->city_school,
-      $courseRegisteredUser->registeredUser->region_school,
-      $courseRegisteredUser->registeredUser->phone_school,
-      Date::dateTimeToExcel($courseRegisteredUser->created_at),
+      $courseRegisteredUser->classroom->description,
+      $courseRegisteredUser->profile->description,
+      $courseRegisteredUser->course->description
     ];
   }
 
   public function headings(): array
   {
-
-
     return [
-      [$this->course['description']],
       [
-        'AULA',
         'RUT',
         'NOMBRE',
         'APELLIDO PATERNO',
         'APELLIDO MATERNO',
         'CORREO ELECTRONICO',
-        'TELEFONO',
-        'CELULAR',
-        'DIRECCION',
-        'CIUDAD',
-        'REGION',
-        'RBD COLEGIO',
-        'NOMBRE COLEGIO',
-        'CIUDAD COLEGIO',
-        'REGION COLEGIO',
-        'TELEFONO COLEGIO',
-        'FECHA DE CREACION'
+        'AULA',
+        'ROL',
+        'CURSO'
       ],
-
     ];
   }
 
-  public function columnFormats(): array
-  {
-    return [
-      'Q' => NumberFormat::FORMAT_DATE_DDMMYYYY
-    ];
-  }
+  // public function columnFormats(): array
+  // {
+  //   return [
+  //     'Q' => NumberFormat::FORMAT_DATE_DDMMYYYY
+  //   ];
+  // }
 
   /**
    * @return array
@@ -143,18 +121,18 @@ class CourseRegisteredUserExport implements FromCollection, WithMapping, WithHea
 
 
 
-        $cellRange = 'A1:W1'; // All headers
-        $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setSize(14);
-        $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setBold(true);
-        $event->sheet->getDelegate()->getStyle('A2:W2')->getFont()->setSize(12);
+        $cellRange = 'A1:H1'; // All headers
+        // $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setSize(14);
+        // $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setBold(true);
+        $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setSize(12);
+        // $event->sheet->getDelegate()->getStyle($cellRange)
+        //   ->getFont()->getColor()->setARGB(Color::COLOR_RED);
+        // $event->sheet->getDelegate()->mergeCells('A1:Q1');
+        // $event->sheet->getDelegate()->getStyle('A1')
+        //   ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $event->sheet->getDelegate()->getStyle($cellRange)
-          ->getFont()->getColor()->setARGB(Color::COLOR_RED);
-        $event->sheet->getDelegate()->mergeCells('A1:Q1');
-        $event->sheet->getDelegate()->getStyle('A1')
-          ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-        $event->sheet->getDelegate()->getStyle('A2:W2')
           ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
-        $event->sheet->getDelegate()->getStyle('A2:W2')->applyFromArray($styleArray);
+        $event->sheet->getDelegate()->getStyle($cellRange)->applyFromArray($styleArray);
       },
     ];
   }
