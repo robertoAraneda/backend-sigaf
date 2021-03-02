@@ -17,21 +17,21 @@ class AuthController extends Controller
    *
    * @var  App\Helpers\MakeResponse  $response
    */
-  protected $response;
+    protected $response;
 
-  public function __construct(MakeResponse $makeResponse = null)
-  {
-    $this->response = $makeResponse;
-  }
+    public function __construct(MakeResponse $makeResponse = null)
+    {
+        $this->response = $makeResponse;
+    }
 
-  /**
-   * Validate the description field.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   */
-  protected function validateData($request)
-  {
-    return Validator::make($request, [
+    /**
+     * Validate the description field.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     */
+    protected function validateData($request)
+    {
+        return Validator::make($request, [
       'rut' => 'required|max:12|string',
       'name' => 'required|max:200|string',
       'mobile' => 'required|max:12|string',
@@ -40,30 +40,31 @@ class AuthController extends Controller
       'password' => 'required|string',
       'isFirstLogin' => 'required|numeric'
     ]);
-  }
+    }
 
-  /**
-   * Create user
-   *
-   * @param  [string] name
-   * @param  [string] email
-   * @param  [string] password
-   * @param  [string] password_confirmation
-   * @return [string] message
-   */
-  public function signup(Request $request)
-  {
-    try {
+    /**
+     * Create user
+     *
+     * @param  [string] name
+     * @param  [string] email
+     * @param  [string] password
+     * @param  [string] password_confirmation
+     * @return [string] message
+     */
+    public function signup(Request $request)
+    {
+        try {
+            if (!request()->isJson()) {
+                return $this->response->unauthorized();
+            }
 
-      if (!request()->isJson())
-        return $this->response->unauthorized();
+            $validate = $this->validateData(request()->all());
 
-      $validate = $this->validateData(request()->all());
+            if ($validate->fails()) {
+                return $this->response->customMessageResponse(($validate->errors()), 406);
+            }
 
-      if ($validate->fails())
-        return $this->response->customMessageResponse(($validate->errors()), 406);
-
-      $user = new User([
+            $user = new User([
         'rut' => $request->rut,
         'name' => $request->name,
         'phone' => $request->phone,
@@ -75,87 +76,87 @@ class AuthController extends Controller
         'user_create_id' => auth()->id()
       ]);
 
-      $user->save();
+            $user->save();
 
-      return $this->response->created($user->fresh()->format());
-    } catch (\Exception $ex) {
-      return $this->response->exception($ex->getMessage());
+            return $this->response->created($user->fresh()->format());
+        } catch (\Exception $ex) {
+            return $this->response->exception($ex->getMessage());
+        }
     }
-  }
 
-  /**
-   * Login user and create token
-   *
-   * @param  [string] email
-   * @param  [string] password
-   * @param  [boolean] remember_me
-   * @return [string] access_token
-   * @return [string] token_type
-   * @return [string] expires_at
-   */
-  public function login(Request $request)
-  {
-    $request->validate([
+    /**
+     * Login user and create token
+     *
+     * @param  [string] email
+     * @param  [string] password
+     * @param  [boolean] remember_me
+     * @return [string] access_token
+     * @return [string] token_type
+     * @return [string] expires_at
+     */
+    public function login(Request $request)
+    {
+        $request->validate([
       'email' => 'required|string|email',
       'password' => 'required|string',
       'remember_me' => 'boolean'
     ]);
 
-    $credentials = request(['email', 'password']);
+        $credentials = request(['email', 'password']);
 
-    if (!Auth::attempt($credentials))
-
-      return response()->json([
+        if (!Auth::attempt($credentials)) {
+            return response()->json([
         'message' => 'Unauthorized'
       ], 401);
+        }
 
-    $user = $request->user();
+        $user = $request->user();
 
-    $tokenResult = $user->createToken('Personal Access Token');
+        $tokenResult = $user->createToken('Personal Access Token');
 
-    $token = $tokenResult->token;
+        $token = $tokenResult->token;
 
-    if ($request->remember_me)
-      $token->expires_at = Carbon::now()->addWeeks(1);
+        if ($request->remember_me) {
+            $token->expires_at = Carbon::now()->addWeeks(1);
+        }
 
-    $token->save();
+        $token->save();
 
-    return response()->json([
+        return response()->json([
       'access_token' => $tokenResult->accessToken,
       'token_type' => 'Bearer',
       'expires_at' => Carbon::parse(
-        $tokenResult->token->expires_at
+          $tokenResult->token->expires_at
       )->toDateTimeString()
     ]);
-  }
+    }
 
-  /**
-   * Logout user (Revoke the token)
-   *
-   * @return [string] message
-   */
-  public function logout(Request $request)
-  {
-    $request->user()->token()->revoke();
-    return response()->json([
+    /**
+     * Logout user (Revoke the token)
+     *
+     * @return [string] message
+     */
+    public function logout(Request $request)
+    {
+        $request->user()->token()->revoke();
+        return response()->json([
       'message' => 'Successfully logged out'
     ]);
-  }
+    }
 
-  /**
-   * Get the authenticated User
-   *
-   * @return [json] user object
-   */
-  public function user(Request $request)
-  {
+    /**
+     * Get the authenticated User
+     *
+     * @return [json] user object
+     */
+    public function user(Request $request)
+    {
+        $user = $request->user();
 
-    $user = $request->user();
+        $searchUser = User::find($user->id);
 
-    $searchUser = User::find($user->id);
-
-    return response()->json([
+        return response()->json([
       'user' => $searchUser->format()
     ], 200);
-  }
+    }
 }

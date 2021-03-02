@@ -7,15 +7,15 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class Ticket extends JsonResource
 {
-  /**
-   * Transform the resource into an array.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @return array
-   */
-  public function toArray($request)
-  {
-    return [
+    /**
+     * Transform the resource into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function toArray($request)
+    {
+        return [
       'links' => [
         'url' => route('api.tickets.show', ['ticket' => $this->id]),
         'href' => route('api.tickets.show', ['ticket' => $this->id], false),
@@ -24,8 +24,8 @@ class Ticket extends JsonResource
       'properties' => [
         'id' => $this->id,
         'courseRegisteredUser' => $this->courseRegisteredUser->load(
-          'course',
-          'registeredUser',
+            ['course',
+          'registeredUser']
         ),
         'typeTicket' => [
           'id' => $this->typeTicket->id,
@@ -47,9 +47,10 @@ class Ticket extends JsonResource
         'userAssigned' => $this->userAssigned,
         'closingDate' => $this->closing_date,
         'observation' => $this->observation,
+        'version' => $this->version,
         'createdAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null,
         'updatedAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null
       ]
     ];
-  }
+    }
 }
