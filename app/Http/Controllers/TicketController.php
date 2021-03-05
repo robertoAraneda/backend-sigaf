@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Helpers\MakeResponse;
 use App\Models\Ticket;
 use App\Models\LogEditingTicket;
+use App\Models\CourseRegisteredUser;
+
 use App\Http\Resources\Json\Ticket as JsonTicket;
 use App\Http\Resources\Json\TicketDetail as JsonTicketDetail;
 use App\Http\Resources\TicketCollection;
@@ -12,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class TicketController extends Controller
 {
@@ -85,9 +88,9 @@ class TicketController extends Controller
                 return $this->response->exception($validate->errors());
             }
 
-
             $ticket = new Ticket();
 
+            $code = $this->findCurrentCorrelative(request()->course_registered_user_id);
 
             $ticket->course_registered_user_id = request()->course_registered_user_id;
             $ticket->type_ticket_id = request()->type_ticket_id;
@@ -95,6 +98,7 @@ class TicketController extends Controller
             $ticket->source_ticket_id = request()->source_ticket_id;
             $ticket->priority_ticket_id = request()->priority_ticket_id;
             $ticket->motive_ticket_id = request()->motive_ticket_id;
+            $ticket->ticket_code = $this->createTicketCode($code, 1);
             $ticket->user_create_id = auth()->id();
             $ticket->user_assigned_id = request()->user_assigned_id;
 
@@ -337,7 +341,9 @@ class TicketController extends Controller
 
             $ticketStored = [];
 
-
+            $code = $this->findCurrentCorrelative(request()->course_registered_user_id[0]);
+    
+            $increment = 1;
             foreach (request()->course_registered_user_id as $key => $value) {
                 $ticket = new Ticket();
 
@@ -347,22 +353,76 @@ class TicketController extends Controller
                 $ticket->source_ticket_id = request()->source_ticket_id;
                 $ticket->priority_ticket_id = request()->priority_ticket_id;
                 $ticket->motive_ticket_id = request()->motive_ticket_id;
+                $ticket->ticket_code = $this->createTicketCode($code, $increment);
                 $ticket->user_create_id = auth()->id();
                 $ticket->user_assigned_id = request()->user_assigned_id;
 
                 if (isset(request()->closing_date)) {
                     $ticket->closing_date = Carbon::now()->format('Y-m-d H:i:s');
                 }
-
                 $ticket->save();
-
                 $ticketStored[] = $ticket->fresh()->format();
-            }
 
+                $increment++;
+            }
 
             return $this->response->success($ticketStored);
         } catch (\Exception $exception) {
             return $this->response->exception($exception->getMessage());
+        }
+    }
+
+    private function findCurrentCorrelative($idCourseRegisteredUser)
+    {
+        $user = CourseRegisteredUser::where('id', $idCourseRegisteredUser)
+            ->with('course.category')->first();
+
+        $category_code = $user->course->category->category_code;
+
+        $cleanString = $this->cleanString($user->course->description);
+
+        $course_code =  strtoupper(substr($cleanString, 0, 3));
+
+        $ticketCode = Ticket::where('ticket_code', 'like', "$category_code-$course_code%")
+                ->orderBy('id', 'desc')
+                ->select('ticket_code')
+                ->first();
+
+        $currentSecuence = 0;
+
+        if (isset($ticketCode)) {
+            $currentSecuence = (int) explode('-', $ticketCode->ticket_code)[2];
+        }
+        
+        return [
+            'category_code' => $category_code,
+            'course_code' => $course_code,
+            'currentSecuence' => $currentSecuence,
+        ];
+    }
+
+    private function createTicketCode($code, $increment)
+    {
+        $secuenceString = str_pad($code['currentSecuence'] + $increment, 4, "0", STR_PAD_LEFT);
+
+        return  "{$code['category_code']}-{$code['course_code']}-{$secuenceString}";
+    }
+
+    public function cleanString($string)
+    {
+        if (!isset($string)) {
+            return null;
+        } else {
+            $letters = ['Á', 'É', 'Í', 'Ó', 'Ú'];
+            $replace = ['A', 'E', 'I', 'O', 'U'];
+
+            $upperString = Str::upper($string);
+
+            for ($i = 0; $i < count($replace); $i++) {
+                $upperString = str_replace($letters[$i], $replace[$i], $upperString);
+            }
+
+            return $upperString;
         }
     }
 }

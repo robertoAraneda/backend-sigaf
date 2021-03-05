@@ -122,6 +122,13 @@ Route::group([
     Route::post('/tickets/multiple', 'TicketController@storeMultiple');
     Route::post('/ticket-details/multiple', 'TicketDetailController@storeMassiveDetail');
     Route::post('/mail/massive', 'MailController@sendMassive');
+    Route::post('/mail/single', 'MailController@sendSingle');
+
+
+    //count
+
+    Route::get('/course-registered-users/{course}/count', 'CourseRegisteredUserController@numberOfUsersByCourse');
+
 
     //alumnos
 
