@@ -73,7 +73,8 @@ class Ticket extends Model
         'createdAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('d-m-Y') : null,
         'timeCreatedAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('H:i') : null,
         'updatedAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('d-m-Y') : null,
-        'ageTicket' => $this->ageTicket($this->created_at, $this->closing_date)
+        'ageTicket' => $this->ageTicket($this->created_at, $this->closing_date),
+        'ticketCode' => $this->ticket_code
       ],
       'relationships' => [
         'numberOfElements' => $this->ticketsDetails->count(),

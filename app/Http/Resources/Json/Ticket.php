@@ -48,6 +48,7 @@ class Ticket extends JsonResource
         'closingDate' => $this->closing_date,
         'observation' => $this->observation,
         'version' => $this->version,
+        'ticketCode' => $this->ticket_code,
         'createdAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null,
         'updatedAt' => $this->created_at != null ?  Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null
       ]
