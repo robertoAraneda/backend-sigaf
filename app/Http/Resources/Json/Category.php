@@ -23,6 +23,7 @@ class Category extends JsonResource
       'properties' => [
         'id' => $this->id,
         'description' => $this->description,
+        'categoryCode' => $this->category_code,
         'idCategoryMoodle' => $this->id_category_moodle,
         'status' => $this->status,
         'createdAt' => $this->created_at != null

@@ -12,6 +12,7 @@ class Category extends Model
 
   protected $fillable = [
     'description',
+    'category_code',
     'platform_id',
     'id_category_moodle',
     'status'
@@ -32,6 +33,7 @@ class Category extends Model
       'properties' => [
         'id' => $this->id,
         'description' => $this->description,
+        'categoryCode' => $this->category_code,
         'idPlatformMoodle' => $this->platform_id,
         'idCategoryMoodle' => $this->id_category_moodle,
         'status' => $this->status,

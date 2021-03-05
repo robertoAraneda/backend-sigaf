@@ -305,4 +305,21 @@ class CourseRegisteredUserController extends Controller
             return $this->response->exception($exception->getMessage());
         }
     }
+
+    public function numberOfUsersByCourse($courseId)
+    {
+        try {
+            if (!request()->isJson()) {
+                return $this->response->unauthorized();
+            }
+
+            $courseRegisteredUsers = CourseRegisteredUser::where('course_id', $courseId)->count();
+
+            return $this->response->success([
+                            'id' => (int) $courseId ,
+                            'count' => $courseRegisteredUsers]);
+        } catch (\Exception $exception) {
+            return $this->response->exception($exception->getMessage());
+        }
+    }
 }
