@@ -119,11 +119,14 @@ Route::group([
 
     // Route::get('/course-registered-users/users/{id}/course/{id}', 'CourseRegisteredUserController@findCourseRegisteredUserByUserCourse');
 
+
+    //email routes
     Route::post('/tickets/multiple', 'TicketController@storeMultiple');
     Route::post('/ticket-details/multiple', 'TicketDetailController@storeMassiveDetail');
     Route::post('/mail/massive', 'MailController@sendMassive');
     Route::post('/mail/single', 'MailController@sendSingle');
-
+    Route::post('/mail/upload/file', 'UploadFileController@uploadFileEmail');
+    Route::post('/mail/delete/file', 'UploadFileController@removeFileEmail');
 
     //count
 
