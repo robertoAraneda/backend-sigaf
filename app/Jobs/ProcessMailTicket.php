@@ -16,6 +16,7 @@ class ProcessMailTicket implements ShouldQueue
 
 
     private $details;
+    public $timeout = 120;
 
     /**
      * Create a new job instance.
@@ -34,9 +35,16 @@ class ProcessMailTicket implements ShouldQueue
      */
     public function handle()
     {
-        $transport = (new \Swift_SmtpTransport('smtp.gmail.com', 587, 'tls'))
+
+      
+/*         $transport = (new \Swift_SmtpTransport('smtp.gmail.com', 587, 'tls'))
               ->setUsername('robaraneda@gmail.com')
-              ->setPassword('05080Uni');
+              ->setPassword('05080Uni'); */
+
+        $transport = (new \Swift_SmtpTransport('smtp.gmail.com', 587, 'tls'))
+              ->setUsername('claudia.alarcon@iie.cl')
+              ->setPassword('163170051');
+
 
         $gmail = new \Swift_Mailer($transport);
 
@@ -45,11 +53,15 @@ class ProcessMailTicket implements ShouldQueue
         $data = $this->details;
         $files = $this->details['files'];
 
-        $emails = array_map('trim', ['robaraneda@gmail.com', 'calarconlazo@gmail.com']);
+        $primaryEmails = array_map('trim', ['robaraneda@gmail.com', 'calarconlazo@gmail.com']);
+        $ccEmails = array_map('trim', ['enchantpato@gmail.com', 'roberto.araneda@asur.cl']);
 
-        Mail::send('ticket', compact('data'), function ($message) use ($files, $emails, $data) {
-            $message->from('robaraneda@gmail.com');
-            $message->to($emails)->subject($data['subject']);
+
+        Mail::send('ticket', compact('data'), function ($message) use ($files, $primaryEmails, $ccEmails, $data) {
+            $message->from('claudia.alarcon@iie.cl');
+            $message->to($primaryEmails);
+            $message->cc($ccEmails);
+            $message->subject($data['subject']);
 
             if (count($files) > 0) {
                 foreach ($files as $file) {
