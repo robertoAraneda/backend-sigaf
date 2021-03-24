@@ -16,12 +16,18 @@ class CourseTutorCollection extends ResourceCollection
   {
     return [
       'links' => [
-        'href' => route(
-          'api.courseTutors.course',
-          'api.courseTutors.tutor',
-          [],
-          false
-        ),
+        'href' => [
+          'course' => route(
+            'api.courseTutors.course',
+            [],
+            false
+          ),
+          'tutor' => route(
+            'api.courseTutors.tutor',
+            [],
+            false
+          )
+        ],
         'title' => 'Listado de relaciones entre cursos y tutores',
         'rel' => 'self'
       ],

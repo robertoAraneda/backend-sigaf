@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,7 +17,7 @@ class CourseTutor extends Model
 
   public function tutor()
   {
-    return $this->belongsTo(Tutor::class);
+    return $this->belongsTo(User::class);
   }
 
   public function format()

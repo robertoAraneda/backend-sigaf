@@ -102,6 +102,7 @@ Route::group([
   Route::apiResource('/status-detail-tickets', 'StatusDetailTicketController')->names('api.statusDetailTickets');
   Route::apiResource('/ticket-details', 'TicketDetailController')->names('api.ticketDetails');
   Route::apiResource('/log-editing-tickets', 'LogEditingTicketController')->names('api.logEditingTickets');
+  Route::apiResource('/course-tutors', 'CourseTutorController')->names('api.courseTutors');
 
 
 

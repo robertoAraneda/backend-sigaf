@@ -165,12 +165,12 @@ class CourseTutorController extends Controller
       if (!is_numeric($course))
         return $this->response->badRequest();
 
-      $courseTutor = CourseTutor::where('course_id', $course)->first();
+      $courseTutor = CourseTutor::where('course_id', $course)->get();
 
       if (!isset($courseTutor))
         return $this->response->noContent();
 
-      return $this->response->success($courseTutor->format());
+      return $this->response->success($courseTutor->map->format());
     } catch (\Exception $exception) {
       return $this->response->exception($exception->getMessage());
     }
@@ -185,12 +185,12 @@ class CourseTutorController extends Controller
       if (!is_numeric($tutor))
         return $this->response->badRequest();
 
-      $courseTutor = CourseTutor::where('tutor_id', $tutor)->first();
+      $courseTutor = CourseTutor::where('tutor_id', $tutor)->get();
 
       if (!isset($courseTutor))
         return $this->response->noContent();
 
-      return $this->response->success($courseTutor->format());
+      return $this->response->success($courseTutor->map->format());
     } catch (\Exception $exception) {
       return $this->response->exception($exception->getMessage());
     }
