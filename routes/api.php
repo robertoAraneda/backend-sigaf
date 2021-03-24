@@ -226,4 +226,13 @@ Route::group([
 
     Route::get('/form/ticket/post', 'FormController\TicketFormController@postForm');
     Route::get('/form/ticket/put/{id}', 'FormController\TicketFormController@putForm');
+
+
+    //dashboard
+    Route::get('/tickets/{id_ticket}/status-chart', 'TicketController@statusTicketsPieChart');
+    Route::get('/tickets/{id_ticket}/motive-chart', 'TicketController@motiveTicketsPieChart');
+    Route::get('/tickets/{id_ticket}/source-chart', 'TicketController@sourceTicketsPieChart');
+    Route::get('/tickets/{id_ticket}/priority-chart', 'TicketController@priorityTicketsPieChart');
+    Route::get('/tickets/{id_ticket}/status-operator-chart', 'TicketController@statusTicketsByOperatorChart');
+    Route::get('/tickets/{course}/total/count', 'TicketController@getTotalTicketCount');
 });
