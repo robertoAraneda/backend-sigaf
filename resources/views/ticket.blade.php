@@ -17,12 +17,13 @@
     </style>
     <body>
         <div>
-           Estimad@ {{ $data['fullname'] }}
+           Estimado(a) {{ $data['fullname'] }}
             {!! $data['body'] !!}
-
-            Saludos cordiales,
+        </div style="margin-top: 20px;">
+             Saludos cordiales,
+        <div>
         </div>
-        <footer>
+        <footer style="margin-top: 20px;">
             <div style="text-align: center;">
                 Coordinación Curso b-Learning
             </div>
@@ -33,10 +34,10 @@
                 Instituto de Informática Educativa - Universidad de La Frontera
             </div>
             <div style="text-align: center;">
-                Correo electrónico:  CORREOCURSO@iie.cl
+                <strong>Correo electrónico:</strong>  {{ $data['emailCourse'] }}
             </div>
             <div style="text-align: center;">
-                Fono contacto: 800 100 210  /  800 045 450 /  800 600 601
+                <strong>Fono contacto:</strong> 800 100 210  /  800 045 450 /  800 650 800
             </div>
         </footer>
     </body>
