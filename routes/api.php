@@ -170,6 +170,9 @@ Route::group([
 
     Route::get('/course-registered-user/{idRegisteredUser}/courses/{idCourse}', 'CourseRegisteredUserController@findSpecificUserCourse');
 
+    Route::get('/course-registered-user/{idRegisteredUser}/tickets', 'TicketController@findTicketsByUser');
+
+
 
     Route::get('/course-registered-user/{idCourse}/users', 'CourseRegisteredUserController@findUserCourseByCourse')->name('api.courseRegisteredUsers.users');
     Route::get('/platforms/{platform}/categories', 'PlatformController@categories')->name('api.platforms.categories');
@@ -195,6 +198,8 @@ Route::group([
     Route::put('/categories/put/{category}', 'CategoryController@updateVue');
 
     Route::post('/registered-users/view-store', 'RegisteredUserController@storeFromView')->name('api.registeredUsers.viewStore');
+    Route::put('/registered-users/{id}/view-update', 'RegisteredUserController@updateFromView')->name('api.registeredUsers.updateStore');
+
     Route::post('/course-registered-users/view-store', 'CourseRegisteredUserController@storeFromView')->name('api.courseRegisteredUsers.viewStore');
 
     Route::get('/registered-users/{idUserMoodle}/findByMoodle', 'RegisteredUserController@findByIdRegisteredUserMoodle')->name('api.registeredUsers.findByIdMoodle');
@@ -226,4 +231,13 @@ Route::group([
 
     Route::get('/form/ticket/post', 'FormController\TicketFormController@postForm');
     Route::get('/form/ticket/put/{id}', 'FormController\TicketFormController@putForm');
+
+
+    //dashboard
+    Route::get('/tickets/{id_ticket}/status-chart', 'TicketController@statusTicketsPieChart');
+    Route::get('/tickets/{id_ticket}/motive-chart', 'TicketController@motiveTicketsPieChart');
+    Route::get('/tickets/{id_ticket}/source-chart', 'TicketController@sourceTicketsPieChart');
+    Route::get('/tickets/{id_ticket}/priority-chart', 'TicketController@priorityTicketsPieChart');
+    Route::get('/tickets/{id_ticket}/status-operator-chart', 'TicketController@statusTicketsByOperatorChart');
+    Route::get('/tickets/{course}/total/count', 'TicketController@getTotalTicketCount');
 });

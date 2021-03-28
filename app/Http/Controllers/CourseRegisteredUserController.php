@@ -256,7 +256,7 @@ class CourseRegisteredUserController extends Controller
         'profile',
         'finalStatus',
         'activityCourseUsers.activity.section'
-      ])->get();
+      ])->paginate(50);
 
             return $this->response->success($courseRegisteredUsers);
         } catch (\Exception $exception) {

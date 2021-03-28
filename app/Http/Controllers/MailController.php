@@ -61,9 +61,14 @@ class MailController extends Controller
                 $details['body']    = $request->text;
                 $details['files']   = $files;
                 $details['course']  = $ticket->courseRegisteredUser->course->description;
-                $details['fullname']=  "{$ticket->courseRegisteredUser->registeredUser->name}
-                                    {$ticket->courseRegisteredUser->registeredUser->last_name} 
-                                    {$ticket->courseRegisteredUser->registeredUser->mother_last_name}";
+                $details['fullname']=  "{$ticket->courseRegisteredUser->registeredUser->name} {$ticket->courseRegisteredUser->registeredUser->last_name} {$ticket->courseRegisteredUser->registeredUser->mother_last_name}";
+
+                $details['primaryMail']   = $ticket->courseRegisteredUser->registeredUser->email;
+                $details['carbonCopyMail']  = array_map('trim', explode(";", $request->CCRecipient));
+                $details['emailCourse'] = trim($ticket->courseRegisteredUser->course->email);
+                $details['passCourse'] = $ticket->courseRegisteredUser->course->password;
+
+
                 $mailsSend[]= $details;
 
                 dispatch(new \App\Jobs\ProcessMailTicket($details));
@@ -98,9 +103,13 @@ class MailController extends Controller
             $details['body']    = $request->text;
             $details['files']   = $files;
             $details['course']  = $ticket->courseRegisteredUser->course->description;
-            $details['fullname']=  "{$ticket->courseRegisteredUser->registeredUser->name}
-                                    {$ticket->courseRegisteredUser->registeredUser->last_name} 
-                                    {$ticket->courseRegisteredUser->registeredUser->mother_last_name}";
+            $details['fullname']=  "{$ticket->courseRegisteredUser->registeredUser->name} {$ticket->courseRegisteredUser->registeredUser->last_name} {$ticket->courseRegisteredUser->registeredUser->mother_last_name}";
+
+            $details['primaryMail']   = $ticket->courseRegisteredUser->registeredUser->email;
+            $details['carbonCopyMail']  = array_map('trim', explode(";", $request->CCRecipient));
+            $details['emailCourse'] = trim($ticket->courseRegisteredUser->course->email);
+            $details['passCourse'] = $ticket->courseRegisteredUser->course->password;
+
 
             dispatch(new \App\Jobs\ProcessMailTicket($details));
   
@@ -134,9 +143,14 @@ class MailController extends Controller
             $details['body']    = $request->text;
             $details['files']   = $files;
             $details['course']  = $ticket->courseRegisteredUser->course->description;
-            $details['fullname']=  "{$ticket->courseRegisteredUser->registeredUser->name}
-                                    {$ticket->courseRegisteredUser->registeredUser->last_name} 
-                                    {$ticket->courseRegisteredUser->registeredUser->mother_last_name}";
+            $details['fullname']=  "{$ticket->courseRegisteredUser->registeredUser->name} {$ticket->courseRegisteredUser->registeredUser->last_name} {$ticket->courseRegisteredUser->registeredUser->mother_last_name}";
+
+            $details['primaryMail']   = $ticket->courseRegisteredUser->registeredUser->email;
+            $details['carbonCopyMail']  = array_map('trim', explode(";", $request->CCRecipient));
+            $details['emailCourse'] = trim($ticket->courseRegisteredUser->course->email);
+            $details['passCourse'] = $ticket->courseRegisteredUser->course->password;
+
+
 
             dispatch(new \App\Jobs\ProcessMailTicket($details));
   
