@@ -42,8 +42,8 @@ class ProcessMailTicket implements ShouldQueue
               ->setPassword('05080Uni'); */
 
         $transport = (new \Swift_SmtpTransport('smtp.gmail.com', 587, 'tls'))
-              ->setUsername('claudia.alarcon@iie.cl')
-              ->setPassword('163170051');
+              ->setUsername($this->details['emailCourse'])
+              ->setPassword($this->details['passCourse']);
 
 
         $gmail = new \Swift_Mailer($transport);
@@ -53,12 +53,12 @@ class ProcessMailTicket implements ShouldQueue
         $data = $this->details;
         $files = $this->details['files'];
 
-        $primaryEmails = array_map('trim', ['robaraneda@gmail.com', 'calarconlazo@gmail.com']);
-        $ccEmails = array_map('trim', ['enchantpato@gmail.com', 'roberto.araneda@asur.cl']);
+        $primaryEmails =$this->details['primaryMail'];
+        $ccEmails = $this->details['carbonCopyMail'];
 
 
         Mail::send('ticket', compact('data'), function ($message) use ($files, $primaryEmails, $ccEmails, $data) {
-            $message->from('claudia.alarcon@iie.cl');
+            $message->from($data['emailCourse']);
             $message->to($primaryEmails);
             $message->cc($ccEmails);
             $message->subject($data['subject']);

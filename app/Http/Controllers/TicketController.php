@@ -609,4 +609,12 @@ class TicketController extends Controller
                 
         return response()->json($tickets);
     }
+
+    public function findTicketsByUser($user_id)
+    {
+        $tickets = Ticket::where('course_registered_user_id', $user_id)
+        ->get();
+
+        return $this->response->success(new TicketCollection($tickets));
+    }
 }
