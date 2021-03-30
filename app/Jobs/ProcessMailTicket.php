@@ -92,7 +92,11 @@ class ProcessMailTicket implements ShouldQueue
         Mail::send('ticket', compact('data'), function ($message) use ($files, $primaryEmails, $ccEmails, $data) {
             $message->from($data['emailCourse']);
             $message->to($primaryEmails);
-            $message->cc($ccEmails);
+
+            if (isset($ccEmails)) {
+                $message->cc($ccEmails);
+            }
+          
             $message->subject($data['subject']);
 
             if (count($files) > 0) {
