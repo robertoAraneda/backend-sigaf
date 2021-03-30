@@ -93,7 +93,7 @@ class ProcessMailTicket implements ShouldQueue
             $message->from($data['emailCourse']);
             $message->to($primaryEmails);
             
-            if (isset($ccEmails)) {
+            if (count($ccEmails) !== 0) {
                 $message->cc($ccEmails);
             }
 
