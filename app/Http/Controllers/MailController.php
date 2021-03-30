@@ -71,7 +71,7 @@ class MailController extends Controller
 
                 $mailsSend[]= $details;
 
-                dispatch(new \App\Jobs\ProcessMailTicket($details));
+                dispatch((new \App\Jobs\ProcessMailTicket($details))->delay(now()->addSeconds(10)));
             }
 
             return $this->response->success($mailsSend);
