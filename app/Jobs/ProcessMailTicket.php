@@ -16,7 +16,28 @@ class ProcessMailTicket implements ShouldQueue
 
 
     private $details;
+
+    /**
+     * The number of seconds the job can run before timing out.
+     *
+     * @var int
+     */
+
     public $timeout = 120;
+
+    /**
+     * The number of times the job may be attempted.
+     *
+     * @var int
+     */
+
+    public $tries = 5;
+    /**
+     * The maximum number of unhandled exceptions to allow before failing.
+     *
+     * @var int
+     */
+    public $maxExceptions = 3;
 
     /**
      * Create a new job instance.
@@ -26,6 +47,17 @@ class ProcessMailTicket implements ShouldQueue
     public function __construct($details)
     {
         $this->details = $details;
+    }
+
+
+    /**
+     * Determine the time at which the job should timeout.
+     *
+     * @return \DateTime
+     */
+    public function retryUntil()
+    {
+        return now()->addMinutes(5);
     }
 
     /**
@@ -74,6 +106,10 @@ class ProcessMailTicket implements ShouldQueue
                 }
             }
         });
+
+        if (Mail::failures()) {
+            $this->release(10);
+        }
 
         //Mail::to(['calarconlazo@gmail.com', 'robaraneda@gmail.com'])->send(new \App\Mail\Ticket($this->details));
     }
