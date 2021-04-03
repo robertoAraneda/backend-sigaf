@@ -10,6 +10,7 @@ use App\Http\Resources\Json\CourseRegisteredUser as JsonCourseRegisteredUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
 
 class CourseRegisteredUserController extends Controller
 {
@@ -319,6 +320,30 @@ class CourseRegisteredUserController extends Controller
                             'id' => (int) $courseId ,
                             'count' => $courseRegisteredUsers]);
         } catch (\Exception $exception) {
+            return $this->response->exception($exception->getMessage());
+        }
+    }
+    
+    public function lastSync($course_id)
+    {
+        try {
+            if (!request()->isJson()) {
+                return $this->response->unauthorized();
+            }
+
+            if (!is_numeric($course_id)) {
+                return $this->response->badRequest();
+            }
+
+            $lastSync = CourseRegisteredUser::where('course_id', $course_id)
+            ->orderBy('updated_at', 'desc')
+            ->select('updated_at')
+            ->first();
+  
+            $lastSync = Carbon::parse($lastSync->updated_at)->format('d/m/Y H:i:s');
+            
+            return $this->response->success($lastSync);
+        } catch (Exception $exception) {
             return $this->response->exception($exception->getMessage());
         }
     }
