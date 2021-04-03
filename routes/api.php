@@ -131,6 +131,7 @@ Route::group([
     //count
 
     Route::get('/course-registered-users/{course}/count', 'CourseRegisteredUserController@numberOfUsersByCourse');
+    Route::get('/course-registered-users/{course}/last-sync', 'CourseRegisteredUserController@lastSync');
 
 
     //alumnos
