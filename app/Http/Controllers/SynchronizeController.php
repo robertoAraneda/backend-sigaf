@@ -16,532 +16,505 @@ use Illuminate\Support\Facades\Storage;
 
 class SynchronizeController extends Controller
 {
+    private $base_url;
 
-  private $base_url;
+    public function __construct()
+    {
+        $this->base_url = "http://ayuda2-emineduc.iie.cl/iie-inacap/public/api/";
+    }
 
-  public function __construct()
-  {
-    $this->base_url = "http://ayuda2-emineduc.iie.cl/iie-inacap/public/api/";
-  }
+    public function getBASE_URL()
+    {
+        return $this->base_url;
+    }
 
-  public function getBASE_URL()
-  {
-    return $this->base_url;
-  }
+    public function synchronizeApp()
+    {
+        $base_url = 'http://ayuda2-emineduc.iie.cl/iie-inacap/public/';
 
-  public function synchronizeApp()
-  {
-    $base_url = 'http://ayuda2-emineduc.iie.cl/iie-inacap/public/';
+        // $response = Http::get($base_url . "api/collection/plataforma");
 
-    // $response = Http::get($base_url . "api/collection/plataforma");
+        // $platforms = $response->json();
 
-    // $platforms = $response->json();
+        // $array = [];
 
-    // $array = [];
+        // /**insertar plataformas */
+        // foreach ($platforms as $platform) {
 
-    // /**insertar plataformas */
-    // foreach ($platforms as $platform) {
+        //   $platformController = new PlatformController();
 
-    //   $platformController = new PlatformController();
+        //   $searchPlatform = $platformController->findByDescription($platform['nombre']);
 
-    //   $searchPlatform = $platformController->findByDescription($platform['nombre']);
+        //   if (!isset($searchPlatform)) {
+        //     $platformController->store($platform);
+        //   }
+        // }
 
-    //   if (!isset($searchPlatform)) {
-    //     $platformController->store($platform);
-    //   }
-    // }
+        // /**insertar categorias */
+        // foreach ($platforms as $platform) {
 
-    // /**insertar categorias */
-    // foreach ($platforms as $platform) {
+        //   $platformController = new PlatformController();
 
-    //   $platformController = new PlatformController();
+        //   $platformResponse = $platformController->findByDescription($platform['nombre']);
 
-    //   $platformResponse = $platformController->findByDescription($platform['nombre']);
+        //   foreach ($platform['categories'] as $category) {
 
-    //   foreach ($platform['categories'] as $category) {
+        //     $categoryController = new CategoryController();
 
-    //     $categoryController = new CategoryController();
+        //     $categorySearch = $categoryController->findByIdCategoryMoodle($category['idcategory']);
 
-    //     $categorySearch = $categoryController->findByIdCategoryMoodle($category['idcategory']);
+        //     if (!isset($categorySearch)) {
 
-    //     if (!isset($categorySearch)) {
+        //       $category['idplataforma'] = $platformResponse->id;
 
-    //       $category['idplataforma'] = $platformResponse->id;
+        //       $categoryController->store($category);
+        //     } else {
 
-    //       $categoryController->store($category);
-    //     } else {
+        //       $categoryAndPlatform = $categoryController->findByIdPlatformAndCategoryMoodle($category['idcategory'], $platformResponse->id);
 
-    //       $categoryAndPlatform = $categoryController->findByIdPlatformAndCategoryMoodle($category['idcategory'], $platformResponse->id);
+        //       if (($category['idplataforma'] == $platform['idplataforma']) && (!isset($categoryAndPlatform))) {
 
-    //       if (($category['idplataforma'] == $platform['idplataforma']) && (!isset($categoryAndPlatform))) {
+        //         $category['idplataforma'] = $platformResponse->id;
 
-    //         $category['idplataforma'] = $platformResponse->id;
+        //         $categoryController->store($category);
+        //       }
+        //     }
+        //   }
+        // }
 
-    //         $categoryController->store($category);
-    //       }
-    //     }
-    //   }
-    // }
+        // /**insertar coursos */
+        // foreach ($platforms as $platform) {
 
-    // /**insertar coursos */
-    // foreach ($platforms as $platform) {
+        //   $platformController = new PlatformController();
 
-    //   $platformController = new PlatformController();
+        //   $platformResponse = $platformController->findByDescription($platform['nombre']);
 
-    //   $platformResponse = $platformController->findByDescription($platform['nombre']);
+        //   foreach ($platform['categories'] as $category) {
 
-    //   foreach ($platform['categories'] as $category) {
+        //     $categoryController = new CategoryController();
 
-    //     $categoryController = new CategoryController();
+        //     $categorySearch = $categoryController->findByIdCategoryMoodle($category['idcategory']);
 
-    //     $categorySearch = $categoryController->findByIdCategoryMoodle($category['idcategory']);
+        //     foreach ($category['coursesFormat'] as $course) {
 
-    //     foreach ($category['coursesFormat'] as $course) {
+        //       $courseController = new CourseController();
 
-    //       $courseController = new CourseController();
+        //       $categoryResponse = $categoryController->findByIdPlatformAndCategoryMoodle($course['idcategory'], $platformResponse->id);
 
-    //       $categoryResponse = $categoryController->findByIdPlatformAndCategoryMoodle($course['idcategory'], $platformResponse->id);
+        //       $courseResponse = $courseController->findByIdCourseMoodle($course['idcurso']);
 
-    //       $courseResponse = $courseController->findByIdCourseMoodle($course['idcurso']);
+        //       if (($course['idcategory'] == $category['idcategory']) && ($course['idplataforma'] == $category['idplataforma'])) {
 
-    //       if (($course['idcategory'] == $category['idcategory']) && ($course['idplataforma'] == $category['idplataforma'])) {
+        //         if (!isset($courseResponse)) {
 
-    //         if (!isset($courseResponse)) {
+        //           $course['idcategory'] = $categoryResponse->id;
 
-    //           $course['idcategory'] = $categoryResponse->id;
+        //           $courseController->store($course);
+        //         }
+        //       }
 
-    //           $courseController->store($course);
-    //         }
-    //       }
+        //       $array[] = $course;
+        //     }
+        //   }
+        // }
 
-    //       $array[] = $course;
-    //     }
-    //   }
-    // }
+        // $response2 = Http::get($base_url . "api/collection/actividades");
 
-    // $response2 = Http::get($base_url . "api/collection/actividades");
+        // $activities = $response2->json();
 
-    // $activities = $response2->json();
+        // /**insertar actividades */
+        // foreach ($activities as $activity) {
 
-    // /**insertar actividades */
-    // foreach ($activities as $activity) {
+        //   $courseController = new CourseController();
+        //   $activityController = new ActivityController();
 
-    //   $courseController = new CourseController();
-    //   $activityController = new ActivityController();
+        //   $course = $courseController->findByIdCourseMoodle($activity['curso']['idcurso']);
 
-    //   $course = $courseController->findByIdCourseMoodle($activity['curso']['idcurso']);
+        //   $activitySearch = $activityController->findByIdActivityMoodle($activity['idmod']);
 
-    //   $activitySearch = $activityController->findByIdActivityMoodle($activity['idmod']);
+        //   if (!isset($activitySearch)) {
+        //     $activity['idrcurso'] = $course->id;
 
-    //   if (!isset($activitySearch)) {
-    //     $activity['idrcurso'] = $course->id;
+        //     $activityController->store($activity);
+        //   }
+        // }
 
-    //     $activityController->store($activity);
-    //   }
-    // }
+        // $response3 = Http::get($base_url . "api/collection/inscritos");
 
-    // $response3 = Http::get($base_url . "api/collection/inscritos");
+        // $courseRegisteredUsersMoodle = $response3->json();
 
-    // $courseRegisteredUsersMoodle = $response3->json();
 
+        // /**insertar inscritos y cursos */
+        // foreach ($courseRegisteredUsersMoodle as $courseRegisteredUserMoodle) {
+        //   $registeredUserController = new RegisteredUserController();
 
-    // /**insertar inscritos y cursos */
-    // foreach ($courseRegisteredUsersMoodle as $courseRegisteredUserMoodle) {
-    //   $registeredUserController = new RegisteredUserController();
+        //   $registeredUserSearch = $registeredUserController->findByIdRegisteredUserMoodle($courseRegisteredUserMoodle['iduser']);
 
-    //   $registeredUserSearch = $registeredUserController->findByIdRegisteredUserMoodle($courseRegisteredUserMoodle['iduser']);
 
+        //   if (!isset($registeredUserSearch)) {
 
-    //   if (!isset($registeredUserSearch)) {
+        //     $registeredUserSearch = $registeredUserController->store($courseRegisteredUserMoodle);
+        //   }
 
-    //     $registeredUserSearch = $registeredUserController->store($courseRegisteredUserMoodle);
-    //   }
+        //   if (isset($registeredUserSearch)) {
 
-    //   if (isset($registeredUserSearch)) {
+        //     $courseController = new CourseController();
 
-    //     $courseController = new CourseController();
+        //     $courseSearch = $courseController->findByIdCourseMoodle($courseRegisteredUserMoodle['curso']['idcurso']);
 
-    //     $courseSearch = $courseController->findByIdCourseMoodle($courseRegisteredUserMoodle['curso']['idcurso']);
+        //     if (isset($courseSearch)) {
 
-    //     if (isset($courseSearch)) {
+        //       $courseRegisteredUserMoodle['curso']['idrcurso'] = $courseSearch->id;
+        //       $courseRegisteredUserMoodle['iduser'] = $registeredUserSearch->id;
 
-    //       $courseRegisteredUserMoodle['curso']['idrcurso'] = $courseSearch->id;
-    //       $courseRegisteredUserMoodle['iduser'] = $registeredUserSearch->id;
 
+        //       $courseRegisteredUserController = new CourseRegisteredUserController();
 
-    //       $courseRegisteredUserController = new CourseRegisteredUserController();
+        //       $courseRegistereduserSearch = $courseRegisteredUserController->findByIdCourseRegisteredUser($courseRegisteredUserMoodle);
 
-    //       $courseRegistereduserSearch = $courseRegisteredUserController->findByIdCourseRegisteredUser($courseRegisteredUserMoodle);
+        //       if (!isset($courseRegistereduserSearch)) {
+        //         $courseRegisteredUserController->store($courseRegisteredUserMoodle);
+        //       }
+        //     }
+        //   }
+        // }
 
-    //       if (!isset($courseRegistereduserSearch)) {
-    //         $courseRegisteredUserController->store($courseRegisteredUserMoodle);
-    //       }
-    //     }
-    //   }
-    // }
 
+        $response5 = Http::get($base_url . "collection/inscrito-actividad/active");
 
-    $response5 = Http::get($base_url . "collection/inscrito-actividad/active");
+        $registeredUserActivities = $response5->json()['data'];
 
-    $registeredUserActivities = $response5->json()['data'];
+        foreach ($registeredUserActivities as $registeredUserActivity) {
+            $courseRegistereduserController = new CourseRegisteredUserController();
+            $activityController = new ActivityController();
+            $courseController = new CourseController();
+            $registeredUserController = new RegisteredUserController();
+            $activityCourseRegisteredUserController = new ActivityCourseRegisteredUserController();
 
-    foreach ($registeredUserActivities as $registeredUserActivity) {
+            $courseSearch = $courseController->findByIdCourseMoodle($registeredUserActivity['user_registered']['curso']['idcurso']);
+            $registeredUserSearch = $registeredUserController->findByIdRegisteredUserMoodle($registeredUserActivity['user_registered']['iduser']);
 
-      $courseRegistereduserController = new CourseRegisteredUserController();
-      $activityController = new ActivityController();
-      $courseController = new CourseController();
-      $registeredUserController = new RegisteredUserController();
-      $activityCourseRegisteredUserController = new ActivityCourseRegisteredUserController();
+            $activitySearch = $activityController->findByIdActivityMoodle($registeredUserActivity['activity']['idmod']);
 
-      $courseSearch = $courseController->findByIdCourseMoodle($registeredUserActivity['user_registered']['curso']['idcurso']);
-      $registeredUserSearch = $registeredUserController->findByIdRegisteredUserMoodle($registeredUserActivity['user_registered']['iduser']);
+            $registeredUserActivityFormat['curso']['idrcurso'] = $courseSearch->id;
+            $registeredUserActivityFormat['iduser'] = $registeredUserSearch->id;
 
-      $activitySearch = $activityController->findByIdActivityMoodle($registeredUserActivity['activity']['idmod']);
+            $courseRegisteredUserSearch = $courseRegistereduserController->findByIdCourseRegisteredUser($registeredUserActivityFormat);
 
-      $registeredUserActivityFormat['curso']['idrcurso'] = $courseSearch->id;
-      $registeredUserActivityFormat['iduser'] = $registeredUserSearch->id;
+            if (isset($courseSearch) && isset($registeredUserSearch) && isset($courseRegisteredUserSearch) && isset($activitySearch)) {
+                $activityCourseRegisteredUserSearch = $activityCourseRegisteredUserController->findByIdActivityCourseRegisteredUser($activitySearch->id, $courseRegisteredUserSearch->id);
 
-      $courseRegisteredUserSearch = $courseRegistereduserController->findByIdCourseRegisteredUser($registeredUserActivityFormat);
+                if (!isset($activityCourseRegisteredUserSearch)) {
+                    $registeredUserActivity['idinscrito'] = $courseRegisteredUserSearch->id;
+                    $registeredUserActivity['idacividad'] = $activitySearch->id;
 
-      if (isset($courseSearch) && isset($registeredUserSearch) && isset($courseRegisteredUserSearch) && isset($activitySearch)) {
-
-        $activityCourseRegisteredUserSearch = $activityCourseRegisteredUserController->findByIdActivityCourseRegisteredUser($activitySearch->id, $courseRegisteredUserSearch->id);
-
-        if (!isset($activityCourseRegisteredUserSearch)) {
-          $registeredUserActivity['idinscrito'] = $courseRegisteredUserSearch->id;
-          $registeredUserActivity['idacividad'] = $activitySearch->id;
-
-          $response = $activityCourseRegisteredUserController->store($registeredUserActivity);
+                    $response = $activityCourseRegisteredUserController->store($registeredUserActivity);
+                }
+            }
         }
-      }
     }
-  }
 
 
-  public function syncronizeAppPlatformsCategoriesDaily()
-  {
+    public function syncronizeAppPlatformsCategoriesDaily()
+    {
+        $response = Http::get($this->getBASE_URL() . "collection/categorias/all");
 
-    $response = Http::get($this->getBASE_URL() . "collection/categorias/all");
 
 
+        $categoriesActive = $response->json();
 
-    $categoriesActive = $response->json();
 
+        foreach ($categoriesActive as $category) {
+            $platformController = new PlatformController();
 
-    foreach ($categoriesActive as $category) {
+            $categoryController = new CategoryController();
 
-      $platformController = new PlatformController();
+            $platformSearch = $platformController->findByDescription($category['plataforma']['nombre']);
 
-      $categoryController = new CategoryController();
+            if (!isset($platformSearch)) {
+                $platformController->store($category['plataforma']);
+            } else {
+                $platformController->update($platformSearch->id, $category['plataforma']);
+            }
 
-      $platformSearch = $platformController->findByDescription($category['plataforma']['nombre']);
+            $platformSearch = $platformController->findByDescription($category['plataforma']['nombre']);
 
-      if (!isset($platformSearch)) {
+            $categorySearch = $categoryController->findByIdPlatformAndCategoryMoodle($category['idcategory'], $platformSearch->id);
 
-        $platformController->store($category['plataforma']);
-      } else {
-        $platformController->update($platformSearch->id, $category['plataforma']);
-      }
+            $categories[] = $category;
 
-      $platformSearch = $platformController->findByDescription($category['plataforma']['nombre']);
+            $category['idplataforma']  = $platformSearch->id;
 
-      $categorySearch = $categoryController->findByIdPlatformAndCategoryMoodle($category['idcategory'], $platformSearch->id);
-
-      $categories[] = $category;
-
-      $category['idplataforma']  = $platformSearch->id;
-
-      if (!isset($categorySearch)) {
-
-        $categoryController->store($category);
-      } else {
-        $categoryController->update($categorySearch->id, $category);
-      }
-    }
-    return response()->json([
-      'success' => true,
-      'error' => null
-    ], 200);
-  }
-
-
-  public function synchronizeAppCoursesActive()
-  {
-
-    $response2 = Http::get($this->getBASE_URL() . "collection/cursos/all");
-
-    $activeCourses = $response2->json();
-
-    foreach ($activeCourses as $activeCourse) {
-
-      $courseController = new CourseController();
-      $categoryController = new CategoryController();
-
-      $categorySearch = $categoryController->findByIdCategoryMoodle($activeCourse['idcategory']);
-
-      $activeCourseSearch = $courseController->findByIdCourseMoodle($activeCourse['idcurso']);
-
-      if (!isset($activeCourseSearch)) {
-        $activeCourse['idcategory'] = $categorySearch->id;
-
-        $courseController->store($activeCourse);
-      }
-    }
-    return response()->json([
-      'success' => true,
-      'error' => null
-    ], 200);
-  }
-
-  public function syncronizeAppActivitiesActive()
-  {
-
-    $response3 = Http::get($this->getBASE_URL() . "collection/actividades/all");
-
-    $activeActivities = $response3->json();
-
-    foreach ($activeActivities as $activeActivity) {
-      $courseController = new CourseController();
-      $activityController = new ActivityController();
-
-      $courseSearch = $courseController->findByIdCourseMoodle($activeActivity['curso']['idcurso']);
-
-      $activeActivitySearch = $activityController->findByIdActivityMoodle($activeActivity['idmod']);
-
-      if (!isset($activeActivitySearch)) {
-
-        $activeActivity['idrcurso'] = $courseSearch->id;
-
-        $activityController->store($activeActivity);
-      }
-    }
-    return response()->json([
-      'success' => true,
-      'error' => null
-    ], 200);
-  }
-
-  public function syncronizeAppRegisteredUsersActive()
-  {
-    $response4 = Http::get($this->getBASE_URL() . "collection/inscrito/filtered");
-
-    $activeRegisteredUsers = $response4->json();
-
-    foreach ($activeRegisteredUsers as $activeRegisteredUser) {
-
-      $registeredUserController = new RegisteredUserController();
-      $courseController = new CourseController();
-      $courseRegisteredUserController = new CourseRegisteredUserController();
-
-
-      $registeredUserSearch = $registeredUserController->findByIdRegisteredUserMoodle($activeRegisteredUser['iduser']);
-
-      if (!isset($registeredUserSearch)) {
-
-        $registeredUserSearch = $registeredUserController->store($activeRegisteredUser);
-      } else {
-
-        $registeredUserSearch = $registeredUserController->update($registeredUserSearch->id, $activeRegisteredUser);
-      }
-
-      $courseSearch = $courseController->findByIdCourseMoodle($activeRegisteredUser['curso']['idcurso']);
-
-      $activeRegisteredUser['curso']['idrcurso'] = $courseSearch->id;
-      $activeRegisteredUser['iduser'] =  $registeredUserSearch->id;
-
-      $courseRegisteredUserSearch = $courseRegisteredUserController->findByIdCourseRegisteredUser($activeRegisteredUser);
-
-      if (!isset($courseRegisteredUserSearch)) {
-
-        $courseRegisteredUserController->store($activeRegisteredUser);
-      } else {
-
-        $courseRegisteredUserController->update($courseRegisteredUserSearch->id, $activeRegisteredUser);
-      }
-    }
-    return response()->json([
-      'success' => true,
-      'error' => null
-    ], 200);
-  }
-
-  public function syncronizeAppRegisteredUserActivitiesActive()
-  {
-
-    $response5 = Http::get($this->getBASE_URL() . "collection/inscrito-actividad/filtered");
-
-    $registeredUserActivities = $response5->json();
-
-    foreach ($registeredUserActivities as $keys) {
-      foreach ($keys as $registeredUserActivity) {
-
-        $courseRegistereduserController = new CourseRegisteredUserController();
-        $activityController = new ActivityController();
-        $courseController = new CourseController();
-        $registeredUserController = new RegisteredUserController();
-        $activityCourseRegisteredUserController = new ActivityCourseRegisteredUserController();
-
-        $courseSearch = $courseController->findByIdCourseMoodle($registeredUserActivity['user_registered']['curso']['idcurso']);
-        $registeredUserSearch = $registeredUserController->findByIdRegisteredUserMoodle($registeredUserActivity['user_registered']['iduser']);
-
-        $activitySearch = $activityController->findByIdActivityMoodle($registeredUserActivity['activity']['idmod']);
-
-        $registeredUserActivityFormat['curso']['idrcurso'] = $courseSearch->id;
-        $registeredUserActivityFormat['iduser'] = $registeredUserSearch->id;
-
-        $courseRegisteredUserSearch = $courseRegistereduserController->findByIdCourseRegisteredUser($registeredUserActivityFormat);
-
-        if (isset($courseSearch) && isset($registeredUserSearch) && isset($courseRegisteredUserSearch) && isset($activitySearch)) {
-
-
-          $activityCourseRegisteredUserSearch = $activityCourseRegisteredUserController->findByIdActivityCourseRegisteredUser($activitySearch->id, $courseRegisteredUserSearch->id);
-
-          $registeredUserActivity['idinscrito'] = $courseRegisteredUserSearch->id;
-          $registeredUserActivity['idacividad'] = $activitySearch->id;
-
-          if (!isset($activityCourseRegisteredUserSearch)) {
-
-            $activityCourseRegisteredUserController->store($registeredUserActivity);
-          } else {
-
-            $activityCourseRegisteredUserController->update($activityCourseRegisteredUserSearch->id, $registeredUserActivity);
-          }
+            if (!isset($categorySearch)) {
+                $categoryController->store($category);
+            } else {
+                $categoryController->update($categorySearch->id, $category);
+            }
         }
-      }
-    }
-    return response()->json([
+        return response()->json([
       'success' => true,
       'error' => null
     ], 200);
-  }
-
-  public function syncUser($idCourseMoodle, $rut)
-  {
-    $response = Http::get($this->getBASE_URL() . "course/" . $idCourseMoodle . "/users/" . $rut);
-
-    $user = $response->json();
-
-    if (isset($user)) {
-
-      $rutUpper = strtoupper($user['rut']);
-
-      list($rut, $dv) = explode("-", $rutUpper);
-
-      $rut = new Rut($rut, $dv);
-
-      if ($rut->validate()) {
-
-        $localUser = RegisteredUser::where('rut', $rutUpper)->first();
-
-        if (isset($localUser)) {
-          $localUser->id_registered_moodle = $user['iduser'];
-          $localUser->rut_registered_moodle = $user['rut'];
-          $localUser->name_registered_moodle = $user['nombre'];
-          $localUser->email_registered_moodle = $user['email'];
-
-          $localUser->user_update_id = auth()->id();
-
-          $localUser->save();
-
-          $localCourse = Course::where('id_course_moodle', $idCourseMoodle)->first();
-
-          $localCourseUser = CourseRegisteredUser::where('registered_user_id', $localUser->id)
-            ->where('course_id', $localCourse->id)->first();
-
-          if (isset($localCourseUser)) {
-            $localCourseUser->last_access_registered_moodle = $user['ultimoacceso'];
-
-            $localCourseUser->save();
-          }
-
-          return response()->json(['data' => $localCourseUser->fresh(), 'success' => true], 201);
-        } else {
-          return response()->json(['data' => $localUser, 'success' => false], 200);
-        }
-      } else {
-        return response()->json(['data' => null, 'success' => false], 416);
-      }
-    } else {
-      return response()->json(['data' => null, 'success' => false], 204);
     }
-  }
 
-  public function syncUsersByCourse($idCourseMoodle)
-  {
-    $response = Http::get($this->getBASE_URL() . "course/" . $idCourseMoodle . "/users");
 
-    $users = $response->json();
+    public function synchronizeAppCoursesActive()
+    {
+        $response2 = Http::get($this->getBASE_URL() . "collection/cursos/all");
 
-    $arrayFindedUsers = [];
-    $arrayMissedUsers = [];
-    $arrayInvalidRut = [];
-    $arrayCourseUserValid = [];
+        $activeCourses = $response2->json();
 
-    try {
-      if (isset($users)) {
-        foreach ($users as $user) {
+        foreach ($activeCourses as $activeCourse) {
+            $courseController = new CourseController();
+            $categoryController = new CategoryController();
 
-          try {
+            $categorySearch = $categoryController->findByIdCategoryMoodle($activeCourse['idcategory']);
+
+            $activeCourseSearch = $courseController->findByIdCourseMoodle($activeCourse['idcurso']);
+
+            if (!isset($activeCourseSearch)) {
+                $activeCourse['idcategory'] = $categorySearch->id;
+
+                $courseController->store($activeCourse);
+            }
+        }
+        return response()->json([
+      'success' => true,
+      'error' => null
+    ], 200);
+    }
+
+    public function syncronizeAppActivitiesActive()
+    {
+        $response3 = Http::get($this->getBASE_URL() . "collection/actividades/all");
+
+        $activeActivities = $response3->json();
+
+        foreach ($activeActivities as $activeActivity) {
+            $courseController = new CourseController();
+            $activityController = new ActivityController();
+
+            $courseSearch = $courseController->findByIdCourseMoodle($activeActivity['curso']['idcurso']);
+
+            $activeActivitySearch = $activityController->findByIdActivityMoodle($activeActivity['idmod']);
+
+            if (!isset($activeActivitySearch)) {
+                $activeActivity['idrcurso'] = $courseSearch->id;
+
+                $activityController->store($activeActivity);
+            }
+        }
+        return response()->json([
+      'success' => true,
+      'error' => null
+    ], 200);
+    }
+
+    public function syncronizeAppRegisteredUsersActive()
+    {
+        $response4 = Http::get($this->getBASE_URL() . "collection/inscrito/filtered");
+
+        $activeRegisteredUsers = $response4->json();
+
+        foreach ($activeRegisteredUsers as $activeRegisteredUser) {
+            $registeredUserController = new RegisteredUserController();
+            $courseController = new CourseController();
+            $courseRegisteredUserController = new CourseRegisteredUserController();
+
+
+            $registeredUserSearch = $registeredUserController->findByIdRegisteredUserMoodle($activeRegisteredUser['iduser']);
+
+            if (!isset($registeredUserSearch)) {
+                $registeredUserSearch = $registeredUserController->store($activeRegisteredUser);
+            } else {
+                $registeredUserSearch = $registeredUserController->update($registeredUserSearch->id, $activeRegisteredUser);
+            }
+
+            $courseSearch = $courseController->findByIdCourseMoodle($activeRegisteredUser['curso']['idcurso']);
+
+            $activeRegisteredUser['curso']['idrcurso'] = $courseSearch->id;
+            $activeRegisteredUser['iduser'] =  $registeredUserSearch->id;
+
+            $courseRegisteredUserSearch = $courseRegisteredUserController->findByIdCourseRegisteredUser($activeRegisteredUser);
+
+            if (!isset($courseRegisteredUserSearch)) {
+                $courseRegisteredUserController->store($activeRegisteredUser);
+            } else {
+                $courseRegisteredUserController->update($courseRegisteredUserSearch->id, $activeRegisteredUser);
+            }
+        }
+        return response()->json([
+      'success' => true,
+      'error' => null
+    ], 200);
+    }
+
+    public function syncronizeAppRegisteredUserActivitiesActive()
+    {
+        $response5 = Http::get($this->getBASE_URL() . "collection/inscrito-actividad/filtered");
+
+        $registeredUserActivities = $response5->json();
+
+        foreach ($registeredUserActivities as $keys) {
+            foreach ($keys as $registeredUserActivity) {
+                $courseRegistereduserController = new CourseRegisteredUserController();
+                $activityController = new ActivityController();
+                $courseController = new CourseController();
+                $registeredUserController = new RegisteredUserController();
+                $activityCourseRegisteredUserController = new ActivityCourseRegisteredUserController();
+
+                $courseSearch = $courseController->findByIdCourseMoodle($registeredUserActivity['user_registered']['curso']['idcurso']);
+                $registeredUserSearch = $registeredUserController->findByIdRegisteredUserMoodle($registeredUserActivity['user_registered']['iduser']);
+
+                $activitySearch = $activityController->findByIdActivityMoodle($registeredUserActivity['activity']['idmod']);
+
+                $registeredUserActivityFormat['curso']['idrcurso'] = $courseSearch->id;
+                $registeredUserActivityFormat['iduser'] = $registeredUserSearch->id;
+
+                $courseRegisteredUserSearch = $courseRegistereduserController->findByIdCourseRegisteredUser($registeredUserActivityFormat);
+
+                if (isset($courseSearch) && isset($registeredUserSearch) && isset($courseRegisteredUserSearch) && isset($activitySearch)) {
+                    $activityCourseRegisteredUserSearch = $activityCourseRegisteredUserController->findByIdActivityCourseRegisteredUser($activitySearch->id, $courseRegisteredUserSearch->id);
+
+                    $registeredUserActivity['idinscrito'] = $courseRegisteredUserSearch->id;
+                    $registeredUserActivity['idacividad'] = $activitySearch->id;
+
+                    if (!isset($activityCourseRegisteredUserSearch)) {
+                        $activityCourseRegisteredUserController->store($registeredUserActivity);
+                    } else {
+                        $activityCourseRegisteredUserController->update($activityCourseRegisteredUserSearch->id, $registeredUserActivity);
+                    }
+                }
+            }
+        }
+        return response()->json([
+      'success' => true,
+      'error' => null
+    ], 200);
+    }
+
+    public function syncUser($idCourseMoodle, $rut)
+    {
+        $response = Http::get($this->getBASE_URL() . "course/" . $idCourseMoodle . "/users/" . $rut);
+
+        $user = $response->json();
+
+        if (isset($user)) {
             $rutUpper = strtoupper($user['rut']);
 
             list($rut, $dv) = explode("-", $rutUpper);
 
             $rut = new Rut($rut, $dv);
 
-            if (!$rut->validate()) {
-              $arrayInvalidRut[] = $user;
+            if ($rut->validate()) {
+                $localUser = RegisteredUser::where('rut', $rutUpper)->first();
+
+                if (isset($localUser)) {
+                    $localUser->id_registered_moodle = $user['iduser'];
+                    $localUser->rut_registered_moodle = $user['rut'];
+                    $localUser->name_registered_moodle = $user['nombre'];
+                    $localUser->email_registered_moodle = $user['email'];
+
+                    $localUser->user_update_id = auth()->id();
+
+                    $localUser->save();
+
+                    $localCourse = Course::where('id_course_moodle', $idCourseMoodle)->first();
+
+                    $localCourseUser = CourseRegisteredUser::where('registered_user_id', $localUser->id)
+            ->where('course_id', $localCourse->id)->first();
+
+                    if (isset($localCourseUser)) {
+                        $localCourseUser->last_access_registered_moodle = $user['ultimoacceso'];
+
+                        $localCourseUser->save();
+                    }
+
+                    return response()->json(['data' => $localCourseUser->fresh(), 'success' => true], 201);
+                } else {
+                    return response()->json(['data' => $localUser, 'success' => false], 200);
+                }
             } else {
-              $localUser = RegisteredUser::where('rut', $rutUpper)->first();
+                return response()->json(['data' => null, 'success' => false], 416);
+            }
+        } else {
+            return response()->json(['data' => null, 'success' => false], 204);
+        }
+    }
 
-              if (isset($localUser)) {
+    public function syncUsersByCourse($idCourseMoodle)
+    {
+        $response = Http::get($this->getBASE_URL() . "course/" . $idCourseMoodle . "/users");
 
-                $localUser->id_registered_moodle = isset($user['iduser']) ? $user['iduser'] : null;
-                $localUser->rut_registered_moodle = isset($user['rut']) ? $rutUpper : null;
-                $localUser->name_registered_moodle = isset($user['nombre']) ? $user['nombre'] : null;
-                $localUser->email_registered_moodle = isset($user['email']) ? $user['email'] : null;
+        $users = $response->json();
 
-                $localUser->save();
+        $arrayFindedUsers = [];
+        $arrayMissedUsers = [];
+        $arrayInvalidRut = [];
+        $arrayCourseUserValid = [];
 
-                $localCourse = Course::where('id_course_moodle', $idCourseMoodle)->first();
+        try {
+            if (isset($users)) {
+                foreach ($users as $user) {
+                    try {
+                        $rutUpper = strtoupper($user['rut']);
 
-                $localCourseUser = CourseRegisteredUser::where('registered_user_id', $localUser->id)
+                        list($rut, $dv) = explode("-", $rutUpper);
+
+                        $rut = new Rut($rut, $dv);
+
+                        if (!$rut->validate()) {
+                            $arrayInvalidRut[] = $user;
+                        } else {
+                            $localUser = RegisteredUser::where('rut', $rutUpper)->first();
+
+                            if (isset($localUser)) {
+                                $localUser->id_registered_moodle = isset($user['iduser']) ? $user['iduser'] : null;
+                                $localUser->rut_registered_moodle = isset($user['rut']) ? $rutUpper : null;
+                                $localUser->name_registered_moodle = isset($user['nombre']) ? $user['nombre'] : null;
+                                $localUser->email_registered_moodle = isset($user['email']) ? $user['email'] : null;
+
+                                $localUser->save();
+
+                                $localCourse = Course::where('id_course_moodle', $idCourseMoodle)->first();
+
+                                $localCourseUser = CourseRegisteredUser::where('registered_user_id', $localUser->id)
                   ->where('course_id', $localCourse->id)->first();
 
-                if (isset($localCourseUser)) {
-                  $localCourseUser->last_access_registered_moodle = isset($user['ultimoacceso']) ? $user['ultimoacceso'] : null;
-                  $localCourseUser->is_sincronized = 1;
-                  $localCourseUser->save();
+                                if (isset($localCourseUser)) {
+                                    $localCourseUser->last_access_registered_moodle = isset($user['ultimoacceso']) ? $user['ultimoacceso'] : null;
+                                    $localCourseUser->is_sincronized = 1;
+                                    $localCourseUser->save();
 
-                  $arrayCourseUserValid[] = $localCourseUser->fresh();
+                                    $arrayCourseUserValid[] = $localCourseUser->fresh();
+                                }
+
+                                $arrayFindedUsers[] = $localUser->fresh();
+                            } else {
+                                $arrayMissedUsers[] = $user;
+                            }
+                        }
+                    } catch (\Exception $ex) {
+                        $arrayInvalidRut[] = $user;
+                    }
                 }
 
-                $arrayFindedUsers[] = $localUser->fresh();
-              } else {
-                $arrayMissedUsers[] = $user;
-              }
-            }
-          } catch (\Exception $ex) {
-            $arrayInvalidRut[] = $user;
-          }
-        }
-
-        return response()->json(
-          [
+                return response()->json(
+                    [
             'userInvalid' => $arrayInvalidRut,
             'userFinded' => $arrayFindedUsers,
             'userMissed' => $arrayMissedUsers,
             'userCourseValid' => $arrayCourseUserValid
 
           ],
-          201
-        );
-      } else {
-        return response()->json(['users' => null], 204);
-      }
-    } catch (\Exception $ex) {
-
-      return response()->json(
-        [
+                    201
+                );
+            } else {
+                return response()->json(['users' => null], 204);
+            }
+        } catch (\Exception $ex) {
+            return response()->json(
+                [
           'userInvalid' => $arrayInvalidRut,
           'userFinded' => $arrayFindedUsers,
           'userMissed' => $arrayMissedUsers,
@@ -549,255 +522,241 @@ class SynchronizeController extends Controller
           'users' => $users
 
         ],
-        200
-      );
-    }
-  }
-
-  public function syncActivitiesByCourse($idCourseMoodle)
-  {
-
-    try {
-      $response = Http::get($this->getBASE_URL() . "course/" . $idCourseMoodle);
-
-      $course = $response->json();
-
-
-      $responseActivities = Http::get($this->getBASE_URL() . "course/" . $course['idrcurso'] . "/activities");
-
-      $activities = $responseActivities->json();
-
-      foreach ($activities as $activity) {
-        $localActivity = Activity::where('id_activity_moodle', $activity['idmod'])->first();
-        $course = Course::where('id_course_moodle', $idCourseMoodle)->first();
-
-        $section = Section::where('description', 'Formativa')->first();
-
-        if (!isset($localActivity)) {
-          $storeActivity = new Activity();
-          $course = Course::where('id_course_moodle', $idCourseMoodle)->first();
-
-          $storeActivity->description = $activity['nombre'];
-          $storeActivity->type = $activity['tipo'];
-          $storeActivity->section_id = $section->id;
-          $storeActivity->weighing = 0;
-          $storeActivity->id_activity_moodle = $activity['idmod'];
-          $storeActivity->course_id = $course->id;
-
-          $storeActivity->save();
-        } else {
-          $localActivity->description = $activity['nombre'];
-          $localActivity->type = $activity['tipo'];
-          $localActivity->id_activity_moodle = $activity['idmod'];
-          $localActivity->course_id = $course->id;
-
-          $localActivity->save();
+                200
+            );
         }
-      }
-
-      return response()->json(['success' => true, 'error' => null], 200);
-    } catch (\Exception $ex) {
-      return response()->json(['success' => false, 'error' => $ex->getMessage()], 500);
     }
-  }
 
-  public function syncActivitiesByClassroom($courseMoodle, $classroom)
-  {
-    try {
-      $course = Course::where('id_course_moodle', $courseMoodle)->first();
+    public function syncActivitiesByCourse($idCourseMoodle)
+    {
+        try {
+            $response = Http::get($this->getBASE_URL() . "course/" . $idCourseMoodle);
 
-      if ($classroom == 'all') {
-        $users = CourseRegisteredUser::where('course_id', $course->id)->with('registeredUser')->get();
-      } else {
-        $users = CourseRegisteredUser::where('course_id', $course->id)->where('classroom_id', $classroom)->with('registeredUser')->get();
-      }
-
-      $arrayActivities = [];
+            $course = $response->json();
 
 
+            $responseActivities = Http::get($this->getBASE_URL() . "course/" . $course['idrcurso'] . "/activities");
 
-      if (count($users) != 0) {
-        foreach ($users as $user) {
+            $activities = $responseActivities->json();
 
-          if (isset($user)) {
-            $response = Http::get($this->getBASE_URL() . "users/" . $user->registeredUser->id_registered_moodle . "/courses/" . $courseMoodle . "/activities");
+            foreach ($activities as $activity) {
+                $localActivity = Activity::where('id_activity_moodle', $activity['idmod'])->first();
+                $course = Course::where('id_course_moodle', $idCourseMoodle)->first();
 
-            $activities = $response->json();
+                $section = Section::where('description', 'Formativa')->first();
 
-            if (count($activities) != 0) {
-              foreach ($activities as $activity) {
+                if (!isset($localActivity)) {
+                    $storeActivity = new Activity();
+                    $course = Course::where('id_course_moodle', $idCourseMoodle)->first();
 
-                $localActivity = Activity::where('id_activity_moodle', $activity['activity']['idmod'])->first();
+                    $storeActivity->description = $activity['nombre'];
+                    $storeActivity->type = $activity['tipo'];
+                    $storeActivity->section_id = $section->id;
+                    $storeActivity->weighing = 0;
+                    $storeActivity->id_activity_moodle = $activity['idmod'];
+                    $storeActivity->course_id = $course->id;
 
-                if (isset($localActivity)) {
+                    $storeActivity->save();
+                } else {
+                    $localActivity->description = $activity['nombre'];
+                    $localActivity->type = $activity['tipo'];
+                    $localActivity->id_activity_moodle = $activity['idmod'];
+                    $localActivity->course_id = $course->id;
 
-                  $actualActivity = ActivityCourseRegisteredUser::where('activity_id', $localActivity->id)->where('course_registered_user_id', $user->id)
+                    $localActivity->save();
+                }
+            }
+
+            return response()->json(['success' => true, 'error' => null], 200);
+        } catch (\Exception $ex) {
+            return response()->json(['success' => false, 'error' => $ex->getMessage()], 500);
+        }
+    }
+
+    public function syncActivitiesByClassroom($courseMoodle, $classroom)
+    {
+        try {
+            $course = Course::where('id_course_moodle', $courseMoodle)->first();
+
+            if ($classroom == 'all') {
+                $users = CourseRegisteredUser::where('course_id', $course->id)->with('registeredUser')->get();
+            } else {
+                $users = CourseRegisteredUser::where('course_id', $course->id)->where('classroom_id', $classroom)->with('registeredUser')->get();
+            }
+
+            $arrayActivities = [];
+
+
+
+            if (count($users) != 0) {
+                foreach ($users as $user) {
+                    if (isset($user)) {
+                        $response = Http::get($this->getBASE_URL() . "users/" . $user->registeredUser->id_registered_moodle . "/courses/" . $courseMoodle . "/activities");
+
+                        $activities = $response->json();
+
+                        if (count($activities) != 0) {
+                            foreach ($activities as $activity) {
+                                $localActivity = Activity::where('id_activity_moodle', $activity['activity']['idmod'])->first();
+
+                                if (isset($localActivity)) {
+                                    $actualActivity = ActivityCourseRegisteredUser::where('activity_id', $localActivity->id)->where('course_registered_user_id', $user->id)
                     ->with(['courseRegisteredUser', 'courseRegisteredUser.course'])
                     ->first();
 
-                  if (isset($actualActivity)) {
-                    $actualActivity->status_moodle = $activity['estado'];
-                    $actualActivity->qualification_moodle = $activity['calificacion'];
+                                    if (isset($actualActivity)) {
+                                        $actualActivity->status_moodle = $activity['estado'];
+                                        $actualActivity->qualification_moodle = $activity['calificacion'];
 
-                    $actualActivity->save();
-                    $arrayActivities[] = $actualActivity;
-                  } else {
-                    $storeActivityDetail = new ActivityCourseRegisteredUser();
+                                        $actualActivity->save();
+                                        $arrayActivities[] = $actualActivity;
+                                    } else {
+                                        $storeActivityDetail = new ActivityCourseRegisteredUser();
 
-                    $storeActivityDetail->activity_id = $localActivity->id;
-                    $storeActivityDetail->course_registered_user_id = $user->id;
+                                        $storeActivityDetail->activity_id = $localActivity->id;
+                                        $storeActivityDetail->course_registered_user_id = $user->id;
 
-                    $storeActivityDetail->status_moodle = $activity['estado'];
-                    $storeActivityDetail->qualification_moodle = $activity['calificacion'];
+                                        $storeActivityDetail->status_moodle = $activity['estado'];
+                                        $storeActivityDetail->qualification_moodle = $activity['calificacion'];
 
-                    $storeActivityDetail->save();
+                                        $storeActivityDetail->save();
 
-                    $arrayActivities[] = $storeActivityDetail;
-                  }
+                                        $arrayActivities[] = $storeActivityDetail;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-              }
             }
-          }
+
+
+
+
+            return response()->json(['success' => true, 'error' => null, 'data' => $arrayActivities], 200);
+        } catch (\Exception $ex) {
+            return response()->json(['success' => false, 'error' => $ex->getMessage(), 'data' => null], 500);
         }
-      }
-
-
-
-
-      return response()->json(['success' => true, 'error' => null, 'data' => $arrayActivities], 200);
-    } catch (\Exception $ex) {
-      return response()->json(['success' => false, 'error' => $ex->getMessage(), 'data' => null], 500);
     }
-  }
 
-  public function syncContributeActivities($courseMoodle, $userMoodle, $arrayActivities)
-  {
+    public function syncContributeActivities($courseMoodle, $userMoodle, $arrayActivities)
+    {
+        try {
+            $response = Http::get($this->getBASE_URL() . "users/" . $userMoodle . "/courses/" . $courseMoodle . "/activities/" . $arrayActivities);
 
-    try {
+            $activities = $response->json();
 
-      $response = Http::get($this->getBASE_URL() . "users/" . $userMoodle . "/courses/" . $courseMoodle . "/activities/" . $arrayActivities);
+            $course = Course::where('id_course_moodle', $courseMoodle)->first();
 
-      $activities = $response->json();
+            $registeredUser = RegisteredUser::where('id_registered_moodle', $userMoodle)->first();
 
-      $course = Course::where('id_course_moodle', $courseMoodle)->first();
+            $courseUser = CourseRegisteredUser::where('registered_user_id', $registeredUser->id)->where('course_id', $course->id)->first();
 
-      $registeredUser = RegisteredUser::where('id_registered_moodle', $userMoodle)->first();
-
-      $courseUser = CourseRegisteredUser::where('registered_user_id', $registeredUser->id)->where('course_id', $course->id)->first();
-
-      $arrayActivities = [];
+            $arrayActivities = [];
 
 
-      if (count($activities['data']['relActivityuser']) != 0) {
-        foreach ($activities['data']['relActivityuser'] as $activity) {
+            if (count($activities['data']['relActivityuser']) != 0) {
+                foreach ($activities['data']['relActivityuser'] as $activity) {
+                    if ($activity != null) {
+                        $localActivity = Activity::where('id_activity_moodle', $activity['activity']['idmod'])->first();
+                    }
 
-          if ($activity != null)
-            $localActivity = Activity::where('id_activity_moodle', $activity['activity']['idmod'])->first();
-
-          if (isset($localActivity)) {
-
-            $actualActivity = ActivityCourseRegisteredUser::where('activity_id', $localActivity->id)->where('course_registered_user_id', $courseUser->id)
+                    if (isset($localActivity)) {
+                        $actualActivity = ActivityCourseRegisteredUser::where('activity_id', $localActivity->id)->where('course_registered_user_id', $courseUser->id)
               ->with(['courseRegisteredUser', 'courseRegisteredUser.course'])
               ->first();
 
-            if (isset($actualActivity)) {
-              $actualActivity->status_moodle = $activity['estado'];
-              $actualActivity->qualification_moodle = $activity['calificacion'];
+                        if (isset($actualActivity)) {
+                            $actualActivity->status_moodle = $activity['estado'];
+                            $actualActivity->qualification_moodle = $activity['calificacion'];
 
-              $actualActivity->save();
-              $arrayActivities[] = $actualActivity;
-            } else {
-              $storeActivityDetail = new ActivityCourseRegisteredUser();
+                            $actualActivity->save();
+                            $arrayActivities[] = $actualActivity;
+                        } else {
+                            $storeActivityDetail = new ActivityCourseRegisteredUser();
 
-              $storeActivityDetail->activity_id = $localActivity->id;
-              $storeActivityDetail->course_registered_user_id = $courseUser->id;
+                            $storeActivityDetail->activity_id = $localActivity->id;
+                            $storeActivityDetail->course_registered_user_id = $courseUser->id;
 
-              $storeActivityDetail->status_moodle = $activity['estado'];
-              $storeActivityDetail->qualification_moodle = $activity['calificacion'];
+                            $storeActivityDetail->status_moodle = $activity['estado'];
+                            $storeActivityDetail->qualification_moodle = $activity['calificacion'];
 
-              $storeActivityDetail->save();
+                            $storeActivityDetail->save();
 
-              $arrayActivities[] = $storeActivityDetail;
+                            $arrayActivities[] = $storeActivityDetail;
+                        }
+                    }
+                }
             }
-          }
+            return response()->json(['success' => true, 'error' => null, 'data' => $arrayActivities], 200);
+        } catch (\Exception $ex) {
+            return response()->json(['success' => false, 'error' => $ex->getMessage(), 'data' => null], 500);
         }
-      }
-      return response()->json(['success' => true, 'error' => null, 'data' => $arrayActivities], 200);
-    } catch (\Exception $ex) {
-      return response()->json(['success' => false, 'error' => $ex->getMessage(), 'data' => null], 500);
     }
-  }
 
-  public function syncActivitiesByUser($idUserRegistered, $idCourse)
+    public function syncActivitiesByUser($idUserRegistered, $idCourse)
+    {
+        try {
+            $registeredUser = RegisteredUser::find($idUserRegistered);
 
-  {
+            $course = Course::find($idCourse);
+            $arrayActivities = [];
+            if (isset($registeredUser) && isset($course)) {
+                $response = Http::get($this->getBASE_URL() . "users/" . $registeredUser->id_registered_moodle . "/courses/" . $course->id_course_moodle . "/activities");
 
-    try {
+                $activities = $response->json();
 
-      $registeredUser = RegisteredUser::find($idUserRegistered);
+                $courseUser = CourseRegisteredUser::where('registered_user_id', $registeredUser->id)->where('course_id', $course->id)->first();
 
-      $course = Course::find($idCourse);
-      $arrayActivities = [];
-      if (isset($registeredUser) && isset($course)) {
+                foreach ($activities as $activity) {
+                    $localActivity = Activity::where('id_activity_moodle', $activity['activity']['idmod'])->first();
 
-        $response = Http::get($this->getBASE_URL() . "users/" . $registeredUser->id_registered_moodle . "/courses/" . $course->id_course_moodle . "/activities");
-
-        $activities = $response->json();
-
-        $courseUser = CourseRegisteredUser::where('registered_user_id', $registeredUser->id)->where('course_id', $course->id)->first();
-
-        foreach ($activities as $activity) {
-
-          $localActivity = Activity::where('id_activity_moodle', $activity['activity']['idmod'])->first();
-
-          if (isset($localActivity)) {
-
-            $actualActivity = ActivityCourseRegisteredUser::where('activity_id', $localActivity->id)->where('course_registered_user_id', $courseUser->id)
+                    if (isset($localActivity)) {
+                        $actualActivity = ActivityCourseRegisteredUser::where('activity_id', $localActivity->id)->where('course_registered_user_id', $courseUser->id)
               ->with(['courseRegisteredUser', 'courseRegisteredUser.course'])
               ->first();
 
-            if (isset($actualActivity)) {
-              $actualActivity->status_moodle = $activity['estado'];
-              $actualActivity->qualification_moodle = $activity['calificacion'];
+                        if (isset($actualActivity)) {
+                            $actualActivity->status_moodle = $activity['estado'];
+                            $actualActivity->qualification_moodle = $activity['calificacion'];
 
-              $actualActivity->save();
-              $arrayActivities[] = $actualActivity->fresh();
-            } else {
-              $storeActivityDetail = new ActivityCourseRegisteredUser();
+                            $actualActivity->save();
+                            $arrayActivities[] = $actualActivity->fresh();
+                        } else {
+                            $storeActivityDetail = new ActivityCourseRegisteredUser();
 
-              $storeActivityDetail->activity_id = $localActivity->id;
-              $storeActivityDetail->course_registered_user_id = $courseUser->id;
+                            $storeActivityDetail->activity_id = $localActivity->id;
+                            $storeActivityDetail->course_registered_user_id = $courseUser->id;
 
-              $storeActivityDetail->status_moodle = $activity['estado'];
-              $storeActivityDetail->qualification_moodle = $activity['calificacion'];
+                            $storeActivityDetail->status_moodle = $activity['estado'];
+                            $storeActivityDetail->qualification_moodle = $activity['calificacion'];
 
-              $storeActivityDetail->save();
+                            $storeActivityDetail->save();
 
-              $arrayActivities[] = $storeActivityDetail;
+                            $arrayActivities[] = $storeActivityDetail;
+                        }
+                    }
+                }
             }
-          }
+            return response()->json(['success' => true, 'error' => null, 'data' => $arrayActivities], 200);
+        } catch (\Exception $ex) {
+            return response()->json(['success' => false, 'error' => $ex->getMessage(), 'data' => null], 500);
         }
-      }
-      return response()->json(['success' => true, 'error' => null, 'data' => $arrayActivities], 200);
-    } catch (\Exception $ex) {
-      return response()->json(['success' => false, 'error' => $ex->getMessage(), 'data' => null], 500);
     }
-  }
 
-  public function syncronizeAppDaily()
-  {
-
-    $this->syncronizeAppRegisteredUsersActive();
-    $this->syncronizeAppRegisteredUserActivitiesActive();
-    return response()->json([
+    public function syncronizeAppDaily()
+    {
+        $this->syncronizeAppRegisteredUsersActive();
+        $this->syncronizeAppRegisteredUserActivitiesActive();
+        return response()->json([
       'success' => true,
       'error' => null
     ], 200);
-  }
+    }
 
 
-  public function syncMoodleStudents()
-  {
+    public function syncMoodleStudents()
+    {
 
     // $registeredUserController = new RegisteredUserController();
     // $response4 = Http::get($this->getBASE_URL() . "collection/inscrito/all");
@@ -823,133 +782,125 @@ class SynchronizeController extends Controller
     //   }
     // }
     // return $array_student;
-  }
-
-
-  public function syncronizeAppRegisteredUsersActiveInit()
-  {
-    $response4 = Http::get($this->getBASE_URL() . "collection/inscrito/all");
-
-    $activeRegisteredUsers = $response4->json();
-
-    foreach ($activeRegisteredUsers as $activeRegisteredUser) {
-      $registeredUserController = new RegisteredUserController();
-      $courseController = new CourseController();
-      $courseRegisteredUserController = new CourseRegisteredUserController();
-
-
-      $registeredUserSearch = $registeredUserController->findByIdRegisteredUserMoodle($activeRegisteredUser['iduser']);
-
-      if (!isset($registeredUserSearch)) {
-
-        $registeredUserSearch = $registeredUserController->store($activeRegisteredUser);
-      }
-
-      $courseSearch = $courseController->findByIdCourseMoodle($activeRegisteredUser['curso']['idcurso']);
-
-      $activeRegisteredUser['curso']['idrcurso'] = $courseSearch->id;
-      $activeRegisteredUser['iduser'] =  $registeredUserSearch->id;
-
-      $courseRegisteredUserSearch = $courseRegisteredUserController->findByIdCourseRegisteredUser($activeRegisteredUser);
-
-      if (!isset($courseRegisteredUserSearch)) {
-
-        $courseRegisteredUserController->store($activeRegisteredUser);
-      } else {
-        $courseRegisteredUserController->update($courseRegisteredUserSearch->id, $activeRegisteredUser);
-      }
     }
-    return response()->json([
-      'success' => true,
-      'error' => null
-    ], 200);
-  }
 
-  public function syncronizeAppRegisteredUserActivitiesActiveInit()
-  {
 
-    $response5 = Http::get($this->getBASE_URL() . "collection/inscrito-actividad/all");
+    public function syncronizeAppRegisteredUsersActiveInit()
+    {
+        $response4 = Http::get($this->getBASE_URL() . "collection/inscrito/all");
 
-    $registeredUserActivities = $response5->json();
+        $activeRegisteredUsers = $response4->json();
 
-    foreach ($registeredUserActivities as $keys) {
-      foreach ($keys as $registeredUserActivity) {
+        foreach ($activeRegisteredUsers as $activeRegisteredUser) {
+            $registeredUserController = new RegisteredUserController();
+            $courseController = new CourseController();
+            $courseRegisteredUserController = new CourseRegisteredUserController();
 
-        $courseRegistereduserController = new CourseRegisteredUserController();
-        $activityController = new ActivityController();
-        $courseController = new CourseController();
-        $registeredUserController = new RegisteredUserController();
-        $activityCourseRegisteredUserController = new ActivityCourseRegisteredUserController();
 
-        $courseSearch = $courseController->findByIdCourseMoodle($registeredUserActivity['user_registered']['curso']['idcurso']);
-        $registeredUserSearch = $registeredUserController->findByIdRegisteredUserMoodle($registeredUserActivity['user_registered']['iduser']);
+            $registeredUserSearch = $registeredUserController->findByIdRegisteredUserMoodle($activeRegisteredUser['iduser']);
 
-        $activitySearch = $activityController->findByIdActivityMoodle($registeredUserActivity['activity']['idmod']);
+            if (!isset($registeredUserSearch)) {
+                $registeredUserSearch = $registeredUserController->store($activeRegisteredUser);
+            }
 
-        $registeredUserActivityFormat['curso']['idrcurso'] = $courseSearch->id;
-        $registeredUserActivityFormat['iduser'] = $registeredUserSearch->id;
+            $courseSearch = $courseController->findByIdCourseMoodle($activeRegisteredUser['curso']['idcurso']);
 
-        $courseRegisteredUserSearch = $courseRegistereduserController->findByIdCourseRegisteredUser($registeredUserActivityFormat);
+            $activeRegisteredUser['curso']['idrcurso'] = $courseSearch->id;
+            $activeRegisteredUser['iduser'] =  $registeredUserSearch->id;
 
-        if (isset($courseSearch) && isset($registeredUserSearch) && isset($courseRegisteredUserSearch) && isset($activitySearch)) {
+            $courseRegisteredUserSearch = $courseRegisteredUserController->findByIdCourseRegisteredUser($activeRegisteredUser);
 
-          $activityCourseRegisteredUserSearch = $activityCourseRegisteredUserController->findByIdActivityCourseRegisteredUser($activitySearch->id, $courseRegisteredUserSearch->id);
-
-          $registeredUserActivity['idinscrito'] = $courseRegisteredUserSearch->id;
-          $registeredUserActivity['idacividad'] = $activitySearch->id;
-
-          if (!isset($activityCourseRegisteredUserSearch)) {
-
-            $activityCourseRegisteredUserController->store($registeredUserActivity);
-          } else {
-            $activityCourseRegisteredUserController->update($activityCourseRegisteredUserSearch->id, $registeredUserActivity);
-          }
+            if (!isset($courseRegisteredUserSearch)) {
+                $courseRegisteredUserController->store($activeRegisteredUser);
+            } else {
+                $courseRegisteredUserController->update($courseRegisteredUserSearch->id, $activeRegisteredUser);
+            }
         }
-      }
+        return response()->json([
+      'success' => true,
+      'error' => null
+    ], 200);
     }
-    return response()->json([
+
+    public function syncronizeAppRegisteredUserActivitiesActiveInit()
+    {
+        $response5 = Http::get($this->getBASE_URL() . "collection/inscrito-actividad/all");
+
+        $registeredUserActivities = $response5->json();
+
+        foreach ($registeredUserActivities as $keys) {
+            foreach ($keys as $registeredUserActivity) {
+                $courseRegistereduserController = new CourseRegisteredUserController();
+                $activityController = new ActivityController();
+                $courseController = new CourseController();
+                $registeredUserController = new RegisteredUserController();
+                $activityCourseRegisteredUserController = new ActivityCourseRegisteredUserController();
+
+                $courseSearch = $courseController->findByIdCourseMoodle($registeredUserActivity['user_registered']['curso']['idcurso']);
+                $registeredUserSearch = $registeredUserController->findByIdRegisteredUserMoodle($registeredUserActivity['user_registered']['iduser']);
+
+                $activitySearch = $activityController->findByIdActivityMoodle($registeredUserActivity['activity']['idmod']);
+
+                $registeredUserActivityFormat['curso']['idrcurso'] = $courseSearch->id;
+                $registeredUserActivityFormat['iduser'] = $registeredUserSearch->id;
+
+                $courseRegisteredUserSearch = $courseRegistereduserController->findByIdCourseRegisteredUser($registeredUserActivityFormat);
+
+                if (isset($courseSearch) && isset($registeredUserSearch) && isset($courseRegisteredUserSearch) && isset($activitySearch)) {
+                    $activityCourseRegisteredUserSearch = $activityCourseRegisteredUserController->findByIdActivityCourseRegisteredUser($activitySearch->id, $courseRegisteredUserSearch->id);
+
+                    $registeredUserActivity['idinscrito'] = $courseRegisteredUserSearch->id;
+                    $registeredUserActivity['idacividad'] = $activitySearch->id;
+
+                    if (!isset($activityCourseRegisteredUserSearch)) {
+                        $activityCourseRegisteredUserController->store($registeredUserActivity);
+                    } else {
+                        $activityCourseRegisteredUserController->update($activityCourseRegisteredUserSearch->id, $registeredUserActivity);
+                    }
+                }
+            }
+        }
+        return response()->json([
       'success' => true,
       'error' => null
     ], 200);
-  }
+    }
 
 
-  public function synchronizeAppInit()
-  {
-    $this->syncronizeAppPlatformsCategoriesDaily();
-    $this->synchronizeAppCoursesActive();
-    $this->syncronizeAppRegisteredUsersActiveInit();
-    $this->syncronizeAppActivitiesActive();
-    $this->syncronizeAppRegisteredUserActivitiesActiveInit();
-    return response()->json([
+    public function synchronizeAppInit()
+    {
+        $this->syncronizeAppPlatformsCategoriesDaily();
+        $this->synchronizeAppCoursesActive();
+        $this->syncronizeAppRegisteredUsersActiveInit();
+        $this->syncronizeAppActivitiesActive();
+        $this->syncronizeAppRegisteredUserActivitiesActiveInit();
+        return response()->json([
       'success' => true,
       'error' => null
     ], 200);
-  }
+    }
 
-  public function findUsersByPendingActivity($id, $idCourse)
-  {
+    public function findUsersByPendingActivity($id, $idCourse)
+    {
+        $ids = json_decode($id);
 
-    $ids = json_decode($id);
+        if (count($ids) > 0) {
+            $url = $this->getBASE_URL() . "activities/" . $id . "/course-users";
 
-    if (count($ids) > 0) {
-      $url = $this->getBASE_URL() . "activities/" . $id . "/course-users";
+            $response5 = Http::get($url);
 
-      $response5 = Http::get($url);
+            $registeredUserActivities = $response5->json();
 
-      $registeredUserActivities = $response5->json();
+            $users['usersWithPendingActivities'] = [];
 
-      $users['usersWithPendingActivities'] = [];
+            foreach ($registeredUserActivities as $value) {
+                $findUser = RegisteredUser::where('id_registered_moodle', $value['iduser'])->first();
 
-      foreach ($registeredUserActivities as $value) {
+                $users['all'][] =   $findUser;
+                $users['value'][] = $value['iduser'];
 
-        $findUser = RegisteredUser::where('id_registered_moodle', $value['iduser'])->first();
-
-        $users['all'][] =   $findUser;
-        $users['value'][] = $value['iduser'];
-
-        if (isset($findUser)) {
-          $courseRegisteredUser = CourseRegisteredUser::where('registered_user_id', $findUser->id)
+                if (isset($findUser)) {
+                    $courseRegisteredUser = CourseRegisteredUser::where('registered_user_id', $findUser->id)
             ->where('course_id', $idCourse)
             ->with([
               'course',
@@ -961,16 +912,16 @@ class SynchronizeController extends Controller
             ])
             ->first();
 
-          if (isset($courseRegisteredUser)) {
-            $users['usersWithPendingActivities'][] =  $courseRegisteredUser;
-          }
-        }
-      }
-      $users['count'] = count($users['usersWithPendingActivities']);
+                    if (isset($courseRegisteredUser)) {
+                        $users['usersWithPendingActivities'][] =  $courseRegisteredUser;
+                    }
+                }
+            }
+            $users['count'] = count($users['usersWithPendingActivities']);
 
-      return response()->json($users);
-    } else {
-      $courseRegisteredUser['usersWithPendingActivities'] = CourseRegisteredUser::where('course_id', $idCourse)
+            return response()->json($users);
+        } else {
+            $courseRegisteredUser['usersWithPendingActivities'] = CourseRegisteredUser::where('course_id', $idCourse)
         ->with([
           'course',
           'classroom',
@@ -980,7 +931,7 @@ class SynchronizeController extends Controller
           'activityCourseUsers.activity.section'
         ])
         ->get();
+        }
+        return response()->json($courseRegisteredUser);
     }
-    return response()->json($courseRegisteredUser);
-  }
 }
