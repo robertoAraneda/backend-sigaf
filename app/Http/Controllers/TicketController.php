@@ -180,7 +180,7 @@ class TicketController extends Controller
             $ticketModel->source_ticket_id = request()->source_ticket_id;
             $ticketModel->priority_ticket_id = request()->priority_ticket_id;
             $ticketModel->motive_ticket_id = request()->motive_ticket_id;
-            $ticketModel->user_create_id = auth()->id();
+            $ticketModel->user_create_id = request()->user_create_id;
             $ticketModel->user_assigned_id = request()->user_assigned_id;
             $ticketModel->version = $ticketModel->version + 1;
 
