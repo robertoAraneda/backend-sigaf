@@ -16,232 +16,232 @@ class TicketDetailController extends Controller
    *
    * @var  App\Helpers\MakeResponse  $response
    */
-    protected $response;
+  protected $response;
 
-    public function __construct(MakeResponse $makeResponse = null)
-    {
-        $this->response = $makeResponse;
-    }
+  public function __construct(MakeResponse $makeResponse = null)
+  {
+    $this->response = $makeResponse;
+  }
 
-    /**
-     * Validate the description field.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     */
-    protected function validateData($request)
-    {
-        return Validator::make($request, [
+  /**
+   * Validate the description field.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   */
+  protected function validateData($request)
+  {
+    return Validator::make($request, [
       'ticket_id' => 'required',
       'user_created_id' => 'required|integer',
       'status_detail_ticket_id' => 'required|integer',
-      'comment' => 'max:255'
+      'comment' => 'max:1000'
     ]);
+  }
+
+  /**
+   * Display a listing of the resource.
+   *
+   * @return \Illuminate\Http\Response
+   */
+  public function index()
+  {
+    try {
+      if (!request()->isJson()) {
+        return $this->response->unauthorized();
+      }
+
+      $ticketDetail = new TicketDetailCollection(TicketDetail::orderBy('created_at', 'desc')->get());
+
+      return $this->response->success($ticketDetail);
+    } catch (\Exception $exception) {
+      return $this->response->exception($exception->getMessage());
     }
+  }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        try {
-            if (!request()->isJson()) {
-                return $this->response->unauthorized();
-            }
+  /**
+   * Store a newly created resource in storage.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @return \Illuminate\Http\Response
+   */
+  public function store()
+  {
+    try {
+      if (!request()->isJson()) {
+        return $this->response->unauthorized();
+      }
 
-            $ticketDetail = new TicketDetailCollection(TicketDetail::orderBy('created_at', 'desc')->get());
+      $validate = $this->validateData(request()->all());
 
-            return $this->response->success($ticketDetail);
-        } catch (\Exception $exception) {
-            return $this->response->exception($exception->getMessage());
-        }
+      if ($validate->fails()) {
+        return $this->response->exception($validate->errors());
+      }
+
+      $ticketDetail = new TicketDetail();
+
+      $ticketDetail = $ticketDetail->create(request()->all());
+
+      return $this->response->created($ticketDetail->format());
+    } catch (\Exception $exception) {
+      return $this->response->exception($exception->getMessage());
     }
+  }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store()
-    {
-        try {
-            if (!request()->isJson()) {
-                return $this->response->unauthorized();
-            }
+  /**
+   * Display the specified resource.
+   *
+   * @param  int  $id
+   * @return \Illuminate\Http\Response
+   */
+  public function show($ticket_detail)
+  {
+    try {
+      if (!request()->isJson()) {
+        return $this->response->unauthorized();
+      }
 
-            $validate = $this->validateData(request()->all());
+      if (!is_numeric($ticket_detail)) {
+        return $this->response->badRequest();
+      }
 
-            if ($validate->fails()) {
-                return $this->response->exception($validate->errors());
-            }
+      $ticketDetailModel = TicketDetail::find($ticket_detail);
 
-            $ticketDetail = new TicketDetail();
+      if (!isset($ticketDetailModel)) {
+        return $this->response->noContent();
+      }
 
-            $ticketDetail = $ticketDetail->create(request()->all());
-
-            return $this->response->created($ticketDetail->format());
-        } catch (\Exception $exception) {
-            return $this->response->exception($exception->getMessage());
-        }
+      return $this->response->success($ticketDetailModel->format());
+    } catch (\Exception $exception) {
+      return $this->response->exception($exception->getMessage());
     }
+  }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($ticket_detail)
-    {
-        try {
-            if (!request()->isJson()) {
-                return $this->response->unauthorized();
-            }
+  /**
+   * Update the specified resource in storage.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @param  int  $id
+   * @return \Illuminate\Http\Response
+   */
+  public function update($id)
+  {
+    try {
+      if (is_numeric($id)) {
+        $ticketDetail = TicketDetail::whereId($id)->first();
 
-            if (!is_numeric($ticket_detail)) {
-                return $this->response->badRequest();
-            }
+        if (isset($ticketDetail)) {
+          $dataUpdate = $this->validateData(request()->all());
+          // $ticketDetail->ticket_id = $updateData['ticket_id'];
+          // $ticketDetail->user_create_id = $updateData['user_created_id'];
+          // $ticketDetail->status_detail_ticket_id = $updateData['status_detail_ticket_id'];
+          // $ticketDetail->comment = $updateData['comment'];
 
-            $ticketDetailModel = TicketDetail::find($ticket_detail);
+          // $ticketDetail->save();
 
-            if (!isset($ticketDetailModel)) {
-                return $this->response->noContent();
-            }
+          $ticketDetail->update($dataUpdate);
 
-            return $this->response->success($ticketDetailModel->format());
-        } catch (\Exception $exception) {
-            return $this->response->exception($exception->getMessage());
-        }
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update($id)
-    {
-        try {
-            if (is_numeric($id)) {
-                $ticketDetail = TicketDetail::whereId($id)->first();
-
-                if (isset($ticketDetail)) {
-                    $dataUpdate = $this->validateData(request()->all());
-                    // $ticketDetail->ticket_id = $updateData['ticket_id'];
-                    // $ticketDetail->user_create_id = $updateData['user_created_id'];
-                    // $ticketDetail->status_detail_ticket_id = $updateData['status_detail_ticket_id'];
-                    // $ticketDetail->comment = $updateData['comment'];
-
-                    // $ticketDetail->save();
-
-                    $ticketDetail->update($dataUpdate);
-
-                    return response()->json([
+          return response()->json([
             'success' => true,
             'ticketDetail' => $ticketDetail->fresh()->format(),
             'error' => null
           ], 200);
-                } else {
-                    return response()->json([
+        } else {
+          return response()->json([
             'success' => false,
             'ticketDetail' => null,
             'error' => 'No Content'
           ], 204);
-                }
-            } else {
-                return response()->json([
+        }
+      } else {
+        return response()->json([
           'success' => false,
           'ticketDetail' => null,
           'error' => 'Bad Request'
         ], 400);
-            }
-        } catch (\Exception $exception) {
-            return response()->json([
+      }
+    } catch (\Exception $exception) {
+      return response()->json([
         'success' => false,
         'ticketDetail' => null,
         'error' => $exception->getMessage()
       ], 500);
-        }
     }
+  }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        try {
-            if (is_numeric($id)) {
-                $ticketDetail = TicketDetail::whereId($id)->first();
+  /**
+   * Remove the specified resource from storage.
+   *
+   * @param  int  $id
+   * @return \Illuminate\Http\Response
+   */
+  public function destroy($id)
+  {
+    try {
+      if (is_numeric($id)) {
+        $ticketDetail = TicketDetail::whereId($id)->first();
 
-                if (isset($ticketDetail)) {
-                    $ticketDetail->delete();
+        if (isset($ticketDetail)) {
+          $ticketDetail->delete();
 
-                    return response()->json([
+          return response()->json([
             'success' => true,
             'ticketDetail' => null,
             'error' => null
           ], 200);
-                } else {
-                    return response()->json([
+        } else {
+          return response()->json([
             'success' => false,
             'ticketDetail' => null,
             'error' => 'No Content'
           ], 204);
-                }
-            } else {
-                return response()->json([
+        }
+      } else {
+        return response()->json([
           'success' => false,
           'ticketDetail' => null,
           'error' => 'Bad Request'
         ], 400);
-            }
-        } catch (\Exception $exception) {
-            return response()->json([
+      }
+    } catch (\Exception $exception) {
+      return response()->json([
         'success' => false,
         'ticketDetail' => null,
         'error' => $exception->getMessage()
       ], 500);
-        }
     }
+  }
 
-    public function storeMassiveDetail(Request $request)
-    {
-        try {
-            if (!request()->isJson()) {
-                return $this->response->unauthorized();
-            }
+  public function storeMassiveDetail(Request $request)
+  {
+    try {
+      if (!request()->isJson()) {
+        return $this->response->unauthorized();
+      }
 
-            $validate = $this->validateData(request()->all());
+      $validate = $this->validateData(request()->all());
 
-            if ($validate->fails()) {
-                return $this->response->exception($validate->errors());
-            }
+      if ($validate->fails()) {
+        return $this->response->exception($validate->errors());
+      }
 
 
-            $storedTicketDetails = [];
+      $storedTicketDetails = [];
 
-            foreach ($request->ticket_id as $key => $value) {
-                $ticketDetail = new TicketDetail();
-                $ticketDetail->ticket_id = $value;
-                $ticketDetail->status_detail_ticket_id = $request->status_detail_ticket_id;
-                $ticketDetail->comment = $request->comment;
-                $ticketDetail->user_created_id = $request->user_created_id;
+      foreach ($request->ticket_id as $key => $value) {
+        $ticketDetail = new TicketDetail();
+        $ticketDetail->ticket_id = $value;
+        $ticketDetail->status_detail_ticket_id = $request->status_detail_ticket_id;
+        $ticketDetail->comment = $request->comment;
+        $ticketDetail->user_created_id = $request->user_created_id;
 
-                $ticketDetail->save();
+        $ticketDetail->save();
 
-                $storedTicketDetails[] = $ticketDetail->format();
-            }
+        $storedTicketDetails[] = $ticketDetail->format();
+      }
 
-            return $this->response->created($storedTicketDetails);
-        } catch (\Exception $exception) {
-            return $this->response->exception($exception->getMessage());
-        }
+      return $this->response->created($storedTicketDetails);
+    } catch (\Exception $exception) {
+      return $this->response->exception($exception->getMessage());
     }
+  }
 }
