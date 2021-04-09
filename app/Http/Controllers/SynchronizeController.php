@@ -891,6 +891,8 @@ class SynchronizeController extends Controller
 
             $registeredUserActivities = $response5->json();
 
+       //s     return response()->json($registeredUserActivities);
+
             $users['usersWithPendingActivities'] = [];
 
             foreach ($registeredUserActivities as $value) {
@@ -901,16 +903,16 @@ class SynchronizeController extends Controller
 
                 if (isset($findUser)) {
                     $courseRegisteredUser = CourseRegisteredUser::where('registered_user_id', $findUser->id)
-            ->where('course_id', $idCourse)
-            ->with([
-              'course',
-              'classroom',
-              'registeredUser',
-              'profile',
-              'finalStatus',
-              'activityCourseUsers.activity.section'
-            ])
-            ->first();
+                        ->where('course_id', $idCourse)
+                        ->with([
+                        'course',
+                        'classroom',
+                        'registeredUser',
+                        'profile',
+                        'finalStatus',
+                        'activityCourseUsers.activity.section'
+                        ])
+                        ->first();
 
                     if (isset($courseRegisteredUser)) {
                         $users['usersWithPendingActivities'][] =  $courseRegisteredUser;

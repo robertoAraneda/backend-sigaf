@@ -78,7 +78,7 @@ class Ticket extends Model
       ],
       'relationships' => [
         'numberOfElements' => $this->ticketsDetails->count(),
-        'array' => $this->ticketsDetails,
+        'array' => $this->ticketsDetails->load('userCreated', 'statusDetailTicket'),
         'links' => [
           'href' => route(
               'api.tickets.ticketsDetails',
