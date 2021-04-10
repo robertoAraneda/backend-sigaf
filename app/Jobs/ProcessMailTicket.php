@@ -88,14 +88,13 @@ class ProcessMailTicket implements ShouldQueue
         $primaryEmails =$this->details['primaryMail'];
         $ccEmails = $this->details['carbonCopyMail'];
 
-
         Mail::send('ticket', compact('data'), function ($message) use ($files, $primaryEmails, $ccEmails, $data) {
             $message->from($data['emailCourse']);
             $message->to($primaryEmails);
-            
-            /*          if (isset($ccEmails)) {
-                         $message->cc($ccEmails);
-                     } */
+
+            if (count($ccEmails) > 0) {
+                $message->cc($ccEmails);
+            }
 
             $message->subject($data['subject']);
 
