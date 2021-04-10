@@ -176,6 +176,7 @@ Route::group([
 
 
     Route::get('/course-registered-user/{idCourse}/users', 'CourseRegisteredUserController@findUserCourseByCourse')->name('api.courseRegisteredUsers.users');
+    Route::get('/course-registered-user/{idCourse}/users/all', 'CourseRegisteredUserController@findUserCourseByCourseAll')->name('api.courseRegisteredUsers.usersAll');
     Route::get('/platforms/{platform}/categories', 'PlatformController@categories')->name('api.platforms.categories');
 
 
