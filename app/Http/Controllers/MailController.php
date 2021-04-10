@@ -64,7 +64,13 @@ class MailController extends Controller
                 $details['fullname']=  "{$ticket->courseRegisteredUser->registeredUser->name} {$ticket->courseRegisteredUser->registeredUser->last_name} {$ticket->courseRegisteredUser->registeredUser->mother_last_name}";
 
                 $details['primaryMail']   = $ticket->courseRegisteredUser->registeredUser->email;
-                $details['carbonCopyMail']  = array_map('trim', explode(";", $request->CCRecipient));
+                if($request->CCRecipient != ''){
+                     $details['carbonCopyMail']  = array_map('trim', explode(";", $request->CCRecipient));
+
+                }else{
+                    $details['carbonCopyMail']  = [];
+
+                }
                 $details['emailCourse'] = trim($ticket->courseRegisteredUser->course->email);
                 $details['passCourse'] = $ticket->courseRegisteredUser->course->password;
 
@@ -106,7 +112,12 @@ class MailController extends Controller
             $details['fullname']=  "{$ticket->courseRegisteredUser->registeredUser->name} {$ticket->courseRegisteredUser->registeredUser->last_name} {$ticket->courseRegisteredUser->registeredUser->mother_last_name}";
 
             $details['primaryMail']   = $ticket->courseRegisteredUser->registeredUser->email;
-            $details['carbonCopyMail']  = array_map('trim', explode(";", $request->CCRecipient));
+            if ($request->CCRecipient != '') {
+             $details['carbonCopyMail']  = array_map('trim', explode(";", $request->CCRecipient));
+            } else {
+                $details['carbonCopyMail']  = [];
+            }
+
             $details['emailCourse'] = trim($ticket->courseRegisteredUser->course->email);
             $details['passCourse'] = $ticket->courseRegisteredUser->course->password;
 
@@ -146,7 +157,12 @@ class MailController extends Controller
             $details['fullname']=  "{$ticket->courseRegisteredUser->registeredUser->name} {$ticket->courseRegisteredUser->registeredUser->last_name} {$ticket->courseRegisteredUser->registeredUser->mother_last_name}";
 
             $details['primaryMail']   = $ticket->courseRegisteredUser->registeredUser->email;
-            $details['carbonCopyMail']  = array_map('trim', explode(";", $request->CCRecipient));
+            if ($request->CCRecipient != '') {
+                $details['carbonCopyMail']  = array_map('trim', explode(";", $request->CCRecipient));
+            } else {
+                $details['carbonCopyMail']  = [];
+            }
+
             $details['emailCourse'] = trim($ticket->courseRegisteredUser->course->email);
             $details['passCourse'] = $ticket->courseRegisteredUser->course->password;
 
