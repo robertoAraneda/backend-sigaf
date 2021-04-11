@@ -104,6 +104,9 @@ Route::group([
     Route::apiResource('/log-editing-tickets', 'LogEditingTicketController')->names('api.logEditingTickets');
 
 
+    Route::get('/tickets/code/{code}', 'TicketController@getTicketByCode');
+    Route::get('/tickets/dates/{initialDate}/{finalDate}', 'TicketController@getTicketByRangeOfDate');
+    Route::get('/tickets/operator/{operator}', 'TicketController@getTicketByOperator');
 
     Route::get('/activity-course-registered-users/{activity_course_registered_user}', 'ActivityCourseRegisteredUserController@show')->name('api.activityCourseRegisteredUsers.show');
 
