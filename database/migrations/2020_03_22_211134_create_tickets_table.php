@@ -16,7 +16,7 @@ class CreateTicketsTable extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('course_registered_user_id');
-            $table->string('ticket_codde', 15);
+            $table->string('ticket_code', 15);
             $table->unsignedBigInteger('type_ticket_id'); //entrante-saliente
             $table->unsignedBigInteger('status_ticket_id'); //Abierto-Cerrado
             $table->unsignedBigInteger('priority_ticket_id'); //alta-media-baja
