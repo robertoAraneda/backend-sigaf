@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\MakeResponse;
 use App\Models\Ticket;
+use App\Models\TicketDetail;
 use App\Models\LogEditingTicket;
 use App\Models\CourseRegisteredUser;
 
@@ -226,6 +227,17 @@ class TicketController extends Controller
                 return $this->response->noContent();
             }
 
+
+            $ticketDetail = TicketDetail::where('ticket_id', $ticket)->get();
+
+            if(count($ticketDetail ) > 0){
+                foreach ($ticketDetail  as $key => $value) {
+                    $detail = TicketDetail::find($value->id);
+                    $detail->delete();
+                }
+            }
+
+
             $ticketModel->delete();
 
             return $this->response->success(null);
@@ -325,6 +337,73 @@ class TicketController extends Controller
             return $this->response->exception($exception->getMessage());
         }
     }
+
+    public function getTicketByCode($code)
+    {
+        try {
+            if (!request()->isJson()) {
+                return $this->response->unauthorized();
+            }
+   
+            $tickets = new TicketCollection(Ticket::where('ticket_code', $code)->orderBy('created_at', 'asc')->get());
+
+            if (!isset($tickets)) {
+                return $this->response->noContent();
+            }
+
+            return $this->response->success($tickets);
+
+        } catch (\Exception $exception) {
+            return $this->response->exception($exception->getMessage());
+        }
+
+    }
+
+    public function getTicketByOperator($operator)
+    {
+        try {
+            if (!request()->isJson()) {
+                return $this->response->unauthorized();
+            }
+   
+            $tickets = new TicketCollection(Ticket::where('user_assigned_id', $operator)->orderBy('created_at', 'asc')->get());
+
+            if (!isset($tickets)) {
+                return $this->response->noContent();
+            }
+
+            return $this->response->success($tickets);
+
+        } catch (\Exception $exception) {
+            return $this->response->exception($exception->getMessage());
+        }
+
+    }
+
+    public function getTicketByRangeOfDate($initialDate, $finalDate)
+    {
+        try {
+            if (!request()->isJson()) {
+                return $this->response->unauthorized();
+            }
+
+            $initial = Carbon::createFromFormat('Y-m-d', $initialDate)->format('Y/m/d');
+            $final = Carbon::createFromFormat('Y-m-d', $finalDate)->format('Y/m/d')." 23:59:59";
+   
+            $tickets = new TicketCollection(Ticket::whereBetween('created_at', [$initial, $final])->orderBy('created_at', 'asc')->get());
+
+            if (!isset($tickets)) {
+                return $this->response->noContent();
+            }
+
+            return $this->response->success($tickets);
+
+        } catch (\Exception $exception) {
+            return $this->response->exception($exception->getMessage());
+        }
+
+    }
+
 
     public function storeMultiple(Request $request)
     {
