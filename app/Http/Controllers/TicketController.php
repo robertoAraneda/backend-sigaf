@@ -246,6 +246,40 @@ class TicketController extends Controller
         }
     }
 
+        /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyMultiple($tickets)
+    {
+        try {
+            if (!request()->isJson()) {
+                return $this->response->unauthorized();
+            }
+
+            $ticketsId = json_decode($tickets);
+
+            foreach ($ticketsId as $value) {
+                $ticketModel = Ticket::find($value);
+
+                $ticketDetail = TicketDetail::where('ticket_id', $value)->get();
+                if (count($ticketDetail) > 0) {
+                    foreach ($ticketDetail  as $key => $value) {
+                        $detail = TicketDetail::find($value->id);
+                        $detail->delete();
+                    }
+                }
+                 $ticketModel->delete();
+            }
+
+            return $this->response->success(null);
+        } catch (\Exception $exception) {
+            return $this->response->exception($exception->getMessage());
+        }
+    }
+
 
     /**
      * Display a list of tickets resources related to type ticket resource.
