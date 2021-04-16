@@ -62,7 +62,7 @@ class TicketController extends Controller
                 return $this->response->unauthorized();
             }
 
-            $tickets = new TicketCollection(Ticket::orderBy('created_at', 'asc')->get());
+            $tickets = new TicketCollection(Ticket::where('status_ticket_id', 1)->orderBy('created_at', 'asc')->get());
 
             return $this->response->success($tickets);
         } catch (\Exception $exception) {
@@ -357,6 +357,7 @@ class TicketController extends Controller
         ->leftJoin('course_registered_users', 'course_registered_users.id', '=', 'tickets.course_registered_user_id')
         ->select('tickets.id')
         ->where('course_registered_users.course_id', $id)
+        ->where('tickets.status_ticket_id', 1)
         ->orderByDesc('tickets.created_at')
         ->get();
 
