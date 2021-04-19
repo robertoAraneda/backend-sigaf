@@ -240,10 +240,21 @@ Route::group([
 
 
     //dashboard
-    Route::get('/tickets/{id_ticket}/status-chart', 'TicketController@statusTicketsPieChart');
-    Route::get('/tickets/{id_ticket}/motive-chart', 'TicketController@motiveTicketsPieChart');
-    Route::get('/tickets/{id_ticket}/source-chart', 'TicketController@sourceTicketsPieChart');
-    Route::get('/tickets/{id_ticket}/priority-chart', 'TicketController@priorityTicketsPieChart');
-    Route::get('/tickets/{id_ticket}/status-operator-chart', 'TicketController@statusTicketsByOperatorChart');
+    Route::get('/tickets/{course}/status-chart', 'TicketController@statusTicketsPieChart');
+    Route::get('/tickets/{course}/motive-chart', 'TicketController@motiveTicketsPieChart');
+    Route::get('/tickets/{course}/source-chart', 'TicketController@sourceTicketsPieChart');
+    Route::get('/tickets/{course}/type-chart', 'TicketController@typeTicketsPieChart');
+    Route::get('/tickets/{course}/priority-chart', 'TicketController@priorityTicketsPieChart');
+    Route::get('/tickets/{course}/status-operator-chart', 'TicketController@statusTicketsByOperatorChart');
+    Route::get('/tickets/{course}/status-motive-chart', 'TicketController@motiveTicketsByStatusChart');
     Route::get('/tickets/{course}/total/count', 'TicketController@getTotalTicketCount');
+    Route::get('/tickets/{course}/last-day/count', 'TicketController@getLastDayTicket');
+    Route::get('/tickets/{course}/open/count', 'TicketController@getOpenTicket');
+    Route::get('/tickets/{course}/close/count', 'TicketController@getCloseTicket');
+
+    //dashboard
+    Route::get('/course-registered-users/{course}/status/count', 'TicketController@statusUsersChart');
+    Route::get('/course-registered-users/{course}/logged-time/count', 'TicketController@timeLoggedUserChart');
+
+
 });

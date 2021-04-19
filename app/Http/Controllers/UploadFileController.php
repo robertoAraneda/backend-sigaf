@@ -48,20 +48,18 @@ class UploadFileController extends Controller
     public function uploadFileEmail(Request $request)
     {
         try {
-            $upload_path        = storage_path('app');
-            $name          = $request->file->getClientOriginalName();
-
-            $file               = $request->file->move($upload_path, $name);
-            $url = Storage::url($name);
-            $size = Storage::size($name);
-            $mime = $request->file->getClientMimeType();
-
+            $upload_path    = storage_path('app');
+            $name           = $request->file->getClientOriginalName();
+            $file           = $request->file->move($upload_path, $name);
+            $url            = Storage::url($name);
+            $size           = Storage::size($name);
+            $mime           = $request->file->getClientMimeType();
 
             $data = [
-                'url' => $url,
-                'name' => $name,
-                'size' => $size,
-                'mime' => $mime
+                'url'   => $url,
+                'name'  => $name,
+                'size'  => $size,
+                'mime'  => $mime
             ];
 
             return $this->response->success($data);

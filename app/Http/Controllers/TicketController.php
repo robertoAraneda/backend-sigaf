@@ -7,7 +7,6 @@ use App\Models\Ticket;
 use App\Models\TicketDetail;
 use App\Models\LogEditingTicket;
 use App\Models\CourseRegisteredUser;
-
 use App\Http\Resources\Json\Ticket as JsonTicket;
 use App\Http\Resources\Json\TicketDetail as JsonTicketDetail;
 use App\Http\Resources\TicketCollection;
@@ -230,7 +229,7 @@ class TicketController extends Controller
 
             $ticketDetail = TicketDetail::where('ticket_id', $ticket)->get();
 
-            if(count($ticketDetail ) > 0){
+            if (count($ticketDetail) > 0) {
                 foreach ($ticketDetail  as $key => $value) {
                     $detail = TicketDetail::find($value->id);
                     $detail->delete();
@@ -246,7 +245,7 @@ class TicketController extends Controller
         }
     }
 
-        /**
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
@@ -271,7 +270,7 @@ class TicketController extends Controller
                         $detail->delete();
                     }
                 }
-                 $ticketModel->delete();
+                $ticketModel->delete();
             }
 
             return $this->response->success(null);
@@ -387,11 +386,9 @@ class TicketController extends Controller
             }
 
             return $this->response->success($tickets);
-
         } catch (\Exception $exception) {
             return $this->response->exception($exception->getMessage());
         }
-
     }
 
     public function getTicketByOperator($operator)
@@ -408,11 +405,9 @@ class TicketController extends Controller
             }
 
             return $this->response->success($tickets);
-
         } catch (\Exception $exception) {
             return $this->response->exception($exception->getMessage());
         }
-
     }
 
     public function getTicketByRangeOfDate($initialDate, $finalDate)
@@ -432,11 +427,9 @@ class TicketController extends Controller
             }
 
             return $this->response->success($tickets);
-
         } catch (\Exception $exception) {
             return $this->response->exception($exception->getMessage());
         }
-
     }
 
 
@@ -597,6 +590,34 @@ class TicketController extends Controller
         ];
         return $this->response->success($chartData);
     }
+
+    //charts
+    //*Encontrar tickets para pie chart
+    public function typeTicketsPieChart($id_course)
+    {
+        $tickets = Ticket::join('course_registered_users', 'tickets.course_registered_user_id', 'course_registered_users.id')
+        ->join('type_tickets', 'tickets.type_ticket_id', 'type_tickets.id')
+        ->where('course_registered_users.course_id', $id_course)
+        ->select(DB::raw('count(tickets.id) as count, type_tickets.description as label'))
+        ->groupBy('type_tickets.description')
+        ->get();
+        $data = $tickets->map(function ($item) {
+            return $item->count;
+        });
+        $labels = $tickets->map(function ($item) {
+            return $item->label;
+        });
+        $chartData  =   [
+            'chartData' => [
+                'datasets' => [
+                 [   'data' => $data ,
+                    'backgroundColor' => ['#5cb85c', '#d9534f']]
+                ],
+                'labels' => $labels
+            ]
+        ];
+        return $this->response->success($chartData);
+    }
     //charts
     //*Encontrar tickets para pie chart
     public function priorityTicketsPieChart($id_course)
@@ -625,6 +646,98 @@ class TicketController extends Controller
         ];
         return $this->response->success($chartData);
     }
+
+    //charts
+    //*Encontrar tickets para pie chart
+    public function timeLoggedUserChart($id_course)
+    {
+        $courseRegisteredUsers = CourseRegisteredUser::where('course_registered_users.course_id', $id_course)
+        ->get();
+
+        $groupped = $courseRegisteredUsers->groupBy(function ($item, $key) {
+            $timeLogged = $item->last_access_registered_moodle;
+            $split = explode(' ', $timeLogged);
+
+            if (count($split) <= 1) {
+                return 'Nunca';
+            } else {
+                switch ($split[1]) {
+                    case 'día':
+                      return 'Menos de una semana';
+                    case 'días':
+                        if ($split[0] < 6) {
+                            return 'Menos de una semana';
+                        } else {
+                            return 'Más de una semana';
+                        }
+                        // no break
+                    case 'horas':
+                           return 'Menos de un día';
+                    case 'minutos':
+                           return 'Menos de un día';
+                    default:
+                        return 'Más de una semana';
+
+                }
+            }
+        });
+
+        $data = $groupped->map(function ($item) {
+            return count($item);
+        })->values();
+        $labels = $groupped->map(function ($item, $key) {
+            return $key;
+        })->values();
+
+        $chartData  =   [
+            'chartData' => [
+                'datasets' => [
+                 [   'data' => $data ,
+                     'backgroundColor' => ['#5cb85c', '#F9A825', '#D32F2F', '#F9A825']],
+                ],
+                'labels' => $labels
+             ]
+        ];
+        return $this->response->success($chartData);
+    }
+    //charts
+    //*Encontrar tickets para pie chart
+    public function statusUsersChart($id_course)
+    {
+        $courseRegisteredUsers = CourseRegisteredUser::join('activity_course_users', 'course_registered_users.id', 'activity_course_users.course_registered_user_id')
+        ->join('activities', 'activities.id', 'activity_course_users.activity_id')
+        ->join('sections', 'sections.id', 'activities.section_id')
+        ->where('course_registered_users.course_id', $id_course)
+        ->where('sections.description', 'Renuncia')
+        ->select(DB::raw('count(course_registered_users.id) as count, activity_course_users.status_moodle as status'))
+        ->groupBy('activity_course_users.status_moodle')
+        ->get();
+
+
+        $data = $courseRegisteredUsers->map(function ($item) {
+            return $item->count;
+        });
+        $labels = $courseRegisteredUsers->map(function ($item) {
+            if ($item->status == '-') {
+                return 'Activo';
+            } elseif ($item->status == 'En curso') {
+                return 'Renuncia en curso';
+            } else {
+                return 'Renunciado';
+            }
+        });
+        $chartData  =   [
+            'chartData' => [
+                'datasets' => [
+                 [   'data' => $data ,
+                     'backgroundColor' => ['#5cb85c', '#F9A825', '#D32F2F']],
+                ],
+                'labels' => $labels
+             ]
+        ];
+        return $this->response->success($chartData);
+    }
+
     //charts
     //*Encontrar tickets para pie chart
     public function motiveTicketsPieChart($id_course)
@@ -632,11 +745,32 @@ class TicketController extends Controller
         $tickets = Ticket::join('course_registered_users', 'tickets.course_registered_user_id', 'course_registered_users.id')
         ->join('motive_tickets', 'tickets.motive_ticket_id', 'motive_tickets.id')
         ->where('course_registered_users.course_id', $id_course)
-        ->select(DB::raw('count(tickets.id) as tickets, motive_tickets.description'))
+        ->select(DB::raw('count(tickets.id) as count, motive_tickets.description as label'))
         ->groupBy('motive_tickets.description')
         ->get();
 
-        return $tickets;
+        $ticketsCount = Ticket::join('course_registered_users', 'tickets.course_registered_user_id', 'course_registered_users.id')
+        ->join('motive_tickets', 'tickets.motive_ticket_id', 'motive_tickets.id')
+        ->where('course_registered_users.course_id', $id_course)
+        ->count();
+
+        $data = $tickets->map(function ($item) use ($ticketsCount) {
+            return round($item->count * 100 / $ticketsCount, 0);
+        });
+
+        $labels = $tickets->map(function ($item) {
+            return $item->label;
+        });
+        $chartData  =   [
+            'chartData' => [
+                'datasets' => [
+                 [   'data' => $data ,
+                     'backgroundColor' => ['#5cb85c', '#F9A825', '#D32F2F', '#D32F2F']],
+                ],
+                'labels' => $labels
+             ]
+        ];
+        return $this->response->success($chartData);
     }
 
     //charts
@@ -651,7 +785,11 @@ class TicketController extends Controller
         ->groupBy('status_tickets.description', 'users.name')
         ->get();
 
-        $tickets = $tickets->groupBy('user');
+        $tickets = $tickets->groupBy(function ($item, $key) {
+            $split = explode(' ', $item['user']);
+            return ucwords(strtolower($split[0])). " ".  ucwords(strtolower($split[1]));
+        });
+
 
         $labels = $tickets->map(function ($item, $key) {
             return $key;
@@ -714,10 +852,118 @@ class TicketController extends Controller
         return $this->response->success($chartData);
     }
 
+    //charts
+    //*Encontrar tickets para pie chart
+    public function motiveTicketsByStatusChart($id_course)
+    {
+        $tickets = Ticket::join('course_registered_users', 'tickets.course_registered_user_id', 'course_registered_users.id')
+        ->join('status_tickets', 'tickets.status_ticket_id', 'status_tickets.id')
+        ->join('motive_tickets', 'tickets.motive_ticket_id', 'motive_tickets.id')
+        ->where('course_registered_users.course_id', $id_course)
+        ->select(DB::raw('count(tickets.id) as tickets, status_tickets.description as status, motive_tickets.description as motive'))
+        ->groupBy('status_tickets.description', 'motive_tickets.description')
+        ->get();
+
+        $tickets = $tickets->groupBy('motive');
+
+        $labels = $tickets->map(function ($item, $key) {
+            return $key;
+        })->values();
+
+        $dataOpen = $tickets->map(function ($item, $key) {
+            if (count($item) == 2) {
+                return $item;
+            } elseif ($item[0]->status == 'Abierto') {
+                return $item->push([
+                    'tickets' => 0,
+                    'status' => 'Cerrado',
+                    'user' => $key
+                ]);
+            } else {
+                return $item->push([
+                    'tickets' => 0,
+                    'status' => 'Abierto',
+                    'user' => $key
+                ]);
+            }
+        });
+
+        $array = [];
+
+        foreach ($dataOpen as $key => $value) {
+            foreach ($value as $key => $val) {
+                $array[] = $val;
+            }
+        }
+        $collection = collect($array);
+
+        $openTicket = $collection->filter(function ($item) {
+            return $item['status'] == 'Abierto';
+        })->map(function ($item) {
+            return $item['tickets'];
+        })->values();
+
+        $closeTicket = $collection->filter(function ($item) {
+            return $item['status'] == 'Cerrado';
+        })->map(function ($item) {
+            return $item['tickets'];
+        })->values();
+
+        $chartData  =   [
+            'chartData' => [
+                'datasets' => [
+                 [   'data' => $openTicket ,
+                     'backgroundColor' => '#5cb85c',
+                     'label' => 'Abierto'
+                ],
+                [   'data' => $closeTicket ,
+                     'backgroundColor' => '#d32f2f',
+                     'label' => 'Cerrado'
+                ],
+            ],
+                'labels' => $labels
+             ]
+        ];
+        return $this->response->success($chartData);
+    }
     public function getTotalTicketCount($course_id)
     {
         $tickets = Ticket::join('course_registered_users', 'tickets.course_registered_user_id', 'course_registered_users.id')
                         ->where('course_registered_users.course_id', $course_id)
+                        ->count();
+
+                
+        return response()->json($tickets);
+    }
+
+    public function getLastDayTicket($course_id)
+    {
+        $current_date = Carbon::now()->format('Y-m-d');
+        $tickets = Ticket::join('course_registered_users', 'tickets.course_registered_user_id', 'course_registered_users.id')
+                        ->where('course_registered_users.course_id', $course_id)
+                        ->where('tickets.created_at', '>', $current_date)
+                        ->count();
+
+                
+        return response()->json($tickets);
+    }
+
+    public function getOpenTicket($course_id)
+    {
+        $tickets = Ticket::join('course_registered_users', 'tickets.course_registered_user_id', 'course_registered_users.id')
+                        ->where('course_registered_users.course_id', $course_id)
+                        ->where('tickets.status_ticket_id', 1)
+                        ->count();
+
+                
+        return response()->json($tickets);
+    }
+
+    public function getCloseTicket($course_id)
+    {
+        $tickets = Ticket::join('course_registered_users', 'tickets.course_registered_user_id', 'course_registered_users.id')
+                        ->where('course_registered_users.course_id', $course_id)
+                        ->where('tickets.status_ticket_id', 2)
                         ->count();
 
                 
