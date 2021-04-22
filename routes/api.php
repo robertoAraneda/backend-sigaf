@@ -256,5 +256,6 @@ Route::group([
     Route::get('/course-registered-users/{course}/status/count', 'TicketController@statusUsersChart');
     Route::get('/course-registered-users/{course}/logged-time/count', 'TicketController@timeLoggedUserChart');
 
-
+    Route::get('/reports/courses/{course_id}/type-ticket/{initial_date}/{final_date?}', 'ReportController@typeTicketsReportChart');
+    Route::get('/reports/courses/{course_id}/table-operator/{initial_date}/{final_date?}', 'ReportController@tableReport');
 });
