@@ -25,6 +25,51 @@ class ReportController extends Controller
         $this->response = $makeResponse;
     }
 
+    public function sideCardReportData($id_course, $initialDate, $finalDate = null)
+    {
+        $carbonDate = Carbon::createFromFormat('d-m-Y', $initialDate)->format('Y-m-d');
+
+        $ticketsAccumulate = Ticket::join('course_registered_users', 'tickets.course_registered_user_id', 'course_registered_users.id')
+        ->join('status_tickets', 'tickets.status_ticket_id', 'status_tickets.id')
+        ->where('course_registered_users.course_id', $id_course)
+        ->where('tickets.created_at', '<', $carbonDate." 23:59:59")
+        ->select(DB::raw('count(tickets.id) as count, status_tickets.description as status'))
+        ->groupBy('status_tickets.description')
+        ->get();
+
+        $total = array_reduce($ticketsAccumulate->all(), function ($accumulator, $item) {
+            $accumulator += $item['count'];
+            return $accumulator;
+        }, 0);
+
+        $newTickets = Ticket::join('course_registered_users', 'tickets.course_registered_user_id', 'course_registered_users.id')
+        ->join('status_tickets', 'tickets.status_ticket_id', 'status_tickets.id')
+        ->where('course_registered_users.course_id', $id_course)
+        ->whereBetween('tickets.created_at', [$carbonDate." 00:00:00", $carbonDate." 23:59:59"])
+        ->count();
+
+        $openObject = $ticketsAccumulate->filter(function ($item) {
+            return $item->status == 'Abierto';
+        })->values();
+
+        $open = count($openObject) > 0 ? $openObject[0]['count'] : 0;
+
+        $closeObject = $ticketsAccumulate->filter(function ($item) {
+            return $item->status == 'Cerrado';
+        })->values();
+
+        $close = count($closeObject) > 0 ? $closeObject[0]['count'] : 0;
+
+        $data = [
+            'newTicket' => $newTickets,
+            'total' => $total,
+            'open' => $open,
+            'close' => $close
+        ];
+
+        return $this->response->success($data);
+    }
+
     //charts
     //*Encontrar tickets para pie chart
     public function typeTicketsReportChart($id_course, $initialDate, $finalDate = null)
@@ -169,15 +214,24 @@ class ReportController extends Controller
             $join->on('tickets.id', '=', 'ticket_details.ticket_id')
                 ->whereBetween('ticket_details.created_at', [$carbonDate." 00:00:00", $carbonDate." 23:59:59"]);
         })
+        ->join('status_detail_tickets', 'ticket_details.status_detail_ticket_id', 'status_detail_tickets.id')
         ->join('users', 'ticket_details.user_created_id', 'users.id')
         ->where('course_registered_users.course_id', $id_course)
         ->select(
             'users.name as operator',
             'status_tickets.description as status',
             'ticket_details.created_at as detail_created',
+            'status_detail_tickets.description as status_detail',
             '*'
         )
         ->get();
+
+        $detailTickets =  $tickets->groupBy('status_detail')->map(function ($item, $key) {
+            return [
+                'label' => $key,
+                'value' => count($item)
+            ] ;
+        })->values();
 
         $data =  $tickets->groupBy('operator')->map(function ($item, $key) {
             $collect = collect($item);
@@ -212,10 +266,25 @@ class ReportController extends Controller
                 'operator' => $key,
                 'tickets' =>count($collect->groupBy('ticket_code')->values()),
                 'close' => $close,
-                'attemps' => $total
+                'attemps' => $total,
             ];
         })->values();
 
-        return $this->response->success($data);
+        return $this->response->success([
+            'table' => $data,
+            'chartData' => [
+                'datasets' => [
+                    [
+                    'data' => $detailTickets->map(function ($item, $key) {
+                        return $item['value'];
+                    }),
+                    'backgroundColor' => ['#5cb85c', '#d9534f']
+                    ]
+                ],
+                'labels' => $detailTickets->map(function ($item, $key) {
+                    return $item['label'];
+                })
+            ]
+         ]);
     }
 }
