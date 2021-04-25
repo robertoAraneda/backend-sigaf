@@ -837,7 +837,7 @@ class TicketController extends Controller
         $chartData  =   [
             'chartData' => [
                 'datasets' => [
-                 [   'data' => $openTicket ,
+                [   'data' => $openTicket ,
                      'backgroundColor' => '#5cb85c',
                      'label' => 'Abierto'
                 ],
