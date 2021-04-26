@@ -622,8 +622,6 @@ class TicketController extends Controller
             }
         });
 
-        return $ageTickets;
-
         $sorted = $ageTickets->sortBy('age')->values();
 
         $filter = $sorted->groupBy(function ($item) {
