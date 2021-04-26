@@ -601,24 +601,23 @@ class TicketController extends Controller
         ->get();
 
         $ageTickets =  $tickets->map(function ($item, $key) {
-            if ($item->create_ticket == null) {
+            $created = Carbon::parse($item->create_ticket);
+
+            if ($item->closing_date == null) {
                 $now = Carbon::now();
-                $created = Carbon::parse($item->create_ticket);
                 $difference = $now->diffInDays($created);
                 return [
                     'age' => $difference,
-                    'now' => $now->format('d-m-y'),
-                    'created' => $created->format('d-m-y')
+                    'now' => $now->format('d-m-Y'),
+                    'created' => $created->format('d-m-Y')
                 ];
             } else {
-                $created = Carbon::parse($item->create_ticket);
                 $clossed = Carbon::parse($item->closing_date);
-
                 $difference = $created->diffInDays($clossed);
                 return [
                     'age' => $difference,
-                    'clossed' => $clossed->format('d-m-y'),
-                    'created' => $created->format('d-m-y')
+                    'clossed' => $clossed->format('d-m-Y'),
+                    'created' => $created->format('d-m-Y')
                 ];
             }
         });
