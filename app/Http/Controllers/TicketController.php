@@ -597,12 +597,13 @@ class TicketController extends Controller
     {
         $tickets = Ticket::join('course_registered_users', 'tickets.course_registered_user_id', 'course_registered_users.id')
         ->where('course_registered_users.course_id', $id_course)
+        ->select('tickets.created_at as create_ticket')
         ->get();
 
         $ageTickets =  $tickets->map(function ($item, $key) {
             if ($item->closing_date == null) {
                 $now = Carbon::now();
-                $created = Carbon::parse($item->created_at);
+                $created = Carbon::parse($item->create_ticket);
                 $difference = $now->diffInDays($created);
                 return [
                     'age' => $difference,
@@ -610,7 +611,7 @@ class TicketController extends Controller
                     'created' => $created->format('d-m-y')
                 ];
             } else {
-                $created = Carbon::parse($item->created_at);
+                $created = Carbon::parse($item->create_ticket);
                 $clossed = Carbon::parse($item->closing_date);
 
                 $difference = $created->diffInDays($clossed);
