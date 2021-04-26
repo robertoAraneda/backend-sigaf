@@ -597,7 +597,7 @@ class TicketController extends Controller
     {
         $tickets = Ticket::join('course_registered_users', 'tickets.course_registered_user_id', 'course_registered_users.id')
         ->where('course_registered_users.course_id', $id_course)
-        ->select('tickets.created_at as create_ticket')
+        ->select('tickets.created_at as create_ticket', '*')
         ->get();
 
         $ageTickets =  $tickets->map(function ($item, $key) {
