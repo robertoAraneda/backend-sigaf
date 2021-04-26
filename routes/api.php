@@ -245,6 +245,7 @@ Route::group([
     Route::get('/tickets/{course}/source-chart', 'TicketController@sourceTicketsPieChart');
     Route::get('/tickets/{course}/type-chart', 'TicketController@typeTicketsPieChart');
     Route::get('/tickets/{course}/priority-chart', 'TicketController@priorityTicketsPieChart');
+    Route::get('/tickets/{course}/age-chart', 'TicketController@ageTicketsPieChart');
     Route::get('/tickets/{course}/status-operator-chart', 'TicketController@statusTicketsByOperatorChart');
     Route::get('/tickets/{course}/status-motive-chart', 'TicketController@motiveTicketsByStatusChart');
     Route::get('/tickets/{course}/total/count', 'TicketController@getTotalTicketCount');
