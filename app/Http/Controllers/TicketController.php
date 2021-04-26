@@ -601,7 +601,7 @@ class TicketController extends Controller
         ->get();
 
         $ageTickets =  $tickets->map(function ($item, $key) {
-            if ($item->closing_date == null) {
+            if ($item->create_ticket == null) {
                 $now = Carbon::now();
                 $created = Carbon::parse($item->create_ticket);
                 $difference = $now->diffInDays($created);
