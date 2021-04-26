@@ -602,21 +602,27 @@ class TicketController extends Controller
         $ageTickets =  $tickets->map(function ($item, $key) {
             if ($item->closing_date == null) {
                 $now = Carbon::now();
-                $created = Carbon::createFromFormat('Y-m-d H:i:s', $item->created_at);
+                $created = Carbon::parse($item->created_at);
                 $difference = $now->diffInDays($created);
                 return [
-                    'age' => $difference
+                    'age' => $difference,
+                    'now' => $now->format('d-m-y'),
+                    'created' => $created->format('d-m-y')
                 ];
             } else {
-                $created = Carbon::createFromFormat('Y-m-d H:i:s', $item->created_at);
-                $clossed = Carbon::createFromFormat('Y-m-d H:i:s', $item->closing_date);
+                $created = Carbon::parse($item->created_at);
+                $clossed = Carbon::parse($item->closing_date);
 
                 $difference = $created->diffInDays($clossed);
                 return [
-                    'age' => $difference
+                    'age' => $difference,
+                    'clossed' => $clossed->format('d-m-y'),
+                    'created' => $created->format('d-m-y')
                 ];
             }
         });
+
+        return $ageTickets;
 
         $sorted = $ageTickets->sortBy('age')->values();
 
