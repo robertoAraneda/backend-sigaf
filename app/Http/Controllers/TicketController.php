@@ -593,6 +593,78 @@ class TicketController extends Controller
 
     //charts
     //*Encontrar tickets para pie chart
+    public function ageTicketsPieChart($id_course)
+    {
+        $tickets = Ticket::join('course_registered_users', 'tickets.course_registered_user_id', 'course_registered_users.id')
+        ->where('course_registered_users.course_id', $id_course)
+        ->get();
+
+        $ageTickets =  $tickets->map(function ($item, $key) {
+            if ($item->closing_date == null) {
+                $now = Carbon::now();
+                $created = Carbon::createFromFormat('Y-m-d H:i:s', $item->created_at);
+                $difference = $now->diffInDays($created);
+                return [
+                    'age' => $difference
+                ];
+            } else {
+                $created = Carbon::createFromFormat('Y-m-d H:i:s', $item->created_at);
+                $clossed = Carbon::createFromFormat('Y-m-d H:i:s', $item->closing_date);
+
+                $difference = $created->diffInDays($clossed);
+                return [
+                    'age' => $difference
+                ];
+            }
+        });
+
+        $sorted = $ageTickets->sortBy('age')->values();
+
+        $filter = $sorted->groupBy(function ($item) {
+            switch ($item['age']) {
+                case 0:
+                    return '< 24h';
+                case 1:
+                    return '1 día';
+                default:
+                   return $item['age']." días";
+                break;
+            }
+        })->map(function ($item, $key) {
+            return [
+                'label' => $key,
+                'value' => count($item)
+            ];
+        });
+
+        $data = $filter->map(function ($item) {
+            return $item['value'];
+        })->values();
+
+        $labels = $filter->map(function ($item) {
+            return $item['label'];
+        })->values();
+
+        $backgroundColor = $filter->map(function ($item) {
+            return '#5cb85c';
+        })->values();
+
+        $chartData  =   [
+            'chartData' => [
+                'datasets' => [
+                    [
+                    'data' => $data ,
+                    'backgroundColor' => $backgroundColor
+                    ]
+                ],
+                 'labels' => $labels
+            ]
+        ];
+        return $this->response->success($chartData);
+    }
+
+    //charts
+    //*Encontrar tickets para pie chart
     public function typeTicketsPieChart($id_course)
     {
         $tickets = Ticket::join('course_registered_users', 'tickets.course_registered_user_id', 'course_registered_users.id')
