@@ -432,7 +432,6 @@ class TicketController extends Controller
         }
     }
 
-
     public function storeMultiple(Request $request)
     {
         try {
