@@ -260,4 +260,6 @@ Route::group([
     Route::get('/reports/courses/{course_id}/type-ticket/{initial_date}/{final_date?}', 'ReportController@typeTicketsReportChart');
     Route::get('/reports/courses/{course_id}/table-operator/{initial_date}/{final_date?}', 'ReportController@tableReport');
     Route::get('/reports/courses/{course_id}/data-card/{initial_date}/{final_date?}', 'ReportController@sideCardReportData');
+    Route::get('/reports/courses/{course_id}/excel', 'ReportController@excelTicketReport');
+    Route::get('/reports/courses/{course_id}/excel-download', 'ReportController@downloadExcelTicketReport');
 });
