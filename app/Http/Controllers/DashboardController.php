@@ -9,6 +9,7 @@ use App\Helpers\MakeResponse;
 use App\Models\CourseRegisteredUser;
 use App\Models\ActivityCourseRegisteredUser;
 use App\Models\Activity;
+use App\Models\Classroom;
 
 class DashboardController extends Controller
 {
@@ -29,6 +30,61 @@ class DashboardController extends Controller
     {
         $courseRegisteredUsers = CourseRegisteredUser::where('course_id', $course_id)
         ->where('is_sincronized', 1)
+        ->select('id', 'last_access_registered_moodle')
+        ->orderBy('id')
+        ->get();
+
+        $resignActivity = Activity::join('sections', 'activities.section_id', 'sections.id')
+        ->where('sections.description', 'Renuncia')
+        ->where('activities.course_id', $course_id)
+        ->select(
+            'activities.id as activity_id',
+            'activities.description as activity_description',
+            'sections.description as section_description'
+        )
+        ->first();
+
+        $resignUsers = $courseRegisteredUsers->filter(function ($courseRegisteredUser, $key) use ($resignActivity) {
+            $ActivityUser = ActivityCourseRegisteredUser::where('course_registered_user_id', $courseRegisteredUser->id)
+            ->where('activity_id', $resignActivity->activity_id)
+            ->first();
+
+            return $ActivityUser->status_moodle == 'Finalizado';
+        });
+
+        $activeUsers    = $courseRegisteredUsers->filter(function ($courseRegisteredUser, $key) use ($resignActivity) {
+            $ActivityUser = ActivityCourseRegisteredUser::where('course_registered_user_id', $courseRegisteredUser->id)
+            ->where('activity_id', $resignActivity->activity_id)
+            ->first();
+
+            return $ActivityUser->status_moodle != 'Finalizado';
+        })->values();
+
+
+        $activeCount    = $activeUsers->filter(function ($courseRegisteredUser, $key) {
+            return $courseRegisteredUser->last_access_registered_moodle != 'Nunca';
+        });
+
+        $inactiveCount  = $activeUsers->filter(function ($courseRegisteredUser, $key) {
+            return $courseRegisteredUser->last_access_registered_moodle == 'Nunca';
+        });
+
+        return $this->response->success(
+            [
+            'resign'   => $resignUsers->count(),
+            'active'   => $activeCount->count(),
+            'inactive' => $inactiveCount->count(),
+            'total'    => $courseRegisteredUsers->count()
+            ]
+        );
+    }
+
+    public function followStudentByClassroom($course_id, $classroom)
+    {
+        $classroom = Classroom::where('description', $classroom)->first();
+        $courseRegisteredUsers = CourseRegisteredUser::where('course_id', $course_id)
+        ->where('is_sincronized', 1)
+        ->where('classroom_id', $classroom->id)
         ->select('id', 'last_access_registered_moodle')
         ->orderBy('id')
         ->get();

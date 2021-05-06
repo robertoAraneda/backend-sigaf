@@ -259,6 +259,7 @@ Route::group([
     Route::get('/course-registered-users/{course}/status/count', 'TicketController@statusUsersChart');
     Route::get('/course-registered-users/{course}/logged-time/count', 'TicketController@timeLoggedUserChart');
     Route::get('/course-registered-users/{course}/follow-student-card', 'DashboardController@sideCardFollowStudent');
+    Route::get('/course-registered-users/{course}/classrooms/{classroom}/follow-student-classroom', 'DashboardController@followStudentByClassroom');
     Route::get('/course-registered-users/{course}/progress-chart', 'DashboardController@progressUserBySection');
     Route::get('/course-registered-users/{course}/progress-chart-avance', 'DashboardController@avanceProgressUserBySection');
 
