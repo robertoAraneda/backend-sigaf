@@ -163,6 +163,8 @@ Route::group([
     Route::get('/profiles/{profile}/course-registered-users', 'ProfileController@courseRegisteredUsers')->name('api.profiles.courseRegisteredUsers');
 
     Route::get('/courses/{course}/activities', 'CourseController@activities')->name('api.courses.activities');
+    Route::get('/courses/{course}/sections', 'CourseController@sections')->name('api.courses.activities');
+
     Route::get('/courses/{course}/registered-users', 'CourseController@registeredUsers')->name('api.courses.registeredUsers');
     Route::get('/courses/{course}/registered-users/{registered_user}', 'CourseController@registeredUser')->name('api.courses.registeredUsers.show');
     Route::get('/courses/{course}/registered-users/{registered_user}/activities', 'CourseController@userActivities')->name('api.courses.registeredUsers.activities');
@@ -256,6 +258,9 @@ Route::group([
     //dashboard
     Route::get('/course-registered-users/{course}/status/count', 'TicketController@statusUsersChart');
     Route::get('/course-registered-users/{course}/logged-time/count', 'TicketController@timeLoggedUserChart');
+    Route::get('/course-registered-users/{course}/follow-student-card', 'DashboardController@sideCardFollowStudent');
+    Route::get('/course-registered-users/{course}/progress-chart', 'DashboardController@progressUserBySection');
+    Route::get('/course-registered-users/{course}/progress-chart-avance', 'DashboardController@avanceProgressUserBySection');
 
     Route::get('/reports/courses/{course_id}/type-ticket/{initial_date}/{final_date?}', 'ReportController@typeTicketsReportChart');
     Route::get('/reports/courses/{course_id}/table-operator/{initial_date}/{final_date?}', 'ReportController@tableReport');
