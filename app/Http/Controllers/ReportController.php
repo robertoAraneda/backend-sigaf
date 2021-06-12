@@ -11,6 +11,12 @@ use App\Models\Ticket;
 use App\Models\TicketDetail;
 use App\Models\TicketReportExcel;
 use App\Models\Course;
+use App\Models\Classroom;
+use App\Models\CourseRegisteredUser;
+use App\Models\ActivityCourseRegisteredUser;
+use App\Models\Activity;
+use App\Models\Section;
+
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -205,7 +211,6 @@ class ReportController extends Controller
         ];
         return $this->response->success($chartData);
     }
-
     //table
     //*
     public function tableReport($id_course, $initialDate, $finalDate = null)
@@ -412,5 +417,798 @@ class ReportController extends Controller
         return (new TicketReportExport($course->description))->download('test.csv', \Maatwebsite\Excel\Excel::XLSX, [
       'Content-Type' => 'application/vnd.ms-excel',
     ]);
+    }
+
+    public function statusUsersClassroomChart($course_id, $classroom)
+    {
+        $classroom = Classroom::where('description', $classroom)->first();
+        $courseRegisteredUsers = CourseRegisteredUser::join('activity_course_users', 'course_registered_users.id', 'activity_course_users.course_registered_user_id')
+        ->join('activities', 'activities.id', 'activity_course_users.activity_id')
+        ->join('sections', 'sections.id', 'activities.section_id')
+        ->where('course_registered_users.course_id', $course_id)
+        ->where('classroom_id', $classroom->id)
+        ->where('sections.description', 'Renuncia')
+        ->select(DB::raw('count(course_registered_users.id) as count, activity_course_users.status_moodle as status'))
+        ->groupBy('activity_course_users.status_moodle')
+        ->get();
+
+
+        $data = $courseRegisteredUsers->map(function ($item) {
+            return $item->count;
+        });
+        $labels = $courseRegisteredUsers->map(function ($item) {
+            if ($item->status == '-') {
+                return 'Activo';
+            } elseif ($item->status == 'En curso') {
+                return 'Renuncia en curso';
+            } else {
+                return 'Renunciado';
+            }
+        });
+        $chartData  =   [
+            'chartData' => [
+                'datasets' => [
+                 [   'data' => $data ,
+                     'backgroundColor' => ['#5cb85c', '#F9A825', '#D32F2F']],
+                ],
+                'labels' => $labels
+             ]
+        ];
+        return $this->response->success($chartData);
+    }
+
+    public function progressUserClassroomBySection($course_id, $classroom)
+    {
+        $classroom = Classroom::where('description', $classroom)->first();
+
+        $courseRegisteredUsersGlobal = CourseRegisteredUser::where('course_id', $course_id)
+        ->join('registered_users', 'course_registered_users.registered_user_id', 'registered_users.id')
+        ->where('classroom_id', $classroom->id)
+        ->where('is_sincronized', 1)
+        ->select('course_registered_users.id', 'last_access_registered_moodle', 'rut')
+        ->orderBy('course_registered_users.id')
+        ->get();
+
+
+        $resignActivity = Activity::join('sections', 'activities.section_id', 'sections.id')
+        ->where('sections.description', 'Renuncia')
+        ->where('activities.course_id', $course_id)
+        ->select(
+            'activities.id as activity_id',
+            'activities.description as activity_description',
+            'sections.description as section_description'
+        )
+        ->first();
+
+        $courseRegisteredUsers = $courseRegisteredUsersGlobal->filter(function ($courseRegisteredUser, $key) use ($resignActivity) {
+            $activityUser = ActivityCourseRegisteredUser::where('course_registered_user_id', $courseRegisteredUser->id)
+            ->where('activity_id', $resignActivity->activity_id)
+            ->first();
+
+            return $activityUser->status_moodle != 'Finalizado';
+        })->values();
+
+
+        $activities = Activity::join('sections', 'activities.section_id', 'sections.id')
+        ->orWhere('sections.description', 'Encuesta')
+        ->orWhere('sections.description', 'Pre Test A')
+        ->orWhere('sections.description', 'Pre Test B')
+        ->orWhere('sections.description', 'Post Test A')
+        ->orWhere('sections.description', 'Post Test B')
+        ->orWhere('weighing', '>', 0)
+        ->select(
+            'activities.id as activity_id',
+            'activities.description as activity_description',
+            'sections.description as section_description',
+            'activities.course_id as course_id'
+        )
+        ->orderBy('sections.description')
+        ->get()->filter(function ($item, $key) use ($course_id) {
+            return $item->course_id == $course_id;
+        })->values();
+
+        $mapped = $activities->map(function ($activity, $key) use ($courseRegisteredUsers) {
+            $gradedEvaluation = 0;
+            $notGradedEvaluation = 0;
+            $total =0;
+            $totalFormB =0;
+            $totalFormA =0;
+
+            foreach ($courseRegisteredUsers as $key => $courseRegisteredUser) {
+                $activityUser = ActivityCourseRegisteredUser::where('course_registered_user_id', $courseRegisteredUser->id)
+                    ->where('activity_id', $activity->activity_id)
+                    ->first();
+
+                if (is_numeric($activityUser->qualification_moodle)) {
+                    $gradedEvaluation ++;
+                } else {
+                    $dv = explode('-', $courseRegisteredUser->rut);
+
+                    switch ($activity->section_description) {
+                         case 'Post Test B':
+                            if ($dv[1] != '0') {
+                                if ($dv[1] == 'K') {
+                                    if ($activityUser->status_moodle == 'Finalizado') {
+                                        $gradedEvaluation ++;
+                                    } else {
+                                        $notGradedEvaluation++;
+                                    }
+                                    $totalFormB++;
+                                } elseif ($dv[1] % 2 != 0) {
+                                    if ($activityUser->status_moodle == 'Finalizado') {
+                                        $gradedEvaluation ++;
+                                    } else {
+                                        $notGradedEvaluation++;
+                                    }
+                                    $totalFormB++;
+                                }
+                            }
+                             break;
+                        case 'Pre Test B':
+                            if ($dv[1] != '0') {
+                                if ($dv[1] == 'K') {
+                                    if ($activityUser->status_moodle == 'Finalizado') {
+                                        $gradedEvaluation ++;
+                                    } else {
+                                        $notGradedEvaluation++;
+                                    }
+                                    $totalFormB++;
+                                } elseif ($dv[1] % 2 != 0) {
+                                    if ($activityUser->status_moodle == 'Finalizado') {
+                                        $gradedEvaluation ++;
+                                    } else {
+                                        $notGradedEvaluation++;
+                                    }
+                                    $totalFormB++;
+                                }
+                            }
+                             break;
+                        case 'Post Test A':
+                             if ($dv[1] != 'K') {
+                                 if ($dv[1] % 2 == 0) {
+                                     if ($activityUser->status_moodle == 'Finalizado') {
+                                         $gradedEvaluation ++;
+                                     } else {
+                                         $notGradedEvaluation++;
+                                     }
+                                     $totalFormA++;
+                                 }
+                             }
+                             break;
+                        case 'Pre Test A':
+                             if ($dv[1] != 'K') {
+                                 if ($dv[1] % 2 == 0) {
+                                     if ($activityUser->status_moodle == 'Finalizado') {
+                                         $gradedEvaluation ++;
+                                     } else {
+                                         $notGradedEvaluation++;
+                                     }
+                                     $totalFormA++;
+                                 }
+                             }
+                             break;
+                        case 'Encuesta':
+                                 if ($activity->status_moodle == 'Finalizado') {
+                                     $gradedEvaluation ++;
+                                 } else {
+                                     $notGradedEvaluation++;
+                                 }
+                             break;
+
+                        default:
+                            $notGradedEvaluation++;
+                            break;
+
+                     }
+                }
+                $total++;
+            }
+            return [
+                'section'   => $activity->section_description,
+                'graded'    => $gradedEvaluation,
+                'notGraded' => $notGradedEvaluation,
+                'formA'     => $totalFormA,
+                'formB'     => $totalFormB,
+                'total'     => $total
+            ];
+        });
+        $collectionMapped = collect($mapped);
+        $groupedBySection = $collectionMapped->groupBy('section')->map(function ($sections, $key) {
+            return [
+                'total'         => array_reduce($sections->all(), function ($accumulator, $item) {
+                    $accumulator += $item['total'];
+                    return $accumulator;
+                }, 0),
+                'graded'        => array_reduce($sections->all(), function ($accumulator, $item) {
+                    $accumulator += $item['graded'];
+                    return $accumulator;
+                }, 0),
+                'notGraded'     => array_reduce($sections->all(), function ($accumulator, $item) {
+                    $accumulator += $item['notGraded'];
+                    return $accumulator;
+                }, 0),
+                'totalFormA'    => array_reduce($sections->all(), function ($accumulator, $item) {
+                    $accumulator += $item['formA'];
+                    return $accumulator;
+                }, 0),
+                'totalFormB'    => array_reduce($sections->all(), function ($accumulator, $item) {
+                    $accumulator += $item['formB'];
+                    return $accumulator;
+                }, 0),
+                'section'       => $sections[0]['section'],
+            ];
+        })->values();
+
+      
+
+        $mappedArray =  $groupedBySection->map(function ($item, $key) {
+            if ($item['totalFormA'] == 0 && $item['totalFormB']== 0) {
+                return  [
+                    'gradedRatio' => round($item['graded'] / $item['total'] * 100, 1),
+                    'notGradedRatio' => round($item['notGraded'] / $item['total'] * 100, 1),
+                    'section' => $item['section']
+                ];
+            } else {
+                if ($item['totalFormA'] > 0) {
+                    return  [
+                    'gradedRatio' => round($item['graded'] / $item['totalFormA'] * 100, 1),
+                    'notGradedRatio' => round($item['notGraded'] / $item['totalFormA'] * 100, 1),
+                       'section' => $item['section']
+                    ];
+                }
+
+                if ($item['totalFormB'] > 0) {
+                    return  [
+                    'gradedRatio' => round($item['graded'] / $item['totalFormB'] * 100, 1),
+                    'notGradedRatio' => round($item['notGraded'] / $item['totalFormB'] * 100, 1),
+                    'section' => $item['section']
+                    ];
+                }
+            }
+        })->values();
+
+        $graded = $mappedArray->map(function ($item, $key) {
+            return $item['gradedRatio'];
+        });
+
+        $notGraded = $mappedArray->map(function ($item, $key) {
+            return $item['notGradedRatio'];
+        });
+
+        $labels = $mappedArray->map(function ($item, $key) {
+            return $item['section'];
+        });
+
+        $chartData = [
+                    'chartData' => [
+                            'datasets' => [
+                            [   'data' => $graded ,
+                                'backgroundColor' => '#5cb85c',
+                                'label' => 'Realizado'
+                            ],
+                            [   'data' => $notGraded ,
+                                'backgroundColor' => '#d32f2f',
+                                'label' => 'No realizado'
+                            ],
+                        ],
+                        'labels' => $labels
+                     ]
+         ];
+        return $this->response->success($chartData);
+    }
+
+    public function exportConsolidateStudentReport($course_id)
+    {
+        $courseRegisteredUsersGlobal = CourseRegisteredUser::where('course_id', $course_id)
+        ->where('is_sincronized', 1)
+        ->orderBy('course_registered_users.id')
+        ->with(['course', 'registeredUser', 'profile','classroom', 'activityCourseUsers.activity.section'])
+        ->get();
+
+        $courseRegisteredGrouppedByClassroom =  $courseRegisteredUsersGlobal->groupBy(function ($item, $key) {
+            return $item->classroom->description;
+        });
+
+        return $courseRegisteredGrouppedByClassroom->map(function ($item, $key) {
+            $tutor = $item->filter(function ($item, $key) {
+                return $item->profile->description == 'Tutor';
+            })->values();
+
+            $initialEnrollment = $item->filter(function ($item, $key) {
+                return $item->profile->description != 'Tutor';
+            });
+
+            $notParticipating = $initialEnrollment->filter(function ($item, $key) {
+                return $item->last_access_registered_moodle == 'Nunca';
+            });
+
+            $active = 0;
+            $quit = 0;
+            $preTest = 0;
+            $total = 0;
+            $unit1 = 0;
+       
+            foreach ($initialEnrollment as $key => $value) {
+                //return $value;
+
+                foreach ($initialEnrollment as $key => $value) {
+                    $test =  $value->activityCourseUsers->map(function ($item, $value) {
+                        // return $item;
+                        return [
+                        'section'=> $item->activity->section->description,
+                        'activity' => $item->activity->description,
+                    ] ;
+                    });
+                    return $value;
+                }
+
+            
+                foreach ($value->activityCourseUsers as $key => $value) {
+                    if ($value->activity->section->description == 'Renuncia' && $value->status_moodle != 'Finalizado') {
+                        $active += 1;
+                    }
+
+                    if ($value->activity->section->description == 'Renuncia' && $value->status_moodle == 'Finalizado') {
+                        $quit += 1;
+                    }
+
+                    if ($value->activity->section->description == 'Pre Test A'  && $value->status_moodle == 'Finalizado') {
+                        // return $value;
+                        $preTest += 1;
+                    }
+
+                    if ($value->activity->section->description == 'Pre Test B'  && $value->status_moodle == 'Finalizado') {
+                        $preTest += 1;
+                    }
+                }
+                $total += 1;
+            }
+
+
+
+            return [
+                'classroom' => $key,
+                'tutor' => $tutor[0]->registeredUser->name. " ".$tutor[0]->registeredUser->last_name." ".$tutor[0]->registeredUser->mother_last_name,
+                'initialEnrollment' =>  $initialEnrollment->count(),
+                'notParticipating' => $notParticipating->count(),
+                'updatedEnrollment' => $initialEnrollment->count() - $notParticipating->count(),
+                'active' => $active,
+                'quit' => $quit,
+                'preTestCount' => $preTest,
+                'preTestPercent' => round($preTest/$total * 100, 1)."%",
+                'total' => $total,
+                'unit1' => $unit1,
+                'test' => $test
+        
+            ];
+        });
+    }
+
+    public function progressUserClassroomByActivity($course_id, $classroom, $section)
+    {
+        $classroom = Classroom::where('description', $classroom)->first();
+        $section = Section::where('description', $section)->first();
+
+        $courseRegisteredUsersGlobal = CourseRegisteredUser::where('course_id', $course_id)
+        ->join('registered_users', 'course_registered_users.registered_user_id', 'registered_users.id')
+        ->where('classroom_id', $classroom->id)
+        ->where('is_sincronized', 1)
+        ->select('course_registered_users.id', 'last_access_registered_moodle', 'rut')
+        ->orderBy('course_registered_users.id')
+        ->get();
+
+
+        $resignActivity = Activity::join('sections', 'activities.section_id', 'sections.id')
+        ->where('sections.description', 'Renuncia')
+        ->where('activities.course_id', $course_id)
+        ->select(
+            'activities.id as activity_id',
+            'activities.description as activity_description',
+            'sections.description as section_description'
+        )
+        ->first();
+
+        $courseRegisteredUsers = $courseRegisteredUsersGlobal->filter(function ($courseRegisteredUser, $key) use ($resignActivity) {
+            $activityUser = ActivityCourseRegisteredUser::where('course_registered_user_id', $courseRegisteredUser->id)
+            ->where('activity_id', $resignActivity->activity_id)
+            ->first();
+
+            return $activityUser->status_moodle != 'Finalizado';
+        })->values();
+
+        $activities = Activity::join('sections', 'activities.section_id', 'sections.id')
+        ->where('sections.id', $section->id)
+        ->select(
+            'activities.id as activity_id',
+            'activities.description as activity_description',
+            'sections.description as section_description',
+            'activities.course_id as course_id'
+        )
+        ->orderBy('sections.description')
+        ->get()->filter(function ($item, $key) use ($course_id) {
+            return $item->course_id == $course_id;
+        })->values();
+
+        $mapped = $activities->map(function ($activity, $key) use ($courseRegisteredUsers) {
+            $gradedEvaluation = 0;
+            $notGradedEvaluation = 0;
+            $total =0;
+            $totalFormB =0;
+            $totalFormA =0;
+
+            foreach ($courseRegisteredUsers as $key => $courseRegisteredUser) {
+                $activityUser = ActivityCourseRegisteredUser::where('course_registered_user_id', $courseRegisteredUser->id)
+                    ->where('activity_id', $activity->activity_id)
+                    ->first();
+
+                if (is_numeric($activityUser->qualification_moodle)) {
+                    $gradedEvaluation ++;
+                } else {
+                    $dv = explode('-', $courseRegisteredUser->rut);
+
+                    switch ($activity->section_description) {
+                         case 'Post Test B':
+                            if ($dv[1] != '0') {
+                                if ($dv[1] == 'K') {
+                                    if ($activityUser->status_moodle == 'Finalizado') {
+                                        $gradedEvaluation ++;
+                                    } else {
+                                        $notGradedEvaluation++;
+                                    }
+                                    $totalFormB++;
+                                } elseif ($dv[1] % 2 != 0) {
+                                    if ($activityUser->status_moodle == 'Finalizado') {
+                                        $gradedEvaluation ++;
+                                    } else {
+                                        $notGradedEvaluation++;
+                                    }
+                                    $totalFormB++;
+                                }
+                            }
+                             break;
+                        case 'Pre Test B':
+                            if ($dv[1] != '0') {
+                                if ($dv[1] == 'K') {
+                                    if ($activityUser->status_moodle == 'Finalizado') {
+                                        $gradedEvaluation ++;
+                                    } else {
+                                        $notGradedEvaluation++;
+                                    }
+                                    $totalFormB++;
+                                } elseif ($dv[1] % 2 != 0) {
+                                    if ($activityUser->status_moodle == 'Finalizado') {
+                                        $gradedEvaluation ++;
+                                    } else {
+                                        $notGradedEvaluation++;
+                                    }
+                                    $totalFormB++;
+                                }
+                            }
+                             break;
+                        case 'Post Test A':
+                             if ($dv[1] != 'K') {
+                                 if ($dv[1] % 2 == 0) {
+                                     if ($activityUser->status_moodle == 'Finalizado') {
+                                         $gradedEvaluation ++;
+                                     } else {
+                                         $notGradedEvaluation++;
+                                     }
+                                     $totalFormA++;
+                                 }
+                             }
+                             break;
+                        case 'Pre Test A':
+                             if ($dv[1] != 'K') {
+                                 if ($dv[1] % 2 == 0) {
+                                     if ($activityUser->status_moodle == 'Finalizado') {
+                                         $gradedEvaluation ++;
+                                     } else {
+                                         $notGradedEvaluation++;
+                                     }
+                                     $totalFormA++;
+                                 }
+                             }
+                             break;
+                        case 'Encuesta':
+                                 if ($activity->status_moodle == 'Finalizado') {
+                                     $gradedEvaluation ++;
+                                 } else {
+                                     $notGradedEvaluation++;
+                                 }
+                             break;
+
+                        default:
+                            $notGradedEvaluation++;
+                            break;
+
+                     }
+                }
+                $total++;
+            }
+            return [
+                'activity'   => $activity->activity_description,
+                'graded'    => $gradedEvaluation,
+                'notGraded' => $notGradedEvaluation,
+                'formA'     => $totalFormA,
+                'formB'     => $totalFormB,
+                'total'     => $total
+            ];
+        });
+
+        $collectionMapped = collect($mapped);
+
+        $mappedArray =  $mapped->map(function ($item, $key) {
+            if ($item['formA'] == 0 && $item['formB']== 0) {
+                return  [
+                    'gradedRatio' => round($item['graded'] / $item['total'] * 100, 1),
+                    'notGradedRatio' => round($item['notGraded'] / $item['total'] * 100, 1),
+                    'activity' => $item['activity']
+                ];
+            } else {
+                if ($item['formA'] > 0) {
+                    return  [
+                    'gradedRatio' => round($item['graded'] / $item['formA'] * 100, 1),
+                    'notGradedRatio' => round($item['notGraded'] / $item['formA'] * 100, 1),
+                    'activity' => $item['activity']
+                    ];
+                }
+
+                if ($item['formB'] > 0) {
+                    return  [
+                    'gradedRatio' => round($item['graded'] / $item['formB'] * 100, 1),
+                    'notGradedRatio' => round($item['notGraded'] / $item['formB'] * 100, 1),
+                    'activity' => $item['activity']
+                    ];
+                }
+            }
+        })->values();
+
+        $graded = $mappedArray->map(function ($item, $key) {
+            return $item['gradedRatio'];
+        });
+
+        $notGraded = $mappedArray->map(function ($item, $key) {
+            return $item['notGradedRatio'];
+        });
+
+        $labels = $mappedArray->map(function ($item, $key) {
+            // return substr($item['activity'], 0, 35)."...";
+
+            return $item['activity'];
+        });
+
+        $chartData = [
+                    'chartData' => [
+                            'datasets' => [
+                            [   'data' => $graded ,
+                                'backgroundColor' => '#5cb85c',
+                                'label' => 'Realizado'
+                            ],
+                            [   'data' => $notGraded ,
+                                'backgroundColor' => '#d32f2f',
+                                'label' => 'No realizado'
+                            ],
+                        ],
+                        'labels' => $labels
+                     ]
+         ];
+        return $this->response->success($chartData);
+    }
+
+    public function avanceProgressUserClassroomByActivity($course_id, $classroom, $section)
+    {
+        $classroom = Classroom::where('description', $classroom)->first();
+        $section = Section::where('description', $section)->first();
+
+        $courseRegisteredUsersGlobal = CourseRegisteredUser::where('course_id', $course_id)
+        ->join('registered_users', 'course_registered_users.registered_user_id', 'registered_users.id')
+        ->where('classroom_id', $classroom->id)
+        ->where('is_sincronized', 1)
+        ->select('course_registered_users.id', 'last_access_registered_moodle', 'rut')
+        ->orderBy('course_registered_users.id')
+        ->get();
+
+
+        $resignActivity = Activity::join('sections', 'activities.section_id', 'sections.id')
+        ->where('sections.description', 'Renuncia')
+        ->where('activities.course_id', $course_id)
+        ->select(
+            'activities.id as activity_id',
+            'activities.description as activity_description',
+            'sections.description as section_description'
+        )
+        ->first();
+
+        $courseRegisteredUsers = $courseRegisteredUsersGlobal->filter(function ($courseRegisteredUser, $key) use ($resignActivity) {
+            $activityUser = ActivityCourseRegisteredUser::where('course_registered_user_id', $courseRegisteredUser->id)
+            ->where('activity_id', $resignActivity->activity_id)
+            ->first();
+
+            return $activityUser->status_moodle != 'Finalizado';
+        })->values();
+
+
+        $activities = Activity::join('sections', 'activities.section_id', 'sections.id')
+        ->where('sections.id', $section->id)
+        ->select(
+            'activities.id as activity_id',
+            'activities.description as activity_description',
+            'sections.description as section_description',
+            'activities.course_id as course_id'
+        )
+        ->orderBy('sections.description')
+        ->get()->filter(function ($item, $key) use ($course_id) {
+            return $item->course_id == $course_id;
+        })->values();
+
+
+        $mapped = $activities->map(function ($activity, $key) use ($courseRegisteredUsers) {
+            $gradedEvaluation = 0;
+            $notGradedEvaluation = 0;
+            $total =0;
+            $totalFormB =0;
+            $totalFormA =0;
+
+            foreach ($courseRegisteredUsers as $key => $courseRegisteredUser) {
+                $activityUser = ActivityCourseRegisteredUser::where('course_registered_user_id', $courseRegisteredUser->id)
+                    ->where('activity_id', $activity->activity_id)
+                    ->first();
+
+                $statusMoodleArray = ['Sin entrega', '-', '', 'No'];
+
+                $dv = explode('-', $courseRegisteredUser->rut);
+
+                switch ($activity->section_description) {
+                         case 'Post Test B':
+                            if ($dv[1] != '0') {
+                                if ($dv[1] == 'K') {
+                                    if (!in_array(trim($activityUser->status_moodle), $statusMoodleArray)) {
+                                        $gradedEvaluation ++;
+                                    } else {
+                                        $notGradedEvaluation++;
+                                    }
+                                    $totalFormB++;
+                                } elseif ($dv[1] % 2 != 0) {
+                                    if (!in_array(trim($activityUser->status_moodle), $statusMoodleArray)) {
+                                        $gradedEvaluation ++;
+                                    } else {
+                                        $notGradedEvaluation++;
+                                    }
+                                    $totalFormB++;
+                                }
+                            }
+                             break;
+                        case 'Pre Test B':
+                            if ($dv[1] != '0') {
+                                if ($dv[1] == 'K') {
+                                    if (!in_array(trim($activityUser->status_moodle), $statusMoodleArray)) {
+                                        $gradedEvaluation ++;
+                                    } else {
+                                        $notGradedEvaluation++;
+                                    }
+                                    $totalFormB++;
+                                } elseif ($dv[1] % 2 != 0) {
+                                    if (!in_array(trim($activityUser->status_moodle), $statusMoodleArray)) {
+                                        $gradedEvaluation ++;
+                                    } else {
+                                        $notGradedEvaluation++;
+                                    }
+                                    $totalFormB++;
+                                }
+                            }
+                             break;
+                        case 'Post Test A':
+                             if ($dv[1] != 'K') {
+                                 if ($dv[1] % 2 == 0) {
+                                     if (!in_array(trim($activityUser->status_moodle), $statusMoodleArray)) {
+                                         $gradedEvaluation ++;
+                                     } else {
+                                         $notGradedEvaluation++;
+                                     }
+                                     $totalFormA++;
+                                 }
+                             }
+                             break;
+                        case 'Pre Test A':
+                             if ($dv[1] != 'K') {
+                                 if ($dv[1] % 2 == 0) {
+                                     if (!in_array(trim($activityUser->status_moodle), $statusMoodleArray)) {
+                                         $gradedEvaluation ++;
+                                     } else {
+                                         $notGradedEvaluation++;
+                                     }
+                                     $totalFormA++;
+                                 }
+                             }
+                             break;
+                        case 'Encuesta':
+                                 if (!in_array(trim($activityUser->status_moodle), $statusMoodleArray)) {
+                                     $gradedEvaluation ++;
+                                 } else {
+                                     $notGradedEvaluation++;
+                                 }
+                             break;
+
+                        default:
+                        if (!in_array(trim($activityUser->status_moodle), $statusMoodleArray)) {
+                            $gradedEvaluation++;
+                        } else {
+                            $notGradedEvaluation++;
+                        }
+                         
+                            break;
+
+                     }
+                
+                $total++;
+            }
+            return [
+                'activity'   => $activity->activity_description,
+                'graded'    => $gradedEvaluation,
+                'notGraded' => $notGradedEvaluation,
+                'formA'     => $totalFormA,
+                'formB'     => $totalFormB,
+                'total'     => $total
+            ];
+        });
+        $collectionMapped = collect($mapped);
+
+        $mappedArray =  $mapped->map(function ($item, $key) {
+            if ($item['formA'] == 0 && $item['formB']== 0) {
+                return  [
+                    'gradedRatio' => round($item['graded'] / $item['total'] * 100, 1),
+                    'notGradedRatio' => round($item['notGraded'] / $item['total'] * 100, 1),
+                    'activity' => $item['activity']
+                ];
+            } else {
+                if ($item['formA'] > 0) {
+                    return  [
+                    'gradedRatio' => round($item['graded'] / $item['formA'] * 100, 1),
+                    'notGradedRatio' => round($item['notGraded'] / $item['formA'] * 100, 1),
+                    'activity' => $item['activity']
+                    ];
+                }
+
+                if ($item['formB'] > 0) {
+                    return  [
+                    'gradedRatio' => round($item['graded'] / $item['formB'] * 100, 1),
+                    'notGradedRatio' => round($item['notGraded'] / $item['formB'] * 100, 1),
+                    'activity' => $item['activity']
+                    ];
+                }
+            }
+        })->values();
+
+        $graded = $mappedArray->map(function ($item, $key) {
+            return $item['gradedRatio'];
+        });
+
+        $notGraded = $mappedArray->map(function ($item, $key) {
+            return $item['notGradedRatio'];
+        });
+
+        $labels = $mappedArray->map(function ($item, $key) {
+            // return substr($item['activity'], 0, 35)."...";
+
+            return $item['activity'];
+        });
+
+
+        $chartData = [
+                    'chartData' => [
+                            'datasets' => [
+                            [   'data' => $graded ,
+                                'backgroundColor' => '#5cb85c',
+                                'label' => 'Realizado'
+                            ],
+                            [   'data' => $notGraded ,
+                                'backgroundColor' => '#d32f2f',
+                                'label' => 'No realizado'
+                            ],
+                        ],
+                        'labels' => $labels
+                     ]
+         ];
+        return $this->response->success($chartData);
     }
 }

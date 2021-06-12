@@ -398,7 +398,7 @@ class TicketController extends Controller
                 return $this->response->unauthorized();
             }
    
-            $tickets = new TicketCollection(Ticket::where('user_assigned_id', $operator)->orderBy('created_at', 'asc')->get());
+            $tickets = new TicketCollection(Ticket::where('user_assigned_id', $operator)->orderBy('created_at', 'desc')->limit(200)->get());
 
             if (!isset($tickets)) {
                 return $this->response->noContent();
@@ -420,7 +420,7 @@ class TicketController extends Controller
             $initial = Carbon::createFromFormat('Y-m-d', $initialDate)->format('Y/m/d');
             $final = Carbon::createFromFormat('Y-m-d', $finalDate)->format('Y/m/d')." 23:59:59";
    
-            $tickets = new TicketCollection(Ticket::whereBetween('created_at', [$initial, $final])->orderBy('created_at', 'asc')->get());
+            $tickets = new TicketCollection(Ticket::whereBetween('created_at', [$initial, $final])->orderBy('created_at', 'desc')->limit(200)->get());
 
             if (!isset($tickets)) {
                 return $this->response->noContent();

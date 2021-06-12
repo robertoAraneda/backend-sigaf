@@ -257,9 +257,14 @@ Route::group([
 
     //dashboard
     Route::get('/course-registered-users/{course}/status/count', 'TicketController@statusUsersChart');
+    Route::get('/course-registered-users/{course}/classrooms/{classroom}/status-user-classroom', 'ReportController@statusUsersClassroomChart');
     Route::get('/course-registered-users/{course}/logged-time/count', 'TicketController@timeLoggedUserChart');
     Route::get('/course-registered-users/{course}/follow-student-card', 'DashboardController@sideCardFollowStudent');
+    Route::get('/course-registered-users/{course}/classrooms/{classroom}/follow-student-classroom', 'DashboardController@followStudentByClassroom');
     Route::get('/course-registered-users/{course}/progress-chart', 'DashboardController@progressUserBySection');
+    Route::get('/course-registered-users/{course}/classrooms/{classroom}/progress-classroom-chart', 'ReportController@progressUserClassroomBySection');
+    Route::get('/course-registered-users/{course}/classrooms/{classroom}/sections/{section}/progress-activities', 'ReportController@progressUserClassroomByActivity');
+    Route::get('/course-registered-users/{course}/classrooms/{classroom}/sections/{section}/progress-activities-avance', 'ReportController@avanceProgressUserClassroomByActivity');
     Route::get('/course-registered-users/{course}/progress-chart-avance', 'DashboardController@avanceProgressUserBySection');
 
     Route::get('/reports/courses/{course_id}/type-ticket/{initial_date}/{final_date?}', 'ReportController@typeTicketsReportChart');
@@ -267,4 +272,5 @@ Route::group([
     Route::get('/reports/courses/{course_id}/data-card/{initial_date}/{final_date?}', 'ReportController@sideCardReportData');
     Route::get('/reports/courses/{course_id}/excel', 'ReportController@excelTicketReport');
     Route::get('/reports/courses/{course_id}/excel-download', 'ReportController@downloadExcelTicketReport');
+    Route::get('/reports/courses/{course_id}/classrooms/excel-download-follow', 'ReportController@exportConsolidateStudentReport');
 });
