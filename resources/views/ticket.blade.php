@@ -46,13 +46,18 @@
           <img src="<?php echo asset('/storage/wspcursos.png')?>"/>
       </div>
       <div style="text-align: center;">
-          <img src="{{public_path('/storage/wspcursos.png')}}"/>
+          <img src="{{public_path("/storage/wspcursos.png")}}"/>
+          {{public_path("hola1")}}
+          <?php echo public_path("hola2")?>
       </div>
       <div style="text-align: center;">
           <img src="{{asset('/storage/wspcursos.png')}}"/>
       </div>
       <div style="text-align: center;">
           <img src="http://sigaf.iie.cl/backend-sigaf/public/storage/wspcursos.png"/>
+      </div>
+      <div style="text-align: center;">
+          <strong>WhathsApp:</strong> +56452781958
       </div>
   </footer>
 </body>
