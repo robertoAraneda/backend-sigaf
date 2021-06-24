@@ -43,13 +43,16 @@
       <strong>Fono contacto:</strong> 45 2781958
     </div>
       <div style="text-align: center;">
-          <img src="<?php echo asset('storage/wspcursos.png')?>"/>
+          <img src="<?php echo asset('/storage/wspcursos.png')?>"/>
       </div>
       <div style="text-align: center;">
-          <img src="{{public_path('storage/wspcursos.png')}}"/>
+          <img src="{{public_path('/storage/wspcursos.png')}}"/>
       </div>
       <div style="text-align: center;">
-          <img src="{{asset('storage/wspcursos.png')}}"/>
+          <img src="{{asset('/storage/wspcursos.png')}}"/>
+      </div>
+      <div style="text-align: center;">
+          <img src="http://sigaf.iie.cl/backend-sigaf/public/storage/wspcursos.png"/>
       </div>
   </footer>
 </body>
