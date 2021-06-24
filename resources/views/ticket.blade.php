@@ -43,7 +43,7 @@
       <strong>Fono contacto:</strong> 45 2781958
     </div>
       <div style="text-align: center;">
-          <img src="<?php echo asset("storage/app/wspcursos.png")?>"/>
+          <img src="<?php echo asset('storage/wspcursos.png')?>"/>
       </div>
   </footer>
 </body>
