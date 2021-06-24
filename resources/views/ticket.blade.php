@@ -42,6 +42,9 @@
     <div style="text-align: center;">
       <strong>Fono contacto:</strong> 45 2781958
     </div>
+      <div style="text-align: center;">
+          <img src="<?php echo asset("storage/app/wspcursos.png")?>"/>
+      </div>
   </footer>
 </body>
 
