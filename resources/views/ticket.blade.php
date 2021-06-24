@@ -45,6 +45,12 @@
       <div style="text-align: center;">
           <img src="<?php echo asset('storage/wspcursos.png')?>"/>
       </div>
+      <div style="text-align: center;">
+          <img src="{{public_path('storage/wspcursos.png')}}"/>
+      </div>
+      <div style="text-align: center;">
+          <img src="{{asset('storage/wspcursos.png')}}"/>
+      </div>
   </footer>
 </body>
 
