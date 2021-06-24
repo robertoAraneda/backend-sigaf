@@ -39,7 +39,7 @@ class LogEditingTicket extends Model
           ? Carbon::parse($this->created_at)->format('d-m-Y')
           : null,
         'updatedAt' => $this->updated_at != null
-          ? Carbon::parse($this->created_at)->format('d-m-Y')
+          ? Carbon::parse($this->updated_at)->format('d-m-Y')
           : null
       ],
     ];
