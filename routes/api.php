@@ -19,7 +19,6 @@ use Illuminate\Support\Facades\Route;
 // });
 
 
-
 /**routes para sincronizar la app de forma masiva (inicial) */
 Route::get('/fetch/all', 'SynchronizeController@synchronizeAppInit')->name('sync.all');
 Route::get('/fetch/all/platforms-categories', 'SynchronizeController@syncronizeAppPlatformsCategoriesDaily')->name('sync.platforms');
@@ -39,10 +38,12 @@ Route::get('/fetch/daily/user-registered-activities', 'SynchronizeController@syn
 
 Route::get('/fetch/course-users/{idCourseMoodle}/users', 'SynchronizeController@syncUsersByCourse');
 
+/* v3 by Betosky*/
+Route::get('v3/sync/course-users/{idCursoMoodle}/users', 'SynchronizeMoodleController@syncUsersByCourse');
 
+Route::get('v3/sync/course-user/{idCursoMoodle}/user/{rutInput}', 'SynchronizeMoodleController@syncUserByCourseRut');
 
-
-
+Route::get('v3/sync/finish-activities/{idCursoMoodle}', 'SynchronizeMoodleController@finalizacionActividad');
 
 
 /**rutas api */
