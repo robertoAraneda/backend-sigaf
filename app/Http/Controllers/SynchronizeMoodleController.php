@@ -42,7 +42,7 @@ class SynchronizeMoodleController extends Controller
         $this->agent = $this->detectBrowser();
         $ruta_actual = getcwd() . "\cookies";
 
-        $this->cookieFile = tempnam($ruta_actual, "../cookies");
+        $this->cookieFile = @tempnam($ruta_actual, "../cookies");
 
          $postfields = array( "username" => $this->username,
                                 "password" => $this->password,
