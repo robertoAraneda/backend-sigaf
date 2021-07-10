@@ -76,7 +76,7 @@ class SynchronizeMoodleController extends Controller
     {
         $curso = Course::where("id_course_moodle", $idCursoMoodle)->first();
         if(!isset($curso)){
-            return response()->json(['success' => false, 'error' => 'La url no retornó datos. URL: $url'], 500);
+            return response()->json(['success' => false, 'error' => 'Curso no se encuentra en el sistema.'], 500);
             return;
         }
 
@@ -167,7 +167,6 @@ class SynchronizeMoodleController extends Controller
                                                             ->first();
                                             if(isset($userCurso))
                                             {
-                                                // Guardamos su último acceso
                                                 $userCurso->last_access_registered_moodle = $ultacceso;
                                                 $userCurso->save();
                                                 $cont_users++;
@@ -199,7 +198,7 @@ class SynchronizeMoodleController extends Controller
     {
         $curso = Course::where("id_course_moodle", $idCursoMoodle)->first();
         if(!isset($curso)){
-            return response()->json(['success' => false, 'error' => 'La url no retornó datos. URL: $url'], 500);
+            return response()->json(['success' => false, 'error' => 'Curso no se encuentra en el sistema.'], 500);
             return;
         }
         $this->loginMoodle();
@@ -306,250 +305,225 @@ class SynchronizeMoodleController extends Controller
         );
     }
 
-    public function finalizacionActividad ($IdCurso, $start = 0, $vueltas = 50)
+    public function syncActivitiesUsers ($IdCurso)
     {
-        $this->loginMoodle();
-        echo "<br>finalizacion Actividad MINEDUC ($start)".
-        $url = $this->base_url . "report/progress/index.php?course=$IdCurso&perpage=1000&start=$start";
-        echo "<br>";
-        if ($start > $vueltas)
-            {
-                // Si ya va en la 3a vuelta sale
-                return array ();
-            }
-
-        $html = $this->runCurl($url);
-        // print_r($html);exit;
-        $doc = new \DOMDocument();
-        libxml_use_internal_errors(true);
-        $doc->loadHTML($html);
-        $tables = $doc->getElementsByTagName("table");
-        print_r($tables);
-        if ($tables == null)
-            {
-                return response()->json(['success' => false, 'error' => 'No hay tablas de matriculacion.'], 500);
-                return;
-            }
-
+        $ejecucion = false;
+        $actividadesUsers = array();
         $curso = Course::where("id_course_moodle", $IdCurso)->first();
-        if(!isset($curso)){
-            echo "<br>Curso no encontrado.";
-            return;
-        }
-
-        //echo "<table>";
-        $ClassActividades = array ();
-        $ClassActividadesMatriculados = array ();
-        $ClassMatriculadosCursos = array ();
-
-        foreach ($tables as $table)
-        {
-            echo 'ENTRO';
-            print_r($table);
-            $firstTR = false;
-            $idTable = $table -> getAttribute("id");
-            $pos = strpos ($idTable, "completion-progress");
-            if ($pos !== false)
-                {
-                    $trs = $table->getElementsByTagName("tr");
-                    $contatr = 0;
-                    
-                    foreach ($trs as $tr)
+        if(!isset($curso))
+            {
+                return response()->json(['success' => false, 'error' => 'Curso no se encuentra en el sistema.'], 500);
+            }
+        $course_users = CourseRegisteredUser::where("course_id", $curso["id"])->get();
+        $cant_users = count($course_users);
+        $vueltas = round (($cant_users)/100, 0, PHP_ROUND_HALF_UP);
+        $id_moodle_missed = array();
+        $id_reg_user_missed = array();
+        $this->loginMoodle();
+        try {
+            for ($INDEX = 0; $INDEX <= $vueltas; $INDEX++)
+            {
+                $url = $this->base_url . "/grade/report/grader/index.php?id=$IdCurso&page=$INDEX";
+                $html = $this->runCurl($url); 
+                curl_close($this->ch_actual);
+                $doc = new \DOMDocument();
+                libxml_use_internal_errors(true);
+                $doc->loadHTML($html);
+                $ids = array();
+                $tables = $doc -> getElementsByTagName("table");
+                foreach ($tables as $table)
                     {
-                        $contatr++;
-                        if (!$firstTR)
+                        $idtables = $table -> getAttribute("id");
+                        if ($idtables != "user-grades")
                             {
-                                $firstTR = true;
-                                // Estanos en el primer renglon, hay que buscar las actividades aqui
+                                continue;
+                            }
+                        $actividades = array ();
+                        $trs = $table -> getElementsByTagName("tr");
+                        foreach ($trs as $tr)
+                        {
+                            $classTr = $tr -> getAttribute("class");
+                            if ($classTr == "heading")
+                            {
                                 $ths = $tr -> getElementsByTagName("th");
-                                $contath = 0;
                                 foreach ($ths as $th)
                                 {
-                                    switch ($contath)
+                                    $classTh = $th -> getAttribute("class");
+                                    if (strpos ($classTh, "item catlevel2") !== false || strpos ($classTh, "item catlevel1") !== false)
                                     {
-                                        case 0:
-                                            // Es la columna de nombre y apellido, IGNORAR
-                                            // <th scope="col" class="completion-sortchoice">
-                                            //  <a href="./?course=31&amp;sort=firstname&amp;silast=all&amp;sifirst=all">Nombre</a> / Apellido(s)
-                                            //</th>
-                                            break;
-                                        case 1:
-                                            // Columna RUT
-                                            break;
-                                        case 2:
-                                            // Es la columna de correo, IGNORAR
-                                            // <th scope="col" class="completion-identifyfield">Direcci�n de correo</th>
-                                            break;
-                                        default:
-                                            // son las columnas de actividades, OBTENEER LA INFO
-                                            //<th scope="col" class="">
-                                            //  <a href="https://www.abiescra2019.cl/mod/lesson/view.php?id=2867" title="Introducci�n">
-                                            //      <img src="https://www.abiescra2019.cl/theme/image.php/bootstrap/lesson/1556053835/icon" alt="Lecci�n" />
-                                            //      <span class="completion-activityname">Introducci�n</span>
-                                            //  </a>
-                                            //</th>
-                                            $TAGA = $th -> childNodes->item(0);
-                                            //echo "<br> Nombre actividad: ".
-                                            $NameAct = $TAGA -> getAttribute("title");
-                                            //echo "<br> href actividad: ".
-                                            $href = $TAGA -> getAttribute("href");
+                                        $ArrayClase = explode (" ", $classTh );
+                                        $as = $th -> getElementsByTagName("a");
+                                        foreach ($as as $a)
+                                        {
+                                            $classA = $a -> getAttribute("class");
+                                            if ($classA == "gradeitemheader")
+                                            {
+                                                $nombre = $a -> getAttribute("title");
+                                                $href = $a -> getAttribute("href");
 
-                                            $posId = strpos ($href, "php?id=");
-                                            if ($posId !== false)
-                                                $idact = substr ($href, $posId + strlen ("php?id="));
-                                            else
-                                                $idact = "";
-
-                                            echo '<br>actividad: ';
-                                            echo $idact;
-                                            echo '<br>href: ';
-                                            echo $href;
-                                            echo '<br>NameAct: ';
-                                            echo $NameAct;
-
-                                            $aux["id_actividad"] = $idact;
-                                            $aux["href"] = $href;
-                                            $aux["name_actividad"] = $NameAct;
-
-                                            // $Classactividad = new Classactividades($db);
-                                            // $Classactividad -> setidmod ($idact);
-                                            // $Classactividad -> sethref($href);
-                                            // $Classactividad -> setClassCursos ($Classcursos);
-                                            // $Classactividad -> setnombre (trim($NameAct));
-                                            // $Classactividad -> setrevisar ("1");
-
-                                            $ClassActividades[] = $aux;
-
-                                            break;
-                                    }
-                                    $contath++;
-                                }
-                            }
-                        else
-                            {
-                                // No es el primer renglon, vamos a buscar los registros de los usuarios
-                                $contath = 0;
-
-                                // $Classinscritos = new Classinscritos($db);
-                                // $Classinscritos -> setClassCurso($Classcursos);
-
-                                $idUser = "";
-                                $rut = "";
-                                $email = "";
-                                $contath = 0;
-                                $Contaact = 0;
-                                foreach ($tr -> childNodes as $td)
-                                {
-                                    switch ($contath)
-                                    {
-                                        case 0:
-                                            // nombre apellido
-                                            //<a href="https://www.abiescra2019.cl/user/view.php?id=32&amp;course=31">Claudia Alejandra Alarc�n Lazo</a>
-                                            //echo "<br>TAGA: ".
-                                            $Nombre= $td -> childNodes->item(0)->nodeValue;
-                                            //echo "<br> HREF Nombre: ".
-                                            $href = $td -> childNodes->item(0)-> getAttribute ("href");
-                                            //echo "<br>POS INI IDUSER: ".
-                                            $posIdini = strpos ($href, "?id=");
-                                            //echo "<br>POS FIN IDUSER: ".
-                                            $posIdFin = strpos ($href, "&");
-                                            //echo "<br>IdUser: ".
-                                            $iduser = substr ($href, $posIdini + strlen ("?id="), $posIdFin - ($posIdini + strlen ("?id=")));
-
-                                            $aux2["nombre"] = $Nombre;
-                                            $aux2["href"] = $href;
-                                            $aux2["iduser"] = $iduser;
-                                            // $Classinscritos -> setnombre($Nombre);
-                                            // $Classinscritos -> setiduser($iduser);
-                                            // $Classinscritos -> setidperfil (5);
-                                            // $Classinscritos -> setPerfil ("Estudiante");
-                                            break;
-                                        case 1:
-                                            // RUT
-                                            $RUT =  $td -> nodeValue;
-                                            // $Classinscritos -> setrut($RUT);
-                                            $aux2["rut"] = $RUT;
-                                            break;
-                                        case 2:
-                                            // <td>claudia.alarcon@gmail.com</td>
-                                            //echo "<br>Email: ".
-                                            $Email = $td -> childNodes->item(0)->nodeValue;
-                                            $aux2["Email"] = $Email;
-                                            // $Classinscritos -> setemail($Email);
-                                            break;
-                                        default:
-                                            $Classtd = trim($td -> getAttribute ("class"));
-                                            if ($Classtd == "completion-progresscell")
+                                                $parts1 = parse_url($href, PHP_URL_QUERY);
+                                                $partes = explode ("=", $parts1);
+                                                if (strpos($partes[1], "&itemnumber") !== false)
                                                 {
-                                                    // <td class="completion-progresscell ">
-                                                    //  <img src="https://www.abiescra2019.cl/theme/image.php/bootstrap/core/1556053835/i/completion-manual-n"
-                                                    //      alt="No finalizado"
-                                                    //      title="Claudia Alejandra Alarc�n Lazo, Introducci�n: No finalizado " />
-                                                    // </td>
-                                                    /** O BIEN */
-                                                    //
-                                                    //<td class="completion-progresscell ">
-                                                    //  <img src="https://www.abiescra2019.cl/theme/image.php/bootstrap/core/1556053835/i/completion-auto-y"
-                                                    //      alt="Finalizado"
-                                                    //      title="Rosa Adriana Alvarado Thimeos, Actividad 2: �Cu�l es mi situaci�n inicial al comenzar el curso Abies 2.0?: Finalizado mi�rcoles, 13 de marzo de 2019, 20:54" />
-                                                    //</td>
-                                                    //echo "<br>Estado Original:".
-                                                    $Estado = $td -> childNodes->item(0)-> getAttribute("alt");
-                                                    //echo "<br>Estado Sin Nombre:".
-                                                    $Estado = substr ($Estado, strlen ($Nombre)+2);
-                                                    //echo "<br>Estado Sin Actividad:".
-                                                    // $Estado = substr ($Estado, strlen ($ClassActividades[$Contaact] -> getnombre())+2);
-                                                    /*
-                                                    if ($strpos($Estado, "No finalizado") !== false)
-                                                    {
-                                                        // Es estado NO finalizado
-                                                        $tiempoestado = "";
-                                                    }
-                                                    else
-                                                    {
-                                                        // Estado Finalizado
-                                                        $tiempoestado = substr ($Estado, strlen("Finalizado"));
-                                                        $Estado = "Finalizado";
-                                                    }
-                                                    */
-
-                                                    // echo '<br>href: ';
-                                                    // echo $href;
-                                                    // echo '<br>$NameAct: ';
-                                                    // echo $NameAct;
-
-                                                    // $Classinscritoactividad = new Classinscritoactividad ($db);
-                                                    // $Classinscritoactividad -> setClassActividad ($ClassActividades[$Contaact] );
-                                                    // $Classinscritoactividad -> setClassinscrito($Classinscritos);
-                                                    // $Classinscritoactividad -> setEstado("");
-                                                    // $Classinscritoactividad -> setcalificacion ("");
-                                                    // $Classinscritoactividad -> settimemodified ("");
-                                                    // $Classinscritoactividad -> setultact ("");
-                                                    // $Classinscritoactividad -> setfinalizado ($Estado);
-
-                                                    $aux2["cont_act"] = $Contaact;
-                                                    $aux2["estado"] = $Estado;
-
-                                                    $ClassActividadesMatriculados [] = $aux2;
+                                                    $p = explode ("&", $partes[1]);
+                                                    $partes[1] = $p[0];
                                                 }
-                                            $Contaact++;
-                                            break;
+                                                $idmod = $partes[1];
+
+                                                $Classactividades = array();
+                                                $Classactividades["id_actividad_moodle"] = $idmod;
+                                                $Classactividades["nombre"] = $nombre;
+                                                $Classactividades["id_curso"] = $curso["id"];
+
+                                                $actividades[$ArrayClase[3]] = $Classactividades;
+                                            }
+                                        }
                                     }
-                                $contath++;
                                 }
                             }
-                            $contatr++;
-                    }
-                }
-        }
-        $start += 25;
-        $arrtmp = $this -> finalizacionActividad ($IdCurso, $start, $vueltas);
+                            elseif ($classTr == "")
+                            {
+                                if ($tr -> hasAttribute("id"))
+                                {
+                                    $idTR = $tr -> getAttribute("id");
+                                    if (strpos ($idTR, "fixed_user") !== false)
+                                    {
+                                        $ths = $tr -> getElementsByTagName("th");
+                                        $IdUser = "";
+                                        $Nombre = "";
+                                        $RUT = "";
+                                        $EMAIL = "";
+                                        foreach ($ths as $th)
+                                        {
+                                            $as = $th  -> getElementsByTagName("a");
+                                            $num = 0;
+                                            foreach ($as as $a)
+                                            {
+                                                if ($num == 0)
+                                                {
+                                                    $href = $a -> getAttribute("href");
+                                                    $parts1 = parse_url($href, PHP_URL_QUERY);
+                                                    $partes = explode ("=", $parts1);
+                                                    $IdUser = $partes[0];
+                                                }
+                                                elseif ($num == 1)
+                                                {
+                                                    $href = $a -> getAttribute("href");
+                                                    $parts1 = parse_url($href, PHP_URL_QUERY);
+                                                    $partes = explode ("=", $parts1);
+                                                    if (strpos($partes[1], "&course") !== false)
+                                                    {
+                                                        $partes[1] = substr($partes[1], 0, strlen($partes[1]) - strlen ("&course")) ;
+                                                    }
+                                                    $IdUser = $partes[1];
+                                                    $Nombre = $a -> nodeValue;
+                                                }
+                                                $num++;
+                                            }
+                                        }
+                                        $tds = $tr -> getElementsByTagName("td");
+                                        $Columnas = 0;
+                                        foreach ($tds as $td)
+                                        {
+                                            switch ($Columnas) 
+                                            {
+                                                case 1:
+                                                    $RUT = $td -> nodeValue;
+                                                    break;
+                                                case 2:
+                                                    $EMAIL = $td -> nodeValue;
+                                                    break;
+                                                default :
+                                                    $ClassTd = $td -> getAttribute("class");
+                                                    $ArrayClase  = explode(" ", $ClassTd);
+                                                    if (isset($actividades ['cat'])) {
+                                                        break;
+                                                    }
+                                                    
+                                                    if (isset($actividades [$ArrayClase[1]]))
+                                                        {
+                                                            $Califica = $td -> nodeValue;
+                                                            $rUserId = RegisteredUser::where("id_registered_moodle", $IdUser)->first();
+                                                            if(isset($rUserId->id)){
+                                                                $rUserId = $rUserId->id;
+                                                            }else{
+                                                                $id_moodle_missed[] = $IdUser;
+                                                                continue;
+                                                            }
+                                                            $courseUserId = CourseRegisteredUser::where("registered_user_id", $rUserId)
+                                                                            ->where("course_id", $curso["id"])
+                                                                            ->first();
+                                                            if(isset($courseUserId->id)){
+                                                                $courseUserId = $courseUserId->id;   
+                                                            }else{
+                                                                $id_reg_user_missed[] = $rUserId;
+                                                                continue;
+                                                            }
+                                                                      
+                                                            $activityMoodleId = $actividades[$ArrayClase[1]]["id_actividad_moodle"];
+                                                            $activityId = Activity::where("id_activity_moodle", $activityMoodleId)
+                                                                            ->where("section_id", "!=", 9)
+                                                                            ->first();
+                                                            if(isset($activityId->id)){
+                                                                $activityId = $activityId->id;
+                                                            }else{
+                                                                continue;
+                                                            }
+                                                            $activityUser = ActivityCourseRegisteredUser::where("course_registered_user_id", $courseUserId)
+                                                                            ->where("activity_id", $activityId)
+                                                                            ->first();
+                                                            $estado = "";
+                                                            if($Califica == "-"){
+                                                                $estado = "Sin entrega";
+                                                            }else{
+                                                                $estado = "Finalizado";
+                                                            }
 
-        echo 'IMPRIMO:';
-        echo '<pre>';
-        print_r($ClassActividadesMatriculados);
-        echo '</pre>';
-        // return array_merge($ClassActividadesMatriculados, $arrtmp);
+                                                            if(isset($activityUser->id)){
+                                                                $activityUser->status_moodle = $estado;
+                                                                $activityUser->qualification_moodle = $Califica;
+                                                                $activityUser->save();
+                                                            }else{
+                                                                $activityUserNew = new ActivityCourseRegisteredUser();
+                                                                $activityUserNew->activity_id = $activityId;
+                                                                $activityUserNew->course_registered_user_id = $courseUserId;
+                                                                $activityUserNew->status_moodle = $estado;
+                                                                $activityUserNew->qualification_moodle = $Califica;
+                                                                $activityUserNew->save();
+                                                            }
+                                                        }
+                                                    break;
+                                            } 
+                                            $Columnas++;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                $ejecucion = true;
+            }
+        }catch (\Exception $ex) {
+            return response()->json(
+                [
+              'status' => 'error',
+              'error' => $ex->getMessage(),
+              'line' => $ex->getLine()
+            ],
+                416
+            );
+        }
+
+        if($ejecucion == true){
+            return response()->json(
+                [
+                'status' => 'ok',
+                'ids_moodle_missed' => array_unique($id_moodle_missed),
+                'ids_registered_user_missed' => array_unique($id_reg_user_missed),
+              ],
+                201
+            );
+        }
     }
 
     public function runCurl($url)
