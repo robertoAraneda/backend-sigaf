@@ -43,7 +43,7 @@ Route::get('v3/sync/course-users/{idCursoMoodle}/users', 'SynchronizeMoodleContr
 
 Route::get('v3/sync/course-user/{idCursoMoodle}/user/{rutInput}', 'SynchronizeMoodleController@syncUserByCourseRut');
 
-Route::get('v3/sync/finish-activities/{idCursoMoodle}', 'SynchronizeMoodleController@finalizacionActividad');
+Route::get('v3/sync/activities-users/{idCursoMoodle}', 'SynchronizeMoodleController@syncActivitiesUsers');
 
 
 /**rutas api */
