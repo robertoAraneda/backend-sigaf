@@ -448,7 +448,7 @@ class SynchronizeMoodleController extends Controller
                                                                 $rUserId = $rUserId->id;
                                                             }else{
                                                                 $id_moodle_missed[] = $IdUser;
-                                                                continue;
+                                                                continue 2;
                                                             }
                                                             $courseUserId = CourseRegisteredUser::where("registered_user_id", $rUserId)
                                                                             ->where("course_id", $curso["id"])
@@ -457,7 +457,7 @@ class SynchronizeMoodleController extends Controller
                                                                 $courseUserId = $courseUserId->id;   
                                                             }else{
                                                                 $id_reg_user_missed[] = $rUserId;
-                                                                continue;
+                                                                continue 2;
                                                             }
                                                                       
                                                             $activityMoodleId = $actividades[$ArrayClase[1]]["id_actividad_moodle"];
