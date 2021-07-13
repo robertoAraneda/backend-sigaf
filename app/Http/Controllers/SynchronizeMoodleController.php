@@ -467,7 +467,7 @@ class SynchronizeMoodleController extends Controller
                                                             if(isset($activityId->id)){
                                                                 $activityId = $activityId->id;
                                                             }else{
-                                                                continue;
+                                                                continue 2;
                                                             }
                                                             $activityUser = ActivityCourseRegisteredUser::where("course_registered_user_id", $courseUserId)
                                                                             ->where("activity_id", $activityId)
