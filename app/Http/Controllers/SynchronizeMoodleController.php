@@ -334,6 +334,7 @@ class SynchronizeMoodleController extends Controller
             $actividades = Activity::where("course_id", $curso->id)
                             ->where("section_id", "!=", 9)
                             ->get();
+
             foreach($actividades as $actividad)
             {
                 switch ($actividad["type"]) {
@@ -366,13 +367,14 @@ class SynchronizeMoodleController extends Controller
                         $courseUserId = CourseRegisteredUser::where("registered_user_id", $rUserId)
                                         ->where("course_id", $curso->id)
                                         ->first();
-                        if(isset($courseUserId->id)){
+                        
+                        if(isset($courseUserId->id) && $courseUserId->id){
                             $courseUserId = $courseUserId->id;   
                         }else{
                             $id_reg_user_missed[] = $rUserId;
                             continue;
                         }
-                                  
+
                         $activityId = Activity::where("id_activity_moodle", $idActivityMoodle)
                                         ->where("section_id", "!=", 9)
                                         ->first();
@@ -383,12 +385,11 @@ class SynchronizeMoodleController extends Controller
                         }
 
                         $activityUser = ActivityCourseRegisteredUser::where("course_registered_user_id", $courseUserId)
-                                        ->where("activity_id", $idActivityMoodle)
+                                        ->where("activity_id", $activityId)
                                         ->first();
-                        
                         if(isset($activityUser->id)){
                             $activityUser->status_moodle = $value["estado"];
-                            $activityUser->qualification_moodle = $value["calificacion"];
+                            $activityUser->qualification_moodle = isset($value["calificacion"]) ? $value["calificacion"] : "";
                             $activityUser->save();
                         }else{
                             $activityUserNew = new ActivityCourseRegisteredUser();
@@ -399,7 +400,6 @@ class SynchronizeMoodleController extends Controller
                             $activityUserNew->save();
                         }
                     }
-                    
                 }
             }
         }catch (\Exception $ex) {
@@ -679,18 +679,16 @@ class SynchronizeMoodleController extends Controller
                     }
                     $coltr++;
                 }
-
-                if ($iduser > 0)
+                
+                if(isset($aux["id_user_moodle"]))
                 {
-                    if(isset($aux["id_user"]))
+                    if(!isset($aux["calificacion"]))
                     {
-                        if(!isset($aux["calificacion"]))
-                        {
-                            $aux["calificacion"] = "";
-                        }
-                        $actividadesUsers[] = $aux;
+                        $aux["calificacion"] = "";
                     }
+                    $actividadesUsers[] = $aux;
                 }
+                
                 $rowtr++;
             }
         }
