@@ -39,11 +39,11 @@ Route::get('/fetch/daily/user-registered-activities', 'SynchronizeController@syn
 Route::get('/fetch/course-users/{idCourseMoodle}/users', 'SynchronizeController@syncUsersByCourse');
 
 /* v3 by Betosky*/
-Route::get('v3/sync/course-users/{idCursoMoodle}/users', 'SynchronizeMoodleController@syncUsersByCourse');
+//Route::get('v3/sync/course-users/{idCursoMoodle}/users', 'SynchronizeMoodleController@syncUsersByCourse');
 
-Route::get('v3/sync/course-user/{idCursoMoodle}/user/{rutInput}', 'SynchronizeMoodleController@syncUserByCourseRut');
+//Route::get('v3/sync/course-user/{idCursoMoodle}/user/{rutInput}', 'SynchronizeMoodleController@syncUserByCourseRut');
 
-Route::get('v3/sync/activities-users/{idCursoMoodle}', 'SynchronizeMoodleController@syncActivitiesUsers');
+//Route::get('v3/sync/activities-users/{idCursoMoodle}', 'SynchronizeMoodleController@syncActivitiesUsers');
 
 
 /**rutas api */
